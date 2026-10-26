@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Dartsturnier – Companion</title>
+  
+  <!-- iPad / PWA Meta-Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dartsturnier">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#090d16">
+
+  <!-- App Icon (SVG Data URI) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%230f172a'/%3E%3Ccircle cx='256' cy='256' r='200' fill='%23111827' stroke='%23334155' stroke-width='10'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='%23ef4444' stroke-width='24' stroke-dasharray='12 12'/%3E%3Ccircle cx='256' cy='256' r='100' fill='none' stroke='%2310b981' stroke-width='24' stroke-dasharray='12 12'/%3E%3Ccircle cx='256' cy='256' r='45' fill='%2310b981'/%3E%3Ccircle cx='256' cy='256' r='20' fill='%23ef4444'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%230f172a'/%3E%3Ccircle cx='256' cy='256' r='200' fill='%23111827' stroke='%23334155' stroke-width='10'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='%23ef4444' stroke-width='24' stroke-dasharray='12 12'/%3E%3Ccircle cx='256' cy='256' r='100' fill='none' stroke='%2310b981' stroke-width='24' stroke-dasharray='12 12'/%3E%3Ccircle cx='256' cy='256' r='45' fill='%2310b981'/%3E%3Ccircle cx='256' cy='256' r='20' fill='%23ef4444'/%3E%3C/svg%3E">
+
+  <!-- Tailwind CSS & Lucide Icons & Canvas Confetti -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            appbg: '#090d16',
+            cardbg: '#111827',
+            bordercol: '#1e293b'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Safe Area insets for iPad with home bar & notch */
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, button {
+      user-select: auto;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    @keyframes shuffle-anim {
+      0% { transform: scale(0.96) translateY(2px); opacity: 0.7; }
+      50% { transform: scale(1.03) translateY(-2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .anim-shuffle {
+      animation: shuffle-anim 0.25s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-appbg text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- Top Navigation Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-30 px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      <!-- Title -->
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-black text-lg">
+          🎯
+        </div>
+        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white">DARTSTURNIER</h1>
+      </div>
+
+      <!-- Stepper Navigation -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+        <button id="nav-btn-setup" onclick="switchTab('setup')" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all text-emerald-400 bg-slate-800/80">
+          <span class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px]">1</span>
+          <span>Setup</span>
+        </button>
+        <button id="nav-btn-seeding" onclick="switchTab('seeding')" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-200">
+          <span class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[10px]">2</span>
+          <span>Setzliste</span>
+        </button>
+        <button id="nav-btn-tournament" onclick="switchTab('tournament')" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-200">
+          <span class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[10px]">3</span>
+          <span>Turnier</span>
+        </button>
+        <button id="nav-btn-podium" onclick="switchTab('podium')" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-200">
+          <span class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[10px]">4</span>
+          <span>Siegerehrung</span>
+        </button>
+      </nav>
+
+      <!-- Global Actions (iPad Help, Korrektur, Reset) -->
+      <div class="flex items-center gap-2">
+        <button onclick="togglePwaModal(true)" title="Auf iPad installieren" class="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs flex items-center gap-1.5 font-medium transition">
+          <i data-lucide="tablet" class="w-4 h-4 text-emerald-400"></i>
+          <span class="hidden sm:inline">iPad App</span>
+        </button>
+        <button id="btn-global-undo" onclick="undoLastAction()" title="Letzten Eintrag rückgängig machen" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-1 font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <span>Korrektur</span>
+        </button>
+        <button onclick="confirmReset()" title="Turnier neu starten" class="px-2.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 text-xs flex items-center gap-1 font-semibold transition">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Reset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Subnav Stepper -->
+  <div class="flex md:hidden border-b border-slate-800/80 bg-slate-950/60 px-2 py-2 justify-between text-xs font-semibold">
+    <button onclick="switchTab('setup')" class="flex-1 py-1 text-center text-emerald-400" id="m-nav-setup">1. Setup</button>
+    <button onclick="switchTab('seeding')" class="flex-1 py-1 text-center text-slate-400" id="m-nav-seeding">2. Setzliste</button>
+    <button onclick="switchTab('tournament')" class="flex-1 py-1 text-center text-slate-400" id="m-nav-tournament">3. Turnier</button>
+    <button onclick="switchTab('podium')" class="flex-1 py-1 text-center text-slate-400" id="m-nav-podium">4. Ehrung</button>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: SETUP -->
+    <!-- ========================================== -->
+    <section id="tab-setup" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+        <div>
+          <h2 class="text-2xl font-black text-white">Turnier-Konfiguration</h2>
+          <p class="text-xs text-slate-400 mt-1">Stelle Spieleranzahl, Modus und Spielregeln für dein Heimturnier ein.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="setup-duration-badge" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold">
+            Dauer: ca. 2.3 Std.
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Spieler Setup -->
+        <div class="bg-cardbg rounded-xl border border-slate-800 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold text-slate-200">Anzahl der Spieler</span>
+            <div class="flex items-center gap-3 bg-slate-900 border border-slate-700 rounded-lg p-1">
+              <button onclick="changePlayerCount(-1)" class="w-8 h-8 rounded bg-slate-800 text-white flex items-center justify-center font-bold hover:bg-slate-700">-</button>
+              <span id="player-count-display" class="w-6 text-center font-black text-base text-emerald-400">5</span>
+              <button onclick="changePlayerCount(1)" class="w-8 h-8 rounded bg-slate-800 text-white flex items-center justify-center font-bold hover:bg-slate-700">+</button>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Spielernamen</label>
+            <div id="player-inputs-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Spielregeln & Legs -->
+        <div class="bg-cardbg rounded-xl border border-slate-800 p-5 space-y-4">
+          <!-- Best of Legs Stepper -->
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold text-slate-200">Best of Legs</span>
+            <div class="flex items-center gap-3 bg-slate-900 border border-slate-700 rounded-lg p-1">
+              <button onclick="changeBestOf(-2)" class="w-8 h-8 rounded bg-slate-800 text-white flex items-center justify-center font-bold hover:bg-slate-700">-</button>
+              <span id="best-of-display" class="w-6 text-center font-black text-base text-emerald-400">3</span>
+              <button onclick="changeBestOf(2)" class="w-8 h-8 rounded bg-slate-800 text-white flex items-center justify-center font-bold hover:bg-slate-700">+</button>
+            </div>
+          </div>
+
+          <!-- Turniermodus Auswahl -->
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Turniermodus</label>
+            <div class="grid grid-cols-1 gap-2">
+              <!-- Doppel-K.o. -->
+              <label onclick="selectMode('double_ko')" class="flex items-center justify-between p-3 rounded-lg border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-slate-600 transition" id="mode-opt-double_ko">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="tournament_mode" value="double_ko" checked class="text-emerald-500 focus:ring-0">
+                  <span class="text-sm font-bold text-white">Doppel-K.o.</span>
+                </div>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Double Elimination</span>
+              </label>
+
+              <!-- 2 Gruppen -->
+              <label onclick="selectMode('two_groups')" class="flex items-center justify-between p-3 rounded-lg border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-slate-600 transition" id="mode-opt-two_groups">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="tournament_mode" value="two_groups" class="text-emerald-500 focus:ring-0">
+                  <span class="text-sm font-bold text-white">2 Gruppen</span>
+                </div>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">Vorrunde + K.o.</span>
+              </label>
+
+              <!-- Ligamodus -->
+              <label onclick="selectMode('league')" class="flex items-center justify-between p-3 rounded-lg border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-slate-600 transition" id="mode-opt-league">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="tournament_mode" value="league" class="text-emerald-500 focus:ring-0">
+                  <span class="text-sm font-bold text-white">Ligamodus</span>
+                </div>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">1 Tabelle</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Spezifische Einstellungen für Liga -->
+          <div id="league-specific-settings" class="hidden space-y-3 pt-3 border-t border-slate-800">
+            <div>
+              <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Endrunden-Modus</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="setLeaguePlayoff('top4')" id="btn-playoff-top4" class="p-2.5 rounded-lg border border-emerald-500/60 bg-emerald-500/10 text-xs font-bold text-emerald-300 text-center">Top-4 Halbfinale</button>
+                <button type="button" onclick="setLeaguePlayoff('table_only')" id="btn-playoff-table" class="p-2.5 rounded-lg border border-slate-700 bg-slate-900 text-xs font-bold text-slate-400 text-center">Reine Tabelle</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Setzlisten-Methode -->
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Setzlisten-Ermittlung</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label onclick="selectSeedingType('bulls')" class="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-emerald-500/50 bg-emerald-500/10 cursor-pointer text-xs font-bold text-emerald-300" id="seeding-opt-bulls">
+                <input type="radio" name="seeding_type" value="bulls" checked class="hidden">
+                <span>🎯 9 Darts aufs Bull</span>
+              </label>
+              <label onclick="selectSeedingType('random')" class="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-900 cursor-pointer text-xs font-bold text-slate-300" id="seeding-opt-random">
+                <input type="radio" name="seeding_type" value="random" class="hidden">
+                <span class="flex items-center gap-1.5"><i data-lucide="dice-5" class="w-3.5 h-3.5 text-emerald-400"></i> Zufallsauslosung</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weiter Button -->
+      <div class="flex justify-end pt-2">
+        <button onclick="goToSeeding()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition">
+          <span>Zur Setzliste</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: SETZLISTE -->
+    <!-- ========================================== -->
+    <section id="tab-seeding" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+        <div>
+          <h2 id="seeding-section-title" class="text-2xl font-black text-white">9 Darts aufs Bull</h2>
+          <p id="seeding-section-desc" class="text-xs text-slate-400 mt-0.5">Ermittle die Startpositionen für das Turnier.</p>
+        </div>
+        
+        <!-- Button Action Bar in Setzliste -->
+        <div class="flex items-center gap-2">
+          <!-- Zufallsauslosung: Auslosen Button direkt VOR Turnier starten -->
+          <button id="btn-draw-random" onclick="executeRandomDraw()" class="hidden px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-2 shadow transition">
+            <i data-lucide="shuffle" class="w-3.5 h-3.5"></i>
+            <span>Auslosen</span>
+          </button>
+
+          <!-- 9 Darts: Rest = Miss -->
+          <button id="btn-fill-misses" onclick="fillCurrentPlayerMisses()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs border border-slate-700 transition">
+            Rest = Miss (0)
+          </button>
+
+          <!-- Turnier starten Button -->
+          <button id="btn-start-tournament" onclick="startTournamentFromSeeding()" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow transition opacity-40 cursor-not-allowed" disabled>
+            <span>Turnier starten</span>
+            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Container für 9 Darts aufs Bull -->
+      <div id="seeding-bulls-view" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Active Throwing Input Box -->
+          <div class="lg:col-span-1 bg-cardbg rounded-xl border border-slate-800 p-5 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold uppercase text-slate-400">Aktueller Werfer</span>
+              <span id="active-thrower-progress" class="text-xs font-semibold text-emerald-400">Wurf 1 / 9</span>
+            </div>
+            
+            <div class="text-center py-2">
+              <h3 id="active-thrower-name" class="text-2xl font-black text-white">Spieler 1</h3>
+              <div class="flex items-center justify-center gap-1.5 mt-3" id="active-thrower-dots">
+                <!-- 9 throw indicators -->
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-2">
+              <button onclick="recordDartThrow(0)" class="py-3 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-bold text-xs flex flex-col items-center justify-center gap-1 transition">
+                <span class="text-base font-black">0</span>
+                <span>Miss</span>
+              </button>
+              <button onclick="recordDartThrow(1)" class="py-3 px-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 font-bold text-xs flex flex-col items-center justify-center gap-1 transition">
+                <span class="text-base font-black">+1</span>
+                <span>Single Bull</span>
+              </button>
+              <button onclick="recordDartThrow(2)" class="py-3 px-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-400 font-bold text-xs flex flex-col items-center justify-center gap-1 transition">
+                <span class="text-base font-black">+2</span>
+                <span>Bullseye</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Setzliste Rangliste -->
+          <div class="lg:col-span-2 bg-cardbg rounded-xl border border-slate-800 p-5 space-y-3">
+            <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Setzliste Zwischenstand</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="border-b border-slate-800 text-slate-400 font-bold">
+                    <th class="py-2 px-3">Rang</th>
+                    <th class="py-2 px-3">Spieler</th>
+                    <th class="py-2 px-3 text-center">Würfe</th>
+                    <th class="py-2 px-3 text-center">Bullseye (2)</th>
+                    <th class="py-2 px-3 text-center">Single (1)</th>
+                    <th class="py-2 px-3 text-right">Punkte</th>
+                    <th class="py-2 px-3 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="seeding-table-body" class="divide-y divide-slate-800/60 font-medium">
+                  <!-- Generated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container für Zufallsauslosung -->
+      <div id="seeding-random-view" class="hidden space-y-4">
+        <div id="random-draw-cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <!-- Dynamically populated draw cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: TURNIER -->
+    <!-- ========================================== -->
+    <section id="tab-tournament" class="hidden space-y-6">
+      <!-- Tournament Header / Overview -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+        <div>
+          <h2 id="tourney-mode-heading" class="text-2xl font-black text-white">Turnierbaum</h2>
+          <div class="flex items-center gap-3 text-xs text-slate-400 mt-1">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Jetzt am Board</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Offen</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Beendet</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamischer Spielbereich je nach Modus -->
+      <div id="tournament-content-area" class="space-y-6">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: SIEGEREHRUNG -->
+    <!-- ========================================== -->
+    <section id="tab-podium" class="hidden space-y-8">
+      <div class="text-center space-y-2 py-4">
+        <h2 class="text-3xl md:text-4xl font-black text-white tracking-wider">🏆 SIEGEREHRUNG 🏆</h2>
+        <p class="text-sm text-slate-400">Herzlichen Glückwunsch an alle Teilnehmer des Dartsturniers!</p>
+      </div>
+
+      <!-- Podium Top 3 Visualisierung -->
+      <div id="podium-top3-container" class="flex flex-row justify-center items-end gap-3 md:gap-6 pt-12 pb-6 max-w-2xl mx-auto px-4">
+        <!-- Rendered dynamically (2nd, 1st with Crown, 3rd) -->
+      </div>
+
+      <!-- Humorvoller Titel für den Sieger -->
+      <div id="winner-title-box" class="max-w-xl mx-auto p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-1">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Ehrentitel des Turniers</span>
+        <h3 id="winner-darts-title" class="text-base font-black text-white">🎯 Unantastbarer Darts-Gott (unschlagbar)</h3>
+      </div>
+
+      <!-- Abschlusstabelle mit einheitlich weißen Spielernamen -->
+      <div class="max-w-2xl mx-auto bg-cardbg rounded-xl border border-slate-800 p-5 space-y-3">
+        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Endplatzierungen</h4>
+        <div class="divide-y divide-slate-800/80" id="podium-final-table">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PWA Install Modal -->
+  <div id="pwa-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-cardbg border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-lg font-black text-white flex items-center gap-2">
+          <i data-lucide="tablet" class="w-5 h-5 text-emerald-400"></i>
+          Auf iPad installieren
+        </h3>
+        <button onclick="togglePwaModal(false)" class="text-slate-400 hover:text-white p-1 rounded-lg">✕</button>
+      </div>
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <p>Nutze die App im echten Vollbildmodus ohne Safari-Adressleiste direkt vom iPad Home-Bildschirm:</p>
+        <ol class="list-decimal list-inside space-y-2 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <li>Tippe oben rechts in Safari auf das <strong>Teilen-Symbol</strong> <span class="text-slate-100 font-bold">[ ⎋ ]</span>.</li>
+          <li>Scrolle nach unten und wähle <strong>„Zum Home-Bildschirm“</strong>.</li>
+          <li>Tippe oben rechts auf <strong>„Hinzufügen“</strong>.</li>
+        </ol>
+        <p class="text-slate-400 text-[11px]">Die App speichert alle Spielstände automatisch lokal auf deinem iPad!</p>
+      </div>
+      <div class="pt-2">
+        <button onclick="togglePwaModal(false)" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-xs text-white transition">
+          Verstanden
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Entry Match Modal -->
+  <div id="match-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-cardbg border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <span id="modal-match-title" class="text-xs font-bold uppercase tracking-wider text-emerald-400">Match</span>
+        <button onclick="closeMatchModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 items-center text-center">
+        <!-- Player 1 -->
+        <div class="space-y-2 p-3 rounded-xl bg-slate-900 border border-slate-800">
+          <p id="modal-p1-name" class="font-bold text-sm text-white truncate">Spieler 1</p>
+          <div class="flex items-center justify-center gap-3">
+            <button onclick="adjustModalScore(1, -1)" class="w-8 h-8 rounded bg-slate-800 text-white font-bold">-</button>
+            <span id="modal-p1-legs" class="text-2xl font-black text-emerald-400">0</span>
+            <button onclick="adjustModalScore(1, 1)" class="w-8 h-8 rounded bg-slate-800 text-white font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- Player 2 -->
+        <div class="space-y-2 p-3 rounded-xl bg-slate-900 border border-slate-800">
+          <p id="modal-p2-name" class="font-bold text-sm text-white truncate">Spieler 2</p>
+          <div class="flex items-center justify-center gap-3">
+            <button onclick="adjustModalScore(2, -1)" class="w-8 h-8 rounded bg-slate-800 text-white font-bold">-</button>
+            <span id="modal-p2-legs" class="text-2xl font-black text-emerald-400">0</span>
+            <button onclick="adjustModalScore(2, 1)" class="w-8 h-8 rounded bg-slate-800 text-white font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+      <p id="modal-target-legs" class="text-center text-xs text-slate-400">Erster bei 2 Legs gewinnt.</p>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button onclick="closeMatchModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">Abbrechen</button>
+        <button onclick="saveModalMatchResult()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow">Ergebnis speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Confirmation Modal -->
+  <div id="reset-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-cardbg border border-red-500/30 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 border border-red-500/30 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-base font-black text-white">Turnier wirklich zurücksetzen?</h3>
+      <p class="text-xs text-slate-400">Alle aktuellen Ergebnisse, Würfe und Turnierspiele werden unwiderruflich gelöscht.</p>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button onclick="toggleResetModal(false)" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">Abbrechen</button>
+        <button onclick="executeResetTournament()" class="flex-1 py-2 rounded-xl bg-red-500 hover:bg-red-400 text-white text-xs font-black shadow">Ja, Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC JAVASCRIPT -->
+  <script>
+    const STORAGE_KEY = 'darts_companion_state_v3';
+
+    // State container
+    let state = {
+      tab: 'setup',
+      playerCount: 5,
+      players: ['Spieler 1', 'Spieler 2', 'Spieler 3', 'Spieler 4', 'Spieler 5'],
+      bestOfLegs: 3,
+      tournamentMode: 'double_ko', // 'double_ko', 'two_groups', 'league'
+      leaguePlayoff: 'top4',       // 'top4', 'table_only'
+      seedingType: 'bulls',        // 'bulls', 'random'
+      
+      // Seeding Data
+      bullThrows: {},              // { 'Spieler 1': [0, 1, 2, ...] }
+      activeThrowerIndex: 0,
+      randomSeedList: [],          // array of player names drawn
+      hasRandomDrawn: false,
+
+      // Tournament Match Data
+      matches: [],
+      history: []                  // for undo
+    };
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderAll();
+      lucide.createIcons();
+    });
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.warn('LocalStorage save failed:', e);
+      }
+    }
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = Object.assign(state, parsed);
+        }
+      } catch (e) {
+        console.warn('LocalStorage load failed:', e);
+      }
+    }
+
+    function renderAll() {
+      updateNavButtons();
+      renderSetupInputs();
+      updateDurationDisplay();
+      renderSeedingSection();
+      renderTournamentView();
+      renderPodium();
+      lucide.createIcons();
+    }
+
+    // Tab Switching
+    function switchTab(tabName) {
+      state.tab = tabName;
+      ['setup', 'seeding', 'tournament', 'podium'].forEach(t => {
+        const sec = document.getElementById(`tab-${t}`);
+        if (sec) sec.classList.toggle('hidden', t !== tabName);
+      });
+      updateNavButtons();
+      saveState();
+      lucide.createIcons();
+    }
+
+    function updateNavButtons() {
+      const tabs = ['setup', 'seeding', 'tournament', 'podium'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-btn-${t}`);
+        const mBtn = document.getElementById(`m-nav-${t}`);
+        const isActive = (state.tab === t);
+        if (btn) {
+          btn.className = isActive 
+            ? 'px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all text-emerald-400 bg-slate-800/80 font-bold'
+            : 'px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-200 font-semibold';
+        }
+        if (mBtn) {
+          mBtn.className = isActive ? 'flex-1 py-1 text-center text-emerald-400 font-bold' : 'flex-1 py-1 text-center text-slate-400';
+        }
+      });
+    }
+
+    // --- SETUP LOGIC ---
+    function changePlayerCount(delta) {
+      let count = state.playerCount + delta;
+      if (count < 3) count = 3;
+      if (count > 8) count = 8;
+      state.playerCount = count;
+
+      while (state.players.length < count) {
+        state.players.push(`Spieler ${state.players.length + 1}`);
+      }
+      if (state.players.length > count) {
+        state.players = state.players.slice(0, count);
+      }
+
+      document.getElementById('player-count-display').innerText = state.playerCount;
+      renderSetupInputs();
+      updateDurationDisplay();
+      saveState();
+    }
+
+    function renderSetupInputs() {
+      const container = document.getElementById('player-inputs-container');
+      container.innerHTML = '';
+      state.players.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700/60';
+        div.innerHTML = `
+          <span class="text-xs font-bold text-slate-500 w-4">${idx + 1}</span>
+          <input type="text" value="${p}" onchange="updatePlayerName(${idx}, this.value)" 
+                 class="bg-transparent text-xs font-semibold text-white focus:outline-none w-full" placeholder="Spieler ${idx + 1}">
+        `;
+        container.appendChild(div);
+      });
+      document.getElementById('player-count-display').innerText = state.playerCount;
+      document.getElementById('best-of-display').innerText = state.bestOfLegs;
+
+      // Mode Selection highlight
+      ['double_ko', 'two_groups', 'league'].forEach(m => {
+        const el = document.getElementById(`mode-opt-${m}`);
+        if (el) {
+          if (m === state.tournamentMode) {
+            el.classList.add('border-emerald-500/60', 'bg-emerald-500/5');
+            el.querySelector('input').checked = true;
+          } else {
+            el.classList.remove('border-emerald-500/60', 'bg-emerald-500/5');
+          }
+        }
+      });
+
+      // League specific settings box
+      const leagueBox = document.getElementById('league-specific-settings');
+      if (leagueBox) leagueBox.classList.toggle('hidden', state.tournamentMode !== 'league');
+
+      // Seeding Type highlight
+      const bullOpt = document.getElementById('seeding-opt-bulls');
+      const randOpt = document.getElementById('seeding-opt-random');
+      if (bullOpt && randOpt) {
+        if (state.seedingType === 'bulls') {
+          bullOpt.className = 'flex items-center justify-center gap-2 p-2.5 rounded-lg border border-emerald-500/50 bg-emerald-500/10 cursor-pointer text-xs font-bold text-emerald-300';
+          randOpt.className = 'flex items-center justify-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-900 cursor-pointer text-xs font-bold text-slate-300';
+        } else {
+          bullOpt.className = 'flex items-center justify-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-900 cursor-pointer text-xs font-bold text-slate-300';
+          randOpt.className = 'flex items-center justify-center gap-2 p-2.5 rounded-lg border border-emerald-500/50 bg-emerald-500/10 cursor-pointer text-xs font-bold text-emerald-300';
+        }
+      }
+    }
+
+    function updatePlayerName(idx, val) {
+      state.players[idx] = val.trim() || `Spieler ${idx + 1}`;
+      saveState();
+    }
+
+    function changeBestOf(delta) {
+      let val = state.bestOfLegs + delta;
+      if (val < 1) val = 1;
+      if (val > 7) val = 7;
+      state.bestOfLegs = val;
+      document.getElementById('best-of-display').innerText = state.bestOfLegs;
+      updateDurationDisplay();
+      saveState();
+    }
+
+    function selectMode(mode) {
+      state.tournamentMode = mode;
+      renderSetupInputs();
+      updateDurationDisplay();
+      saveState();
+    }
+
+    function setLeaguePlayoff(type) {
+      state.leaguePlayoff = type;
+      const bTop4 = document.getElementById('btn-playoff-top4');
+      const bTable = document.getElementById('btn-playoff-table');
+      if (type === 'top4') {
+        bTop4.className = 'p-2.5 rounded-lg border border-emerald-500/60 bg-emerald-500/10 text-xs font-bold text-emerald-300 text-center';
+        bTable.className = 'p-2.5 rounded-lg border border-slate-700 bg-slate-900 text-xs font-bold text-slate-400 text-center';
+      } else {
+        bTop4.className = 'p-2.5 rounded-lg border border-slate-700 bg-slate-900 text-xs font-bold text-slate-400 text-center';
+        bTable.className = 'p-2.5 rounded-lg border border-emerald-500/60 bg-emerald-500/10 text-xs font-bold text-emerald-300 text-center';
+      }
+      updateDurationDisplay();
+      saveState();
+    }
+
+    function selectSeedingType(type) {
+      state.seedingType = type;
+      renderSetupInputs();
+      renderSeedingSection();
+      saveState();
+    }
+
+    function updateDurationDisplay() {
+      // Calculation based on ~40 Average (ca. 17 min for Best of 3)
+      let matchesCount = 8;
+      const n = state.playerCount;
+      if (state.tournamentMode === 'double_ko') {
+        matchesCount = (n === 3 ? 4 : (n === 4 ? 6 : (n === 5 ? 8 : (n === 6 ? 10 : (n === 7 ? 12 : 14)))));
+      } else if (state.tournamentMode === 'two_groups') {
+        const grp1 = Math.ceil(n / 2);
+        const grp2 = Math.floor(n / 2);
+        matchesCount = ((grp1 * (grp1 - 1)) / 2) + ((grp2 * (grp2 - 1)) / 2) + 4; // plus playoffs
+      } else {
+        // League
+        matchesCount = (n * (n - 1)) / 2 + (state.leaguePlayoff === 'top4' ? 4 : 0);
+      }
+      
+      const legDurationMin = 5.5; // at 40 avg
+      const avgLegsPerMatch = (state.bestOfLegs === 1 ? 1 : (state.bestOfLegs === 3 ? 2.4 : (state.bestOfLegs === 5 ? 3.8 : 5.2)));
+      const totalMinutes = matchesCount * avgLegsPerMatch * legDurationMin;
+      const hours = (totalMinutes / 60).toFixed(1);
+
+      document.getElementById('setup-duration-badge').innerText = `Dauer: ca. ${hours} Std.`;
+    }
+
+    function goToSeeding() {
+      switchTab('seeding');
+      renderSeedingSection();
+    }
+
+    // --- SETZLISTE LOGIC ---
+    function renderSeedingSection() {
+      const isRandom = state.seedingType === 'random';
+      document.getElementById('seeding-section-title').innerText = isRandom ? 'Zufallsauslosung' : '9 Darts aufs Bull';
+      document.getElementById('seeding-section-desc').innerText = isRandom 
+        ? 'Ermittle die Startpositionen durch eine zufällige Ziehung.' 
+        : 'Jeder Spieler wirft 9 Darts aufs Bullseye. Single Bull = 1 Pkt, Bullseye = 2 Pkt.';
+
+      document.getElementById('btn-draw-random').classList.toggle('hidden', !isRandom);
+      document.getElementById('btn-fill-misses').classList.toggle('hidden', isRandom);
+      
+      document.getElementById('seeding-bulls-view').classList.toggle('hidden', isRandom);
+      document.getElementById('seeding-random-view').classList.toggle('hidden', !isRandom);
+
+      if (isRandom) {
+        renderRandomDrawCards();
+        validateSeedingReady();
+      } else {
+        renderBullsThrower();
+        renderBullsTable();
+        validateSeedingReady();
+      }
+    }
+
+    function renderBullsThrower() {
+      const pName = state.players[state.activeThrowerIndex] || state.players[0];
+      document.getElementById('active-thrower-name').innerText = pName;
+      
+      const throws = state.bullThrows[pName] || [];
+      const currentThrowNum = Math.min(throws.length + 1, 9);
+      document.getElementById('active-thrower-progress').innerText = throws.length >= 9 ? 'Beendet' : `Wurf ${currentThrowNum} / 9`;
+
+      const dotsContainer = document.getElementById('active-thrower-dots');
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const dot = document.createElement('div');
+        if (i < throws.length) {
+          const score = throws[i];
+          if (score === 2) {
+            dot.className = 'w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-[10px] shadow';
+            dot.innerText = '2';
+          } else if (score === 1) {
+            dot.className = 'w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-[10px] shadow';
+            dot.innerText = '1';
+          } else {
+            dot.className = 'w-6 h-6 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 flex items-center justify-center font-bold text-[10px]';
+            dot.innerText = '0';
+          }
+        } else if (i === throws.length) {
+          dot.className = 'w-6 h-6 rounded-full border-2 border-emerald-400 animate-pulse';
+        } else {
+          dot.className = 'w-6 h-6 rounded-full border border-slate-700 bg-slate-900';
+        }
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function recordDartThrow(val) {
+      const pName = state.players[state.activeThrowerIndex];
+      if (!state.bullThrows[pName]) state.bullThrows[pName] = [];
+      if (state.bullThrows[pName].length >= 9) return;
+
+      pushHistoryState();
+      state.bullThrows[pName].push(val);
+
+      if (state.bullThrows[pName].length >= 9) {
+        // move to next player if available
+        if (state.activeThrowerIndex < state.players.length - 1) {
+          state.activeThrowerIndex++;
+        }
+      }
+      renderBullsThrower();
+      renderBullsTable();
+      validateSeedingReady();
+      saveState();
+    }
+
+    function fillCurrentPlayerMisses() {
+      const pName = state.players[state.activeThrowerIndex];
+      if (!state.bullThrows[pName]) state.bullThrows[pName] = [];
+      const currentLen = state.bullThrows[pName].length;
+      if (currentLen >= 9) return;
+
+      pushHistoryState();
+      while (state.bullThrows[pName].length < 9) {
+        state.bullThrows[pName].push(0);
+      }
+      if (state.activeThrowerIndex < state.players.length - 1) {
+        state.activeThrowerIndex++;
+      }
+      renderBullsThrower();
+      renderBullsTable();
+      validateSeedingReady();
+      saveState();
+    }
+
+    function getSortedBullsList() {
+      return [...state.players].map(p => {
+        const th = state.bullThrows[p] || [];
+        const bullseyes = th.filter(x => x === 2).length;
+        const singles = th.filter(x => x === 1).length;
+        const pts = th.reduce((a, b) => a + b, 0);
+        return { name: p, throws: th, bullseyes, singles, pts, finished: th.length >= 9 };
+      }).sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts;
+        if (b.bullseyes !== a.bullseyes) return b.bullseyes - a.bullseyes;
+        return b.singles - a.singles;
+      });
+    }
+
+    function renderBullsTable() {
+      const list = getSortedBullsList();
+      const tbody = document.getElementById('seeding-table-body');
+      tbody.innerHTML = '';
+
+      list.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition';
+        
+        let rankBadge = `${idx + 1}.`;
+        if (idx === 0) rankBadge = '🥇';
+        else if (idx === 1) rankBadge = '🥈';
+        else if (idx === 2) rankBadge = '🥉';
+
+        const isCurrent = state.players[state.activeThrowerIndex] === item.name;
+        
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-bold ${idx < 3 ? 'text-base' : 'text-slate-400'}">${rankBadge}</td>
+          <td class="py-2.5 px-3 font-bold ${isCurrent ? 'text-emerald-400' : 'text-white'} flex items-center gap-2">
+            <span>${item.name}</span>
+            ${isCurrent ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">Aktiv</span>' : ''}
+          </td>
+          <td class="py-2.5 px-3 text-center text-slate-300">${item.throws.length}/9</td>
+          <td class="py-2.5 px-3 text-center text-purple-400 font-semibold">${item.bullseyes}</td>
+          <td class="py-2.5 px-3 text-center text-sky-400 font-semibold">${item.singles}</td>
+          <td class="py-2.5 px-3 text-right font-black text-slate-200 text-sm">${item.pts}</td>
+          <td class="py-2.5 px-3 text-center">
+            ${item.finished 
+              ? '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-semibold">Beendet</span>' 
+              : '<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-semibold">Offen</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderRandomDrawCards() {
+      const container = document.getElementById('random-draw-cards');
+      container.innerHTML = '';
+
+      const list = state.hasRandomDrawn && state.randomSeedList.length > 0 
+        ? state.randomSeedList 
+        : state.players;
+
+      list.forEach((p, idx) => {
+        const card = document.createElement('div');
+        // Clean neutral card styling with dark border, no orange ring
+        card.className = 'p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between transition-all';
+        if (state.hasRandomDrawn) {
+          card.classList.add('anim-shuffle');
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700/80 text-slate-300 flex items-center justify-center font-bold text-xs">
+              #${idx + 1}
+            </span>
+            <div>
+              <p class="font-bold text-sm text-white">${state.hasRandomDrawn ? p : 'Noch nicht ausgelost'}</p>
+              <p class="text-[10px] text-slate-400">Startplatz ${idx + 1}</p>
+            </div>
+          </div>
+          <i data-lucide="${state.hasRandomDrawn ? 'check-circle' : 'help-circle'}" class="w-4 h-4 ${state.hasRandomDrawn ? 'text-emerald-400' : 'text-slate-600'}"></i>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function executeRandomDraw() {
+      pushHistoryState();
+      const shuffled = [...state.players].sort(() => Math.random() - 0.5);
+      state.randomSeedList = shuffled;
+      state.hasRandomDrawn = true;
+      renderRandomDrawCards();
+      validateSeedingReady();
+      saveState();
+    }
+
+    function validateSeedingReady() {
+      const btn = document.getElementById('btn-start-tournament');
+      let ready = false;
+
+      if (state.seedingType === 'random') {
+        ready = state.hasRandomDrawn && state.randomSeedList.length === state.players.length;
+      } else {
+        const list = getSortedBullsList();
+        ready = list.every(item => item.finished);
+      }
+
+      if (ready) {
+        btn.disabled = false;
+        btn.className = 'px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow transition cursor-pointer';
+      } else {
+        btn.disabled = true;
+        btn.className = 'px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow transition opacity-40 cursor-not-allowed';
+      }
+    }
+
+    function startTournamentFromSeeding() {
+      if (state.matches.length === 0) {
+        generateTournamentMatches();
+      }
+      switchTab('tournament');
+      saveState();
+    }
+
+    // --- TOURNAMENT STRUCTURE GENERATION ---
+    function getSeededPlayers() {
+      if (state.seedingType === 'random' && state.randomSeedList.length === state.players.length) {
+        return [...state.randomSeedList];
+      }
+      return getSortedBullsList().map(x => x.name);
+    }
+
+    function generateTournamentMatches() {
+      const players = getSeededPlayers();
+      state.matches = [];
+
+      if (state.tournamentMode === 'double_ko') {
+        buildDoubleKoBracket(players);
+      } else if (state.tournamentMode === 'two_groups') {
+        buildTwoGroupsBracket(players);
+      } else {
+        buildLeagueBracket(players);
+      }
+    }
+
+    function buildDoubleKoBracket(players) {
+      // Standard simplified home Double KO match tree
+      const p = [...players];
+      const n = p.length;
+
+      // Winner Round 1
+      if (n >= 4) {
+        state.matches.push({ id: 'WR1_M1', section: 'winner', name: 'Hauptrunde: Spiel 1', p1: p[0], p2: p[3], score1: 0, score2: 0, status: 'open' });
+        state.matches.push({ id: 'WR1_M2', section: 'winner', name: 'Hauptrunde: Spiel 2', p1: p[1], p2: p[2], score1: 0, score2: 0, status: 'open' });
+      }
+      if (n >= 5) {
+        state.matches.push({ id: 'WR1_M3', section: 'winner', name: 'Hauptrunde: Spiel 3', p1: p[4], p2: 'Freilos', score1: 2, score2: 0, status: 'finished', winner: p[4] });
+      }
+
+      // Loser Round
+      state.matches.push({ id: 'LR_M1', section: 'loser', name: 'Verlierer-Runde: Spiel 1', p1: 'Verlierer WR1', p2: 'Verlierer WR2', score1: 0, score2: 0, status: 'open' });
+      
+      // Winner Final
+      state.matches.push({ id: 'WF_M1', section: 'winner', name: 'Hauptrunden-Finale', p1: 'Sieger WR1', p2: 'Sieger WR2', score1: 0, score2: 0, status: 'open' });
+
+      // Loser Final
+      state.matches.push({ id: 'LF_M1', section: 'loser', name: 'Verlierer-Finale', p1: 'Sieger LR1', p2: 'Verlierer WF', score1: 0, score2: 0, status: 'open' });
+
+      // Spiel um Platz 3 (wording strictly Platz 3)
+      state.matches.push({ id: 'P3_M1', section: 'final', name: 'Spiel um Platz 3', p1: 'Verlierer Halbfinale 1', p2: 'Verlierer Halbfinale 2', score1: 0, score2: 0, status: 'open' });
+
+      // Grand Final
+      state.matches.push({ id: 'GF_M1', section: 'final', name: 'Grand Final', p1: 'Sieger Hauptrunde', p2: 'Sieger Verlierer', score1: 0, score2: 0, status: 'open' });
+    }
+
+    function buildTwoGroupsBracket(players) {
+      const groupA = [];
+      const groupB = [];
+      players.forEach((p, idx) => {
+        if (idx % 2 === 0) groupA.push(p);
+        else groupB.push(p);
+      });
+
+      // Matches Group A
+      for (let i = 0; i < groupA.length; i++) {
+        for (let j = i + 1; j < groupA.length; j++) {
+          state.matches.push({
+            id: `GA_${i}_${j}`,
+            section: 'group_a',
+            name: 'Gruppe A',
+            p1: groupA[i],
+            p2: groupA[j],
+            score1: 0,
+            score2: 0,
+            status: 'open'
+          });
+        }
+      }
+
+      // Matches Group B
+      for (let i = 0; i < groupB.length; i++) {
+        for (let j = i + 1; j < groupB.length; j++) {
+          state.matches.push({
+            id: `GB_${i}_${j}`,
+            section: 'group_b',
+            name: 'Gruppe B',
+            p1: groupB[i],
+            p2: groupB[j],
+            score1: 0,
+            score2: 0,
+            status: 'open'
+          });
+        }
+      }
+
+      // K.o. Playoffs (Halbfinale, Spiel um Platz 3, Finale)
+      state.matches.push({ id: 'KO_HF1', section: 'ko_stage', name: 'Halbfinale 1', p1: '1. Gruppe A', p2: '2. Gruppe B', score1: 0, score2: 0, status: 'open' });
+      state.matches.push({ id: 'KO_HF2', section: 'ko_stage', name: 'Halbfinale 2', p1: '1. Gruppe B', p2: '2. Gruppe A', score1: 0, score2: 0, status: 'open' });
+      state.matches.push({ id: 'KO_P3', section: 'ko_stage', name: 'Spiel um Platz 3', p1: 'Verlierer HF1', p2: 'Verlierer HF2', score1: 0, score2: 0, status: 'open' });
+      state.matches.push({ id: 'KO_FIN', section: 'ko_stage', name: 'Finale', p1: 'Sieger HF1', p2: 'Sieger HF2', score1: 0, score2: 0, status: 'open' });
+    }
+
+    function buildLeagueBracket(players) {
+      for (let i = 0; i < players.length; i++) {
+        for (let j = i + 1; j < players.length; j++) {
+          state.matches.push({
+            id: `LIG_${i}_${j}`,
+            section: 'league',
+            name: 'Liga Match',
+            p1: players[i],
+            p2: players[j],
+            score1: 0,
+            score2: 0,
+            status: 'open'
+          });
+        }
+      }
+
+      if (state.leaguePlayoff === 'top4' && players.length >= 4) {
+        state.matches.push({ id: 'L_HF1', section: 'ko_stage', name: 'Halbfinale 1', p1: '1. Tabelle', p2: '4. Tabelle', score1: 0, score2: 0, status: 'open' });
+        state.matches.push({ id: 'L_HF2', section: 'ko_stage', name: 'Halbfinale 2', p1: '2. Tabelle', p2: '3. Tabelle', score1: 0, score2: 0, status: 'open' });
+        state.matches.push({ id: 'L_P3', section: 'ko_stage', name: 'Spiel um Platz 3', p1: 'Verlierer HF1', p2: 'Verlierer HF2', score1: 0, score2: 0, status: 'open' });
+        state.matches.push({ id: 'L_FIN', section: 'ko_stage', name: 'Finale', p1: 'Sieger HF1', p2: 'Sieger HF2', score1: 0, score2: 0, status: 'open' });
+      }
+    }
+
+    // --- TOURNAMENT RENDERING ---
+    function renderTournamentView() {
+      const container = document.getElementById('tournament-content-area');
+      container.innerHTML = '';
+
+      if (state.tournamentMode === 'double_ko') {
+        renderDoubleKoView(container);
+      } else if (state.tournamentMode === 'two_groups') {
+        renderTwoGroupsView(container);
+      } else {
+        renderLeagueView(container);
+      }
+    }
+
+    function renderDoubleKoView(container) {
+      // 3 Sektionen: Hauptrunde (Emerald), Verlierer-Runde (Red), Grand Final / Platz 3 (Amber/Gold)
+      const sections = [
+        { key: 'winner', title: 'Hauptrunde (Winners Bracket)', dot: 'bg-emerald-400', border: 'border-emerald-500/20' },
+        { key: 'loser', title: 'Verlierer-Runde (Losers Bracket)', dot: 'bg-red-500', border: 'border-red-500/20' },
+        { key: 'final', title: 'Endspiele & Spiel um Platz 3', dot: 'bg-amber-400', border: 'border-amber-500/20' }
+      ];
+
+      sections.forEach(sec => {
+        const matches = state.matches.filter(m => m.section === sec.key);
+        if (matches.length === 0) return;
+
+        const secBox = document.createElement('div');
+        secBox.className = `p-4 rounded-xl bg-cardbg border ${sec.border} space-y-3`;
+        secBox.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full ${sec.dot}"></span>
+            <h3 class="font-bold text-sm text-white">${sec.title}</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="sec-box-${sec.key}"></div>
+        `;
+        container.appendChild(secBox);
+
+        const subGrid = secBox.querySelector(`#sec-box-${sec.key}`);
+        matches.forEach(m => subGrid.appendChild(createMatchCard(m)));
+      });
+    }
+
+    function renderTwoGroupsView(container) {
+      // 1. Group A & B live tables with neutral gray points
+      const tablesGrid = document.createElement('div');
+      tablesGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+      // Group A (Green bg-emerald-400)
+      tablesGrid.appendChild(createGroupTableCard('Gruppe A', 'bg-emerald-400', 'group_a'));
+      // Group B (Red bg-red-500)
+      tablesGrid.appendChild(createGroupTableCard('Gruppe B', 'bg-red-500', 'group_b'));
+
+      container.appendChild(tablesGrid);
+
+      // 2. Group matches
+      const groupMatchesBox = document.createElement('div');
+      groupMatchesBox.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+      const boxA = document.createElement('div');
+      boxA.className = 'p-4 rounded-xl bg-cardbg border border-emerald-500/20 space-y-3';
+      boxA.innerHTML = `<h4 class="text-xs font-bold uppercase text-emerald-400">Spiele Gruppe A</h4><div class="space-y-2" id="list-ga"></div>`;
+      groupMatchesBox.appendChild(boxA);
+
+      const boxB = document.createElement('div');
+      boxB.className = 'p-4 rounded-xl bg-cardbg border border-red-500/20 space-y-3';
+      boxB.innerHTML = `<h4 class="text-xs font-bold uppercase text-red-400">Spiele Gruppe B</h4><div class="space-y-2" id="list-gb"></div>`;
+      groupMatchesBox.appendChild(boxB);
+
+      container.appendChild(groupMatchesBox);
+
+      const listGA = boxA.querySelector('#list-ga');
+      const listGB = boxB.querySelector('#list-gb');
+      state.matches.filter(m => m.section === 'group_a').forEach(m => listGA.appendChild(createMatchCard(m)));
+      state.matches.filter(m => m.section === 'group_b').forEach(m => listGB.appendChild(createMatchCard(m)));
+
+      // 3. Playoff K.o.-Stage (Halbfinale, Spiel um Platz 3, Finale in Gold/Orange bg-amber-400)
+      const koMatches = state.matches.filter(m => m.section === 'ko_stage');
+      if (koMatches.length > 0) {
+        const koBox = document.createElement('div');
+        koBox.className = 'p-4 rounded-xl bg-cardbg border border-amber-500/30 space-y-3';
+        koBox.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            <h4 class="text-xs font-bold uppercase text-amber-400">K.o.-Hauptrunde (Halbfinale & Finale)</h4>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="list-ko"></div>
+        `;
+        container.appendChild(koBox);
+        const listKO = koBox.querySelector('#list-ko');
+        koMatches.forEach(m => listKO.appendChild(createMatchCard(m)));
+      }
+    }
+
+    function createGroupTableCard(title, dotColor, sectionKey) {
+      const card = document.createElement('div');
+      card.className = 'p-4 rounded-xl bg-cardbg border border-slate-800 space-y-3';
+      
+      const seeded = getSeededPlayers();
+      const groupPlayers = seeded.filter((p, idx) => sectionKey === 'group_a' ? (idx % 2 === 0) : (idx % 2 !== 0));
+      
+      // Calculate group standings
+      const stats = groupPlayers.map(p => {
+        let wins = 0, legsWon = 0, legsLost = 0;
+        state.matches.filter(m => m.section === sectionKey && m.status === 'finished').forEach(m => {
+          if (m.p1 === p) {
+            legsWon += m.score1;
+            legsLost += m.score2;
+            if (m.score1 > m.score2) wins++;
+          } else if (m.p2 === p) {
+            legsWon += m.score2;
+            legsLost += m.score1;
+            if (m.score2 > m.score1) wins++;
+          }
+        });
+        const pts = wins * 2;
+        return { name: p, wins, legsWon, legsLost, diff: legsWon - legsLost, pts };
+      }).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : b.diff - a.diff);
+
+      let rows = '';
+      stats.forEach((s, idx) => {
+        let medal = `${idx + 1}.`;
+        if (idx === 0) medal = '🥇';
+        else if (idx === 1) medal = '🥈';
+        else if (idx === 2) medal = '🥉';
+
+        rows += `
+          <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
+            <td class="py-2 px-2 font-bold ${idx < 3 ? 'text-sm' : 'text-slate-400'}">${medal}</td>
+            <td class="py-2 px-2 font-bold text-white">${s.name}</td>
+            <td class="py-2 px-2 text-center text-slate-300">${s.wins}</td>
+            <td class="py-2 px-2 text-center text-slate-300">${s.legsWon}:${s.legsLost}</td>
+            <td class="py-2 px-2 text-right font-black text-slate-200 text-sm">${s.pts}</td>
+          </tr>
+        `;
+      });
+
+      card.innerHTML = `
+        <div class="flex items-center gap-2 pb-1 border-b border-slate-800">
+          <span class="w-3 h-3 rounded-full ${dotColor}"></span>
+          <h4 class="font-bold text-xs uppercase tracking-wider text-white">${title}</h4>
+        </div>
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="text-slate-400 font-bold border-b border-slate-800">
+              <th class="py-1 px-2">Rang</th>
+              <th class="py-1 px-2">Spieler</th>
+              <th class="py-1 px-2 text-center">S</th>
+              <th class="py-1 px-2 text-center">Legs</th>
+              <th class="py-1 px-2 text-right">Pkt</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      return card;
+    }
+
+    function renderLeagueView(container) {
+      // 1. Live-Tabelle Ligamodus
+      const tableCard = document.createElement('div');
+      tableCard.className = 'p-5 rounded-xl bg-cardbg border border-slate-800 space-y-3';
+      
+      const seeded = getSeededPlayers();
+      const stats = seeded.map(p => {
+        let wins = 0, legsWon = 0, legsLost = 0;
+        state.matches.filter(m => m.section === 'league' && m.status === 'finished').forEach(m => {
+          if (m.p1 === p) {
+            legsWon += m.score1;
+            legsLost += m.score2;
+            if (m.score1 > m.score2) wins++;
+          } else if (m.p2 === p) {
+            legsWon += m.score2;
+            legsLost += m.score1;
+            if (m.score2 > m.score1) wins++;
+          }
+        });
+        const pts = wins * 2;
+        return { name: p, wins, legsWon, legsLost, diff: legsWon - legsLost, pts };
+      }).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : b.diff - a.diff);
+
+      let rows = '';
+      stats.forEach((s, idx) => {
+        let medal = `${idx + 1}.`;
+        if (idx === 0) medal = '🥇';
+        else if (idx === 1) medal = '🥈';
+        else if (idx === 2) medal = '🥉';
+
+        rows += `
+          <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
+            <td class="py-2.5 px-3 font-bold ${idx < 3 ? 'text-base' : 'text-slate-400'}">${medal}</td>
+            <td class="py-2.5 px-3 font-bold text-white">${s.name}</td>
+            <td class="py-2.5 px-3 text-center text-slate-300">${s.wins}</td>
+            <td class="py-2.5 px-3 text-center text-slate-300">${s.legsWon}:${s.legsLost}</td>
+            <td class="py-2.5 px-3 text-right font-black text-slate-200 text-sm">${s.pts}</td>
+          </tr>
+        `;
+      });
+
+      tableCard.innerHTML = `
+        <div class="flex items-center justify-between pb-1 border-b border-slate-800">
+          <h4 class="font-bold text-xs uppercase tracking-wider text-slate-300">Live-Tabelle Ligamodus</h4>
+          <span class="text-xs text-slate-400">Punkte in neutralem Grau</span>
+        </div>
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="text-slate-400 font-bold border-b border-slate-800">
+              <th class="py-2 px-3">Rang</th>
+              <th class="py-2 px-3">Spieler</th>
+              <th class="py-2 px-3 text-center">Siege</th>
+              <th class="py-2 px-3 text-center">Legs</th>
+              <th class="py-2 px-3 text-right">Pkt</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      container.appendChild(tableCard);
+
+      // 2. League Matches
+      const matchesBox = document.createElement('div');
+      matchesBox.className = 'p-4 rounded-xl bg-cardbg border border-slate-800 space-y-3';
+      matchesBox.innerHTML = `
+        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Ligenspiele</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="list-league-matches"></div>
+      `;
+      container.appendChild(matchesBox);
+      const listL = matchesBox.querySelector('#list-league-matches');
+      state.matches.filter(m => m.section === 'league').forEach(m => listL.appendChild(createMatchCard(m)));
+
+      // 3. Playoff Top 4 if active
+      const playoffMatches = state.matches.filter(m => m.section === 'ko_stage');
+      if (playoffMatches.length > 0) {
+        const poBox = document.createElement('div');
+        poBox.className = 'p-4 rounded-xl bg-cardbg border border-amber-500/30 space-y-3';
+        poBox.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            <h4 class="text-xs font-bold uppercase text-amber-400">Top-4 Endrunde & Spiel um Platz 3</h4>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="list-league-po"></div>
+        `;
+        container.appendChild(poBox);
+        const listPO = poBox.querySelector('#list-league-po');
+        playoffMatches.forEach(m => listPO.appendChild(createMatchCard(m)));
+      }
+    }
+
+    function createMatchCard(m) {
+      const card = document.createElement('div');
+      card.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition cursor-pointer flex flex-col justify-between gap-2';
+      card.onclick = () => openMatchModal(m.id);
+
+      let statusBadge = '';
+      if (m.status === 'live') {
+        statusBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>Jetzt am Board</span>';
+      } else if (m.status === 'finished') {
+        statusBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">Beendet</span>';
+      } else {
+        statusBadge = '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300">Offen</span>';
+      }
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-800/80">
+          <span class="font-bold text-slate-400 truncate max-w-[150px]">${m.name}</span>
+          ${statusBadge}
+        </div>
+        <div class="flex items-center justify-between py-1">
+          <div class="flex-1 space-y-1">
+            <div class="flex items-center justify-between pr-2">
+              <span class="text-xs font-bold ${m.score1 > m.score2 && m.status === 'finished' ? 'text-emerald-400' : 'text-white'} truncate">${m.p1}</span>
+              <span class="text-sm font-black text-slate-200">${m.score1}</span>
+            </div>
+            <div class="flex items-center justify-between pr-2">
+              <span class="text-xs font-bold ${m.score2 > m.score1 && m.status === 'finished' ? 'text-emerald-400' : 'text-white'} truncate">${m.p2}</span>
+              <span class="text-sm font-black text-slate-200">${m.score2}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    // --- MATCH MODAL & SCORING ---
+    let currentModalMatchId = null;
+    let modalScore1 = 0;
+    let modalScore2 = 0;
+
+    function openMatchModal(matchId) {
+      const match = state.matches.find(m => m.id === matchId);
+      if (!match) return;
+      currentModalMatchId = matchId;
+      modalScore1 = match.score1;
+      modalScore2 = match.score2;
+
+      document.getElementById('modal-match-title').innerText = match.name;
+      document.getElementById('modal-p1-name').innerText = match.p1;
+      document.getElementById('modal-p2-name').innerText = match.p2;
+      document.getElementById('modal-p1-legs').innerText = modalScore1;
+      document.getElementById('modal-p2-legs').innerText = modalScore2;
+      
+      const target = Math.ceil(state.bestOfLegs / 2);
+      document.getElementById('modal-target-legs').innerText = `Best of ${state.bestOfLegs} (Erster mit ${target} Legs gewinnt)`;
+
+      document.getElementById('match-modal').classList.remove('hidden');
+    }
+
+    function closeMatchModal() {
+      document.getElementById('match-modal').classList.add('hidden');
+    }
+
+    function adjustModalScore(playerNum, delta) {
+      const target = Math.ceil(state.bestOfLegs / 2);
+      if (playerNum === 1) {
+        modalScore1 = Math.max(0, Math.min(target, modalScore1 + delta));
+        document.getElementById('modal-p1-legs').innerText = modalScore1;
+      } else {
+        modalScore2 = Math.max(0, Math.min(target, modalScore2 + delta));
+        document.getElementById('modal-p2-legs').innerText = modalScore2;
+      }
+    }
+
+    function saveModalMatchResult() {
+      const match = state.matches.find(m => m.id === currentModalMatchId);
+      if (!match) return;
+
+      pushHistoryState();
+      match.score1 = modalScore1;
+      match.score2 = modalScore2;
+
+      const target = Math.ceil(state.bestOfLegs / 2);
+      if (modalScore1 === target || modalScore2 === target) {
+        match.status = 'finished';
+        match.winner = modalScore1 > modalScore2 ? match.p1 : match.p2;
+      } else if (modalScore1 > 0 || modalScore2 > 0) {
+        match.status = 'live';
+      } else {
+        match.status = 'open';
+      }
+
+      closeMatchModal();
+      renderTournamentView();
+      checkTournamentCompletion();
+      saveState();
+    }
+
+    function checkTournamentCompletion() {
+      // Check if finals are finished to auto update podium
+      const allFinished = state.matches.length > 0 && state.matches.every(m => m.status === 'finished');
+      if (allFinished) {
+        renderPodium();
+      }
+    }
+
+    // --- SIEGEREHRUNG (PODIUM) ---
+    function renderPodium() {
+      const seeded = getSeededPlayers();
+      // Collect rankings based on current tournament outcome
+      let rankings = [...seeded];
+
+      // If we have final matches, sort winner to 1st, runner up to 2nd, etc.
+      const grandFinal = state.matches.find(m => m.id === 'GF_M1' || m.id === 'KO_FIN' || m.id === 'L_FIN');
+      const p3Match = state.matches.find(m => m.id === 'P3_M1' || m.id === 'KO_P3' || m.id === 'L_P3');
+
+      if (grandFinal && grandFinal.status === 'finished') {
+        const winner = grandFinal.winner;
+        const second = grandFinal.winner === grandFinal.p1 ? grandFinal.p2 : grandFinal.p1;
+        rankings = [winner, second, ...rankings.filter(p => p !== winner && p !== second)];
+      }
+
+      if (p3Match && p3Match.status === 'finished') {
+        const third = p3Match.winner;
+        rankings = [rankings[0], rankings[1], third, ...rankings.filter(p => p !== rankings[0] && p !== rankings[1] && p !== third)];
+      }
+
+      const p1 = rankings[0] || '1. Platz';
+      const p2 = rankings[1] || '2. Platz';
+      const p3 = rankings[2] || '3. Platz';
+
+      // Visual Top 3 Podium
+      const podiumContainer = document.getElementById('podium-top3-container');
+      podiumContainer.innerHTML = `
+        <!-- 2nd Place -->
+        <div class="flex-1 flex flex-col items-center">
+          <span class="text-2xl mb-1">🥈</span>
+          <p class="font-black text-sm text-white truncate max-w-[110px] text-center">${p2}</p>
+          <span class="text-[10px] text-slate-400 font-bold mb-2">Vize-Champion</span>
+          <div class="w-full bg-slate-800/90 border-t-2 border-slate-400 rounded-t-xl h-24 flex items-center justify-center font-black text-slate-400 text-lg shadow">
+            2
+          </div>
+        </div>
+
+        <!-- 1st Place with Crown -->
+        <div class="flex-1 flex flex-col items-center -mt-8">
+          <span class="text-3xl animate-bounce">👑</span>
+          <span class="text-3xl my-0.5">🥇</span>
+          <p class="font-black text-base text-white truncate max-w-[130px] text-center">${p1}</p>
+          <span class="text-[11px] text-amber-400 font-black mb-2">TURNIERSIEGER</span>
+          <div class="w-full bg-gradient-to-t from-amber-600/30 to-amber-500/20 border-t-2 border-amber-400 rounded-t-xl h-36 flex items-center justify-center font-black text-amber-400 text-2xl shadow-xl">
+            1
+          </div>
+        </div>
+
+        <!-- 3rd Place -->
+        <div class="flex-1 flex flex-col items-center">
+          <span class="text-2xl mb-1">🥉</span>
+          <p class="font-black text-sm text-white truncate max-w-[110px] text-center">${p3}</p>
+          <span class="text-[10px] text-slate-400 font-bold mb-2">Platz 3</span>
+          <div class="w-full bg-slate-800/80 border-t-2 border-amber-700/60 rounded-t-xl h-18 flex items-center justify-center font-black text-amber-700 text-base shadow">
+            3
+          </div>
+        </div>
+      `;
+
+      // Humorous darts title generator based on winner name
+      const titles = [
+        '🎯 Unantastbarer Darts-Gott (unschlagbar)',
+        '🎯 180er-Flüsterer & Checkout-König',
+        '🎯 Bullseye-Terminator der Extraklasse',
+        '🎯 Board-Beherrscher mit eiskalter Hand'
+      ];
+      document.getElementById('winner-darts-title').innerText = titles[p1.length % titles.length];
+
+      // Final Table: All player names strictly text-white font-bold, medals without numbers for ranks 1-3
+      const tableBox = document.getElementById('podium-final-table');
+      tableBox.innerHTML = '';
+      rankings.forEach((p, idx) => {
+        const row = document.createElement('div');
+        row.className = 'py-3 flex items-center justify-between';
+        
+        let medal = `${idx + 1}.`;
+        if (idx === 0) medal = '🥇';
+        else if (idx === 1) medal = '🥈';
+        else if (idx === 2) medal = '🥉';
+
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-7 text-center font-black ${idx < 3 ? 'text-lg' : 'text-xs text-slate-400'}">${medal}</span>
+            <span class="text-sm font-bold text-white">${p}</span>
+          </div>
+          <span class="text-xs font-semibold text-slate-400">${idx === 0 ? 'Turniersieger' : `Platz ${idx + 1}`}</span>
+        `;
+        tableBox.appendChild(row);
+      });
+    }
+
+    // Fire confetti on Siegerehrung visit
+    function triggerPodiumConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+      }
+    }
+
+    // --- UNDO (KORREKTUR) & RESET ---
+    function pushHistoryState() {
+      const snap = JSON.stringify({
+        bullThrows: state.bullThrows,
+        activeThrowerIndex: state.activeThrowerIndex,
+        randomSeedList: state.randomSeedList,
+        hasRandomDrawn: state.hasRandomDrawn,
+        matches: state.matches
+      });
+      state.history.push(snap);
+      if (state.history.length > 25) state.history.shift();
+      updateUndoButtonState();
+    }
+
+    function undoLastAction() {
+      if (!state.history || state.history.length === 0) return;
+      const prev = JSON.parse(state.history.pop());
+      state.bullThrows = prev.bullThrows;
+      state.activeThrowerIndex = prev.activeThrowerIndex;
+      state.randomSeedList = prev.randomSeedList;
+      state.hasRandomDrawn = prev.hasRandomDrawn;
+      state.matches = prev.matches;
+
+      renderAll();
+      updateUndoButtonState();
+      saveState();
+    }
+
+    function updateUndoButtonState() {
+      const btn = document.getElementById('btn-global-undo');
+      if (btn) {
+        btn.disabled = (!state.history || state.history.length === 0);
+      }
+    }
+
+    function confirmReset() {
+      toggleResetModal(true);
+    }
+
+    function toggleResetModal(show) {
+      document.getElementById('reset-modal').classList.toggle('hidden', !show);
+    }
+
+    function togglePwaModal(show) {
+      document.getElementById('pwa-modal').classList.toggle('hidden', !show);
+    }
+
+    function executeResetTournament() {
+      state.bullThrows = {};
+      state.activeThrowerIndex = 0;
+      state.randomSeedList = [];
+      state.hasRandomDrawn = false;
+      state.matches = [];
+      state.history = [];
+      toggleResetModal(false);
+      switchTab('setup');
+      renderAll();
+      saveState();
+    }
+  </script>
+</body>
+</html>
