@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Dartsturnier – Companion</title>
+
+  <!-- PWA & Apple iPad / iOS Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dartsturnier">
+  <meta name="theme-color" content="#020617">
+  <meta name="application-name" content="Dartsturnier">
+  <meta name="description" content="Turnier-Manager für Darts: Doppel-K.o., 2 Gruppen &amp; Ligamodus">
+
+  <!-- Apple Touch Icon (Dartboard SVG Data URI) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23090d16'/%3E%3Ccircle cx='90' cy='90' r='75' fill='%230f172a' stroke='%2310b981' stroke-width='6'/%3E%3Ccircle cx='90' cy='90' r='55' fill='none' stroke='%23e2e8f0' stroke-width='3' stroke-dasharray='8 4' opacity='0.3'/%3E%3Ccircle cx='90' cy='90' r='35' fill='%230f766e' stroke='%2334d399' stroke-width='4'/%3E%3Ccircle cx='90' cy='90' r='18' fill='%23064e3b' stroke='%2310b981' stroke-width='4'/%3E%3Ccircle cx='90' cy='90' r='8' fill='%23ef4444'/%3E%3C/svg%3E">
+
+  <!-- Web App Manifest Data URI -->
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Dartsturnier%20Companion%22%2C%22short_name%22%3A%22Dartsturnier%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23020617%22%2C%22theme_color%22%3A%22%23020617%22%2C%22orientation%22%3A%22any%22%7D">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Chakra Petch', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    /* iOS safe areas */
+    body {
+      padding-top: max(1rem, env(safe-area-inset-top));
+      padding-bottom: max(4rem, calc(2rem + env(safe-area-inset-bottom)));
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-slate-950 font-sans">
+
+  <!-- Main Container -->
+  <div class="max-w-5xl mx-auto px-1 sm:px-4">
+
+    <!-- Top Header Navigation -->
+    <header class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-800/80 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10 shrink-0">
+          <i data-lucide="target" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-display font-bold text-lg sm:text-xl tracking-tight text-white">DARTSTURNIER</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">COMPANION</span>
+            <span id="saveStatusIndicator" class="hidden sm:inline-flex items-center gap-1 text-[10px] text-slate-500 font-medium transition-opacity">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Gespeichert
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Turnier-Manager: Doppel-K.o. &bull; 2 Gruppen &bull; Ligamodus</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons Header -->
+      <div class="flex items-center gap-2" id="headerActions">
+        <!-- iPad / PWA Install Guide Button -->
+        <button id="btnPwaInfo" onclick="openPwaModal()" class="px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Auf dem iPad als App installieren">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span class="hidden xs:inline">iPad App</span>
+        </button>
+
+        <!-- Orange Korrektur Button (Step back) -->
+        <button id="btnHeaderUndo" onclick="undoLastAction()" class="hidden px-3.5 py-2 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Letzte Eingabe schrittweise korrigieren">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <span>Korrektur</span>
+        </button>
+
+        <!-- Red Neustart Button (Trash) -->
+        <button id="btnHeaderReset" onclick="openResetModal()" class="px-3.5 py-2 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Turnier neu starten / alles löschen">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span>Neustart</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stepper Navigation -->
+    <nav class="flex items-center justify-between mb-8 overflow-x-auto pb-1 text-xs font-semibold gap-2 border-b border-slate-800/60">
+      <div id="stepBadge1" class="flex items-center gap-2 pb-2.5 border-b-2 border-emerald-500 text-emerald-400">
+        <span class="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-[11px]">1</span>
+        <span>Setup</span>
+      </div>
+      <div id="stepBadge2" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[11px]">2</span>
+        <span>Setzliste</span>
+      </div>
+      <div id="stepBadge3" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[11px]">3</span>
+        <span>Matches</span>
+      </div>
+      <div id="stepBadge4" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[11px]">4</span>
+        <span>Siegerehrung</span>
+      </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: SETUP -->
+    <!-- ========================================== -->
+    <section id="screenSetup" class="space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-xl space-y-6">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold font-display text-white mb-1">Turnier konfigurieren</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Wähle Teilnehmerzahl, Spieldistanz und deinen bevorzugten Modus.</p>
+        </div>
+
+        <!-- 1. Spieleranzahl (3 bis 8) mit Plus / Minus -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spieleranzahl (3 bis 8 Spieler)</label>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="adjustPlayerCount(-1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
+              <i data-lucide="minus" class="w-5 h-5"></i>
+            </button>
+            <div class="flex-1 py-3 px-4 bg-slate-950/80 border border-slate-800 rounded-xl text-center">
+              <span id="playerCountDisplay" class="font-display font-bold text-lg text-white">5 Spieler</span>
+            </div>
+            <button type="button" onclick="adjustPlayerCount(1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Spieldistanz Best of Legs mit Plus / Minus -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Match-Distanz (Best of Legs)</label>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="adjustBestOf(-1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
+              <i data-lucide="minus" class="w-5 h-5"></i>
+            </button>
+            <div class="flex-1 py-3 px-4 bg-slate-950/80 border border-slate-800 rounded-xl text-center">
+              <span id="bestOfDisplay" class="font-display font-bold text-lg text-white">Best of 3 Legs</span>
+            </div>
+            <button type="button" onclick="adjustBestOf(1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Turniermodus -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Turniermodus</label>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- DKO -->
+            <button type="button" id="btnModeDKO" onclick="setTournamentMode('dko')" class="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition relative">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-white font-display text-base">Doppel-K.o.</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">K.o.-Baum</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-snug">Jeder hat 2 Leben. Erst nach 2 Niederlagen ist man raus. Mit Loser Bracket &amp; Reset-Finale.</p>
+            </button>
+
+            <!-- 2 Gruppen -->
+            <button type="button" id="btnModeGruppen" onclick="setTournamentMode('gruppen')" class="p-4 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700 relative">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-200 font-display text-base">2 Gruppen</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">Vorrunde + K.o.</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-snug">Teilung in Gruppe A &amp; B, danach Halbfinale über Kreuz, Spiel um Platz 3 &amp; Finale.</p>
+            </button>
+
+            <!-- Ligamodus -->
+            <button type="button" id="btnModeLiga" onclick="setTournamentMode('liga')" class="p-4 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700 relative">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-200 font-display text-base">Ligamodus</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">1 Tabelle</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-snug">Jeder gegen Jeden in einer einzigen Tabelle. Optional mit Final- &amp; Platzierungsspielen.</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Wertungssystem (für 2 Gruppen und Ligamodus) -->
+        <div id="scoringOptionBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-2.5">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Wertungssystem</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" id="btnScoreMatch" onclick="setScoringSystem('match')" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
+              <span class="font-bold block text-white mb-0.5">2 Punkte pro Sieg</span>
+              <span class="text-[10px] text-slate-300">Klassisch (Sieg: 2 Pkt, Niederlage: 0 Pkt).</span>
+            </button>
+            <button type="button" id="btnScoreLegs" onclick="setScoringSystem('legs')" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+              <span class="font-bold block text-slate-200 mb-0.5">1 Punkt pro gewonnenes Leg</span>
+              <span class="text-[10px] text-slate-400">Belohnt jedes einzelne gewonnene Leg (z.B. bei 1:2).</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. Spielrunden (für Gruppen- und Ligamodus) -->
+        <div id="roundsOptionBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-2.5">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spielrunden</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" id="btnRoundsSingle" onclick="setTournamentRounds(1)" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
+              <span class="font-bold block text-white mb-0.5">Einfache Runde (Nur Hinrunde)</span>
+              <span class="text-[10px] text-slate-300">Jede Paarung trifft 1x aufeinander (Standard, zeitsparend).</span>
+            </button>
+            <button type="button" id="btnRoundsDouble" onclick="setTournamentRounds(2)" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+              <span class="font-bold block text-slate-200 mb-0.5">Hin- &amp; Rückrunde (Doppelrunde)</span>
+              <span class="text-[10px] text-slate-400">Jede Paarung spielt 2x mit getauschtem Anwurfrecht.</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 6. Endrunden-Modus (nur für Ligamodus) -->
+        <div id="leagueOptionBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-2.5">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Endrunden-Modus nach der Liga</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" id="btnPlayoffTop4" onclick="setLeaguePlayoff('top4')" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
+              <span class="font-bold block text-white mb-0.5">Top-4 Halbfinale</span>
+              <span class="text-[10px] text-slate-300">Platz 1–4 spielen Halbfinale, Spiel um Platz 3 &amp; Finale.</span>
+            </button>
+            <button type="button" id="btnPlayoffNone" onclick="setLeaguePlayoff('none')" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+              <span class="font-bold block text-slate-200 mb-0.5">Reine Tabelle</span>
+              <span class="text-[10px] text-slate-400">Keine Endspiele, Tabellenerster ist Turniersieger.</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 7. Qualifikations-Methode Auswahl -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Qualifikations-Methode</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button type="button" id="btnQualiMethodBull" onclick="setQualiMethod('bull')" class="p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-white font-display text-sm flex items-center gap-1.5">
+                  <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
+                  9 Darts aufs Bull
+                </span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Sportlich</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-snug">Jeder wirft 9 Darts aufs Bull. Die erspielten Punkte entscheiden über Rangliste &amp; Freilose.</p>
+            </button>
+
+            <button type="button" id="btnQualiMethodRandom" onclick="setQualiMethod('random')" class="p-3.5 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-200 font-display text-sm flex items-center gap-1.5">
+                  <i data-lucide="dices" class="w-4 h-4 text-emerald-400"></i>
+                  Zufallsauslosung
+                </span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Blind Draw</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-snug">Faire Zufallsauslosung per Zufallsgenerator. Keine Vorab-Würfe nötig, sofort spielbereit!</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sinnhaftigkeits- & Empfehlungs-Box (Dauer ohne Herleitung) -->
+        <div id="adviceBox" class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-xs text-slate-300 flex items-start gap-3">
+          <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+          <div id="adviceText" class="space-y-1">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Spieler-Namen Inputs -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spielernamen anpassen</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5" id="playerInputsGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <button onclick="startQualification()" class="w-full py-4 rounded-xl font-bold font-display text-base bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-[0.98]">
+          <span id="btnStartQualiText">Zur Setzliste</span>
+          <i data-lucide="chevron-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: QUALIFIKATION -->
+    <!-- ========================================== -->
+    <section id="screenQuali" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Phase 1</span>
+          <h2 class="text-2xl font-bold font-display text-white" id="qualiScreenTitle">9 Darts aufs Bull</h2>
+          <p class="text-xs text-slate-400" id="qualiScreenSubtitle">Trage die Treffer ein oder lose die Setzpositionen per Zufall aus.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <button id="btnQualiMissRemaining" onclick="fillRemainingMisses()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition" title="Offene Darts als Fehlwurf werten">
+            Rest = Miss (0)
+          </button>
+          <button id="btnRandomDrawTrigger" onclick="performRandomDraw(true)" class="hidden px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold font-display text-sm flex items-center justify-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20 shrink-0">
+            <i data-lucide="shuffle" class="w-4 h-4"></i>
+            <span>Auslosen</span>
+          </button>
+          <button onclick="startTournament()" id="btnStartTournament" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-display text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition">
+            <i data-lucide="play" class="w-4 h-4"></i>
+            <span>Turnier starten</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW A: 9 Darts aufs Bull -->
+      <div id="bullQualiContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Interactive Player Cards -->
+        <div class="lg:col-span-7 space-y-3" id="qualiCards">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Live Quali Ranking & Seeding Legend -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display font-bold text-white text-base flex items-center gap-2">
+                <i data-lucide="award" class="w-5 h-5 text-amber-400"></i>
+                <span>Quali-Rangliste</span>
+              </h3>
+              <span id="tieWarningBadge" class="hidden text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                Stechen aktiv!
+              </span>
+            </div>
+
+            <p class="text-[11px] text-slate-400 mb-3">
+              Tipp: Bei Punktgleichheit werft ihr je 1 Dart aufs Bull (Stechen) und passt die Reihenfolge über die Pfeile an.
+            </p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800">
+              <table class="w-full text-left text-xs min-w-[390px]">
+                <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-800">
+                  <tr>
+                    <th class="py-2.5 px-2 w-8 text-center whitespace-nowrap">Rang</th>
+                    <th class="py-2.5 px-2 whitespace-nowrap">Spieler</th>
+                    <th class="py-2.5 px-1.5 text-center whitespace-nowrap">Pkt</th>
+                    <th class="py-2.5 px-1.5 text-center whitespace-nowrap">Status</th>
+                    <th class="py-2.5 px-2 whitespace-nowrap">Setzposition</th>
+                    <th class="py-2.5 px-2 text-center whitespace-nowrap min-w-[76px]">Stechen</th>
+                  </tr>
+                </thead>
+                <tbody id="qualiRankingTableBody" class="divide-y divide-slate-800 text-slate-300">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs space-y-2" id="seedingLegendBox">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW B: Zufallsauslosung (Blind Draw) -->
+      <div id="randomQualiContainer" class="hidden space-y-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-display font-bold text-white text-sm">Ausgeloste Startpositionen</h4>
+            <span class="text-xs text-slate-400">Sofort spielbereit</span>
+          </div>
+          <div id="randomDrawGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: TOURNAMENT RUNNER -->
+    <!-- ========================================== -->
+    <section id="screenTournament" class="hidden space-y-6">
+      <!-- Title & Progress Bar -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-slate-800">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400" id="tournamentPhaseBadge">Phase 2</span>
+          <h2 class="text-2xl font-bold font-display text-white" id="tournamentModeTitle">Doppel-K.o. Turnierbaum</h2>
+        </div>
+        <!-- View Toggle: Runner vs Tree -->
+        <div class="flex items-center p-1 bg-slate-900 border border-slate-800 rounded-xl">
+          <button id="tabBtnRunner" onclick="setTournamentView('runner')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 transition">
+            Match-Steuerung
+          </button>
+          <button id="tabBtnTree" onclick="setTournamentView('tree')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">
+            <span id="tabTreeLabel">Turnierbaum</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Group Tables for 2-Gruppen-Modus -->
+      <div id="groupsLiveTablesContainer" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Gruppe A -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-display font-bold text-white text-sm flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Gruppe A
+            </h4>
+            <span class="text-[10px] text-slate-400">Top 2 &rarr; Halbfinale</span>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-800">
+                <tr>
+                  <th class="py-1.5 px-2">#</th>
+                  <th class="py-1.5 px-2">Spieler</th>
+                  <th class="py-1.5 px-1 text-center">Sp</th>
+                  <th class="py-1.5 px-1 text-center">S:N</th>
+                  <th class="py-1.5 px-1 text-center">Legs</th>
+                  <th class="py-1.5 px-2 text-right">Pkt</th>
+                </tr>
+              </thead>
+              <tbody id="tableBodyGroupA" class="divide-y divide-slate-800 text-slate-300"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Gruppe B -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-display font-bold text-white text-sm flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm"></span> Gruppe B
+            </h4>
+            <span class="text-[10px] text-slate-400">Top 2 &rarr; Halbfinale</span>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-800">
+                <tr>
+                  <th class="py-1.5 px-2">#</th>
+                  <th class="py-1.5 px-2">Spieler</th>
+                  <th class="py-1.5 px-1 text-center">Sp</th>
+                  <th class="py-1.5 px-1 text-center">S:N</th>
+                  <th class="py-1.5 px-1 text-center">Legs</th>
+                  <th class="py-1.5 px-2 text-right">Pkt</th>
+                </tr>
+              </thead>
+              <tbody id="tableBodyGroupB" class="divide-y divide-slate-800 text-slate-300"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live League Table for Ligamodus -->
+      <div id="leagueLiveTableBox" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-display font-bold text-white text-sm flex items-center gap-1.5">
+            <i data-lucide="table" class="w-4 h-4 text-amber-400"></i>
+            <span id="leagueTableHeading">Live-Tabelle (Ligamodus)</span>
+          </h4>
+          <span class="text-[10px] text-slate-400" id="leagueTableSubNote">Wertung: Punkte &gt; Diff &gt; Legs</span>
+        </div>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left text-xs min-w-[480px]">
+            <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-800">
+              <tr>
+                <th class="py-2 px-2.5 w-8">#</th>
+                <th class="py-2 px-2.5">Spieler</th>
+                <th class="py-2 px-2 text-center">Sp</th>
+                <th class="py-2 px-2 text-center">S</th>
+                <th class="py-2 px-2 text-center">N</th>
+                <th class="py-2 px-2 text-center">Legs</th>
+                <th class="py-2 px-2 text-center">Diff</th>
+                <th class="py-2 px-3 text-right">Punkte</th>
+              </tr>
+            </thead>
+            <tbody id="tableBodyLeague" class="divide-y divide-slate-800 text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RUNNER VIEW: Currently at Board + Full Schedule -->
+      <div id="viewRunner" class="space-y-6">
+        <!-- Active Match Card (Hero Card) -->
+        <div id="activeMatchHero" class="bg-slate-900 border-2 border-emerald-500/50 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                JETZT AM BOARD
+              </span>
+              <span class="text-xs text-slate-400 font-semibold" id="activeMatchRoundName">Match 1: Runde 1</span>
+            </div>
+            <span class="text-xs text-slate-400" id="activeMatchDistance">Best of 3 (First to 2)</span>
+          </div>
+
+          <!-- Players 1v1 -->
+          <div class="grid grid-cols-11 items-center gap-2 my-6">
+            <div class="col-span-5 text-right">
+              <h3 class="text-xl sm:text-2xl font-bold font-display text-white truncate" id="activeP1Name">Spieler 1</h3>
+            </div>
+            <div class="col-span-1 text-center">
+              <span class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-slate-400 font-display font-bold text-xs flex items-center justify-center mx-auto">
+                VS
+              </span>
+            </div>
+            <div class="col-span-5 text-left">
+              <h3 class="text-xl sm:text-2xl font-bold font-display text-white truncate" id="activeP2Name">Spieler 2</h3>
+            </div>
+          </div>
+
+          <!-- Result Buttons Container -->
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <p class="text-[11px] text-center text-slate-400">Ergebnis eintragen (Scolia Leg-Endstand):</p>
+            <div class="flex flex-wrap justify-center gap-2" id="activeResultButtons">
+              <!-- Dynamically rendered based on Best of -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Schedule List -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display font-bold text-white text-base flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
+              <span>Gesamter Spielplan</span>
+            </h3>
+            <span class="text-xs text-slate-400" id="scheduleProgressBadge">0 / 0 beendet</span>
+          </div>
+          <div class="space-y-2.5" id="scheduleListContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TREE VIEW: Visual Brackets -->
+      <div id="viewTree" class="hidden space-y-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <h3 class="font-display font-bold text-white text-base mb-4 flex items-center gap-2">
+            <i data-lucide="git-merge" class="w-4 h-4 text-cyan-400"></i>
+            <span>Grafische Turnierbaum-Übersicht</span>
+          </h3>
+          <div id="treeContainer" class="space-y-6 overflow-x-auto pb-4">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4: SIEGEREHRUNG (PODIUM) -->
+    <!-- ========================================== -->
+    <section id="screenPodium" class="hidden space-y-6">
+      <div class="text-center space-y-2 pt-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Turnier beendet</span>
+        <h2 class="text-3xl sm:text-4xl font-bold font-display text-white">Siegerehrung &amp; Hall of Fame</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Glückwunsch an alle Teilnehmer zu einem starken Darts-Abend!</p>
+      </div>
+
+      <!-- Top 3 Podium -->
+      <div class="flex items-end justify-center gap-3 sm:gap-6 pt-6 pb-2" id="podiumTop3Container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Full Standings Table with Fun Titles -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <h3 class="font-display font-bold text-white text-base mb-3 flex items-center gap-2">
+          <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i>
+          <span>Offizielle Abschlusstabelle &amp; Ehrentitel</span>
+        </h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left text-xs min-w-[420px]">
+            <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-800">
+              <tr>
+                <th class="py-2.5 px-3 w-12 text-center">Platz</th>
+                <th class="py-2.5 px-3">Spieler</th>
+                <th class="py-2.5 px-3">Ehrentitel des Abends</th>
+                <th class="py-2.5 px-3 text-right">Bilanz</th>
+              </tr>
+            </thead>
+            <tbody id="podiumTableBody" class="divide-y divide-slate-800 text-slate-300">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Reset Confirmation Modal -->
+  <div id="resetConfirmModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4">
+      <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h4 class="font-display font-bold text-white text-lg">Turnier wirklich neu starten?</h4>
+        <p class="text-xs text-slate-400 mt-1">Alle eingegebenen Punkte, Matches und Ranglisten werden gelöscht.</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeResetModal()" class="flex-1 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold transition">
+          Abbrechen
+        </button>
+        <button onclick="confirmReset()" class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white font-bold text-xs transition">
+          Ja, alles löschen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- iPad PWA Guide Modal -->
+  <div id="pwaModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-left">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="tablet" class="w-4 h-4"></i>
+          </div>
+          <h4 class="font-display font-bold text-white text-base">Auf dem iPad als App nutzen</h4>
+        </div>
+        <button onclick="closePwaModal()" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-300">
+        <p>So installierst du den Dartsturnier-Manager ohne App Store direkt auf deinem iPad-Homescreen:</p>
+        <ol class="space-y-2 list-decimal list-inside bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+          <li class="leading-relaxed">Öffne diese Seite in <strong>Safari</strong> auf deinem iPad.</li>
+          <li class="leading-relaxed">Tippe oben rechts in Safari auf das <strong>Teilen-Symbol</strong> (<span class="font-mono text-emerald-400">⎋</span> mit Pfeil nach oben).</li>
+          <li class="leading-relaxed">Scrolle in der Liste nach unten und wähle <strong>„Zum Home-Bildschirm“</strong>.</li>
+          <li class="leading-relaxed">Tippe auf <strong>„Hinzufügen“</strong>.</li>
+        </ol>
+        <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300 text-[11px] leading-relaxed flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4 shrink-0 text-emerald-400"></i>
+          <span>Danach startet die App als vollwertige Vollbild-App (ohne Safari-Balken) und deine Spielstände bleiben erhalten!</span>
+        </div>
+      </div>
+
+      <button onclick="closePwaModal()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition">
+        Verstanden
+      </button>
+    </div>
+  </div>
+
+  <!-- Cloud Storage Sync (Firestore + LocalStorage Fallback) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'darts-companion-app';
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let isInitialLoadDone = false;
+
+    // Check Local Storage first for instantaneous offline/PWA restoration
+    try {
+      const cached = localStorage.getItem('darts_tournament_companion_state');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (window.applyLoadedTournamentState) {
+          window.applyLoadedTournamentState(parsed);
+          isInitialLoadDone = true;
+        }
+      }
+    } catch (err) {
+      console.warn("Local storage read error:", err);
+    }
+
+    if (typeof __firebase_config !== 'undefined') {
+      try {
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        const initAuth = async () => {
+          try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (err) {
+            console.error("Auth initialization error:", err);
+          }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+          currentUser = user;
+          if (!user) return;
+          const userId = user.uid;
+
+          // Mandatory Path: /artifacts/{appId}/users/{userId}/tournaments/active
+          const docRef = doc(db, 'artifacts', appId, 'users', userId, 'tournaments', 'active');
+          onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists() && !isInitialLoadDone) {
+              isInitialLoadDone = true;
+              if (window.applyLoadedTournamentState) {
+                window.applyLoadedTournamentState(docSnap.data());
+              }
+            }
+          }, (err) => {
+            console.error("Snapshot error:", err);
+          });
+        });
+
+        initAuth();
+      } catch (err) {
+        console.error("Firebase storage init failed:", err);
+      }
+    }
+
+    // Global save function with both LocalStorage and Firestore
+    window.persistTournamentState = async function(stateData) {
+      try {
+        localStorage.setItem('darts_tournament_companion_state', JSON.stringify(stateData));
+      } catch (e) {
+        console.warn("LocalStorage save error:", e);
+      }
+
+      if (!db || !currentUser) return;
+      try {
+        const userId = currentUser.uid;
+        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'tournaments', 'active');
+        const payload = JSON.parse(JSON.stringify(stateData));
+        await setDoc(docRef, payload);
+        const ind = document.getElementById('saveStatusIndicator');
+        if (ind) {
+          ind.classList.remove('opacity-0');
+          setTimeout(() => ind && ind.classList.add('opacity-0'), 2000);
+        }
+      } catch (e) {
+        console.error("Cloud save state error:", e);
+      }
+    };
+  </script>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- ========================================== -->
+  <script>
+    // Global Application State
+    const state = {
+      playerCount: 5,
+      bestOf: 3,              // 1, 3, 5, 7
+      mode: 'dko',            // 'dko', 'gruppen', 'liga'
+      rounds: 1,              // 1 = nur Hinrunde, 2 = Hin- & Rückrunde
+      scoringSystem: 'match', // 'match' (2 Pkt Sieg), 'legs' (1 Pkt pro Leg)
+      qualiMethod: 'bull',    // 'bull' (9 Darts) or 'random' (Zufallsauslosung)
+      randomDrawDone: false,  // Erst nach Klick auf Auslosen aktiv
+      leaguePlayoff: 'top4',  // 'top4', 'none'
+      leaguePlayoffGenerated: false,
+      players: [
+        { id: 1, name: "Spieler 1", qualiScore: 0, dartsCount: 0, tieBreakRank: 1, randomRank: 1 },
+        { id: 2, name: "Spieler 2", qualiScore: 0, dartsCount: 0, tieBreakRank: 2, randomRank: 2 },
+        { id: 3, name: "Spieler 3", qualiScore: 0, dartsCount: 0, tieBreakRank: 3, randomRank: 3 },
+        { id: 4, name: "Spieler 4", qualiScore: 0, dartsCount: 0, tieBreakRank: 4, randomRank: 4 },
+        { id: 5, name: "Spieler 5", qualiScore: 0, dartsCount: 0, tieBreakRank: 5, randomRank: 5 }
+      ],
+      qualiHistory: [],        // Tracking bull throws for undo
+      currentPhase: 'setup',  // 'setup', 'quali', 'tournament', 'podium'
+      tournamentView: 'runner',// 'runner' or 'tree'
+      matches: [],
+      activeMatchId: null,
+      finalStandings: [],
+      history: [],             // Full snapshots for undoing match results
+      groupA: [],
+      groupB: []
+    };
+
+    function triggerPersistence() {
+      if (typeof window.persistTournamentState === 'function') {
+        window.persistTournamentState(state);
+      }
+    }
+
+    // Hydrate state from storage
+    window.applyLoadedTournamentState = function(saved) {
+      if (!saved || !saved.currentPhase) return;
+      Object.assign(state, saved);
+
+      // Rehydrate UI according to saved phase
+      if (state.currentPhase === 'setup') {
+        document.getElementById('screenSetup').classList.remove('hidden');
+        document.getElementById('screenQuali').classList.add('hidden');
+        document.getElementById('screenTournament').classList.add('hidden');
+        document.getElementById('screenPodium').classList.add('hidden');
+        setPlayerCount(state.playerCount);
+        setTournamentMode(state.mode);
+        setTournamentRounds(state.rounds || 1);
+        setScoringSystem(state.scoringSystem || 'match');
+        setLeaguePlayoff(state.leaguePlayoff || 'top4');
+        setQualiMethod(state.qualiMethod);
+        updateBestOfUI();
+      } else if (state.currentPhase === 'quali') {
+        document.getElementById('screenSetup').classList.add('hidden');
+        document.getElementById('screenQuali').classList.remove('hidden');
+        document.getElementById('screenTournament').classList.add('hidden');
+        document.getElementById('screenPodium').classList.add('hidden');
+        renderQualiView();
+      } else if (state.currentPhase === 'tournament') {
+        document.getElementById('screenSetup').classList.add('hidden');
+        document.getElementById('screenQuali').classList.add('hidden');
+        document.getElementById('screenTournament').classList.remove('hidden');
+        document.getElementById('screenPodium').classList.add('hidden');
+
+        const grTables = document.getElementById('groupsLiveTablesContainer');
+        const ligaTable = document.getElementById('leagueLiveTableBox');
+        if (grTables) grTables.classList.toggle('hidden', state.mode !== 'gruppen');
+        if (ligaTable) ligaTable.classList.toggle('hidden', state.mode !== 'liga');
+
+        if (state.mode === 'gruppen') renderGroupTables();
+        if (state.mode === 'liga') renderLeagueTable();
+
+        setTournamentView(state.tournamentView || 'runner');
+        renderActiveMatch();
+        renderScheduleList();
+        renderTree();
+      } else if (state.currentPhase === 'podium') {
+        document.getElementById('screenSetup').classList.add('hidden');
+        document.getElementById('screenQuali').classList.add('hidden');
+        document.getElementById('screenTournament').classList.add('hidden');
+        document.getElementById('screenPodium').classList.remove('hidden');
+        renderPodium();
+      }
+
+      updateStepBadges();
+      updateHeaderActions();
+      updateAdvice();
+      if (window.lucide) lucide.createIcons();
+    };
+
+    function openPwaModal() {
+      const modal = document.getElementById('pwaModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePwaModal() {
+      const modal = document.getElementById('pwaModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // On Load
+    window.addEventListener('DOMContentLoaded', () => {
+      setPlayerCount(state.playerCount);
+      updateBestOfUI();
+      setTournamentMode(state.mode);
+      setTournamentRounds(state.rounds);
+      setScoringSystem(state.scoringSystem);
+      setLeaguePlayoff(state.leaguePlayoff);
+      updateQualiMethodUI();
+      updateAdvice();
+      updateHeaderActions();
+      if (window.lucide) lucide.createIcons();
+    });
+
+    // ==========================================
+    // SETUP CONTROLLERS
+    // ==========================================
+    function adjustPlayerCount(delta) {
+      const next = state.playerCount + delta;
+      if (next >= 3 && next <= 8) {
+        setPlayerCount(next);
+        triggerPersistence();
+      }
+    }
+
+    function setPlayerCount(count) {
+      state.playerCount = count;
+      const countDisplay = document.getElementById('playerCountDisplay');
+      if (countDisplay) {
+        countDisplay.textContent = `${count} Spieler`;
+      }
+
+      // Sync players array
+      if (state.players.length > count) {
+        state.players = state.players.slice(0, count);
+      } else {
+        while (state.players.length < count) {
+          const nextId = state.players.length + 1;
+          state.players.push({
+            id: nextId,
+            name: `Spieler ${nextId}`,
+            qualiScore: 0,
+            dartsCount: 0,
+            tieBreakRank: nextId,
+            randomRank: nextId
+          });
+        }
+      }
+
+      renderPlayerInputs();
+      updateAdvice();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderPlayerInputs() {
+      const grid = document.getElementById('playerInputsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      state.players.forEach((p, idx) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'relative';
+        wrap.innerHTML = `
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-xs font-bold text-slate-500 font-display">
+            P${idx + 1}
+          </div>
+          <input type="text" value="${escapeHtml(p.name)}" 
+            onchange="state.players[${idx}].name = this.value || 'Spieler ${idx + 1}'; triggerPersistence();"
+            class="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition font-medium"
+            placeholder="Spieler ${idx + 1}">
+        `;
+        grid.appendChild(wrap);
+      });
+    }
+
+    function adjustBestOf(delta) {
+      const distances = [1, 3, 5, 7];
+      let idx = distances.indexOf(state.bestOf);
+      idx += delta;
+      if (idx >= 0 && idx < distances.length) {
+        state.bestOf = distances[idx];
+        updateBestOfUI();
+        updateAdvice();
+        triggerPersistence();
+      }
+    }
+
+    function updateBestOfUI() {
+      const display = document.getElementById('bestOfDisplay');
+      if (display) display.textContent = `Best of ${state.bestOf} Legs`;
+    }
+
+    function setTournamentMode(m) {
+      state.mode = m;
+      const btnDKO = document.getElementById('btnModeDKO');
+      const btnGruppen = document.getElementById('btnModeGruppen');
+      const btnLiga = document.getElementById('btnModeLiga');
+      const scoringBox = document.getElementById('scoringOptionBox');
+      const roundsBox = document.getElementById('roundsOptionBox');
+      const leagueBox = document.getElementById('leagueOptionBox');
+
+      const activeCls = "p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition relative";
+      const inactiveCls = "p-4 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700 relative";
+
+      if (btnDKO) btnDKO.className = m === 'dko' ? activeCls : inactiveCls;
+      if (btnGruppen) btnGruppen.className = m === 'gruppen' ? activeCls : inactiveCls;
+      if (btnLiga) btnLiga.className = m === 'liga' ? activeCls : inactiveCls;
+
+      if (scoringBox) {
+        scoringBox.classList.toggle('hidden', m === 'dko');
+      }
+      if (roundsBox) {
+        roundsBox.classList.toggle('hidden', m === 'dko');
+      }
+      if (leagueBox) {
+        leagueBox.classList.toggle('hidden', m !== 'liga');
+      }
+
+      updateAdvice();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function setTournamentRounds(r) {
+      state.rounds = r;
+      const btnSingle = document.getElementById('btnRoundsSingle');
+      const btnDouble = document.getElementById('btnRoundsDouble');
+      const activeCls = "p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300";
+      const inactiveCls = "p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700";
+
+      if (btnSingle) btnSingle.className = r === 1 ? activeCls : inactiveCls;
+      if (btnDouble) btnDouble.className = r === 2 ? activeCls : inactiveCls;
+      updateAdvice();
+      triggerPersistence();
+    }
+
+    function setScoringSystem(s) {
+      state.scoringSystem = s;
+      const btnM = document.getElementById('btnScoreMatch');
+      const btnL = document.getElementById('btnScoreLegs');
+      const activeCls = "p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300";
+      const inactiveCls = "p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700";
+
+      if (btnM) btnM.className = s === 'match' ? activeCls : inactiveCls;
+      if (btnL) btnL.className = s === 'legs' ? activeCls : inactiveCls;
+      triggerPersistence();
+    }
+
+    function setLeaguePlayoff(p) {
+      state.leaguePlayoff = p;
+      ['top4', 'none'].forEach(k => {
+        const el = document.getElementById(`btnPlayoff${k.charAt(0).toUpperCase() + k.slice(1)}`);
+        if (el) {
+          el.className = state.leaguePlayoff === k 
+            ? "p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300"
+            : "p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700";
+        }
+      });
+      updateAdvice();
+      triggerPersistence();
+    }
+
+    function setQualiMethod(method) {
+      state.qualiMethod = method;
+      updateQualiMethodUI();
+      triggerPersistence();
+    }
+
+    function updateQualiMethodUI() {
+      const btnBull = document.getElementById('btnQualiMethodBull');
+      const btnRandom = document.getElementById('btnQualiMethodRandom');
+      const activeCls = "p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition";
+      const inactiveCls = "p-3.5 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700";
+
+      if (btnBull) btnBull.className = state.qualiMethod === 'bull' ? activeCls : inactiveCls;
+      if (btnRandom) btnRandom.className = state.qualiMethod === 'random' ? activeCls : inactiveCls;
+
+      const btnStart = document.getElementById('btnStartQualiText');
+      if (btnStart) {
+        btnStart.textContent = 'Zur Setzliste';
+      }
+    }
+
+    function updateAdvice() {
+      const textEl = document.getElementById('adviceText');
+      if (!textEl) return;
+      const n = state.playerCount;
+      const m = state.mode;
+      const r = state.rounds;
+      const bo = state.bestOf;
+
+      // Realistic match duration for ~40 Average:
+      // Bo 1: 1 leg = 7 min
+      // Bo 3 (first to 2): avg ~2.4 legs = ~17 min
+      // Bo 5 (first to 3): avg ~3.8 legs = ~27 min
+      // Bo 7 (first to 4): avg ~5.3 legs = ~37 min
+      const estMatchMins = bo === 1 ? 7 : (bo === 3 ? 17 : (bo === 5 ? 27 : 37));
+      let matchesCount = 0;
+      let headline = '';
+      let desc = '';
+
+      if (m === 'dko') {
+        matchesCount = n === 3 ? 4 : (n === 4 ? 6 : (n === 5 ? 8 : (n === 6 ? 10 : (n === 7 ? 12 : 14))));
+        const hours = Math.round((matchesCount * estMatchMins) / 60 * 10) / 10;
+        headline = `Doppel-K.o. bei ${n} Spielern: ca. ${matchesCount} bis ${matchesCount + 1} Matches`;
+        desc = `Dauer: ca. <strong>${hours} Std.</strong> Jeder hat zwei Leben. Höchste Fairness für ein einzelnes Board!`;
+      } else if (m === 'gruppen') {
+        const grA = Math.ceil(n / 2);
+        const grB = Math.floor(n / 2);
+        const matchesA = (grA * (grA - 1)) / 2;
+        const matchesB = (grB * (grB - 1)) / 2;
+        const groupMatches = (matchesA + matchesB) * r;
+        const koMatches = 4; // HF1, HF2, Spiel um Platz 3, Finale
+        matchesCount = groupMatches + koMatches;
+        const hours = Math.round((matchesCount * estMatchMins) / 60 * 10) / 10;
+        headline = `2 Gruppen (${grA} & ${grB} Spieler): ${matchesCount} Matches gesamt`;
+        desc = `Vorrunde (${groupMatches} Spiele) + Halbfinale, Spiel um Platz 3 & Finale (${koMatches} Spiele). Dauer: ca. <strong>${hours} Std.</strong>`;
+      } else {
+        const leagueMatches = ((n * (n - 1)) / 2) * r;
+        const playoffMatches = state.leaguePlayoff === 'top4' ? 4 : 0;
+        matchesCount = leagueMatches + playoffMatches;
+        const hours = Math.round((matchesCount * estMatchMins) / 60 * 10) / 10;
+        headline = `Ligamodus (${r === 2 ? 'Hin- & Rückrunde' : 'Einfache Runde'}): ${matchesCount} Matches`;
+        desc = `Jeder gegen Jeden. ${state.leaguePlayoff === 'top4' ? 'Inklusive Top-4 Halbfinale, Spiel um Platz 3 & Finale!' : 'Reine Tabelle: Direkte Endplatzierung nach Tabelle ohne Endspiele.'} Dauer: ca. <strong>${hours} Std.</strong>`;
+      }
+
+      textEl.innerHTML = `
+        <p class="font-bold text-emerald-400 text-sm">${headline}</p>
+        <p class="text-slate-300 leading-snug">${desc}</p>
+      `;
+    }
+
+    // ==========================================
+    // QUALIFIKATION CONTROLLERS
+    // ==========================================
+    function startQualification() {
+      state.currentPhase = 'quali';
+      updateStepBadges();
+
+      document.getElementById('screenSetup').classList.add('hidden');
+      document.getElementById('screenQuali').classList.remove('hidden');
+
+      state.players.forEach((p, idx) => {
+        if (!p.tieBreakRank) p.tieBreakRank = idx + 1;
+        if (!p.randomRank) p.randomRank = idx + 1;
+      });
+
+      updateQualiMethodUI();
+      renderQualiView();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderQualiView() {
+      const isRandom = state.qualiMethod === 'random';
+      const bullView = document.getElementById('bullQualiContainer');
+      const randomView = document.getElementById('randomQualiContainer');
+      const missBtn = document.getElementById('btnQualiMissRemaining');
+      const drawBtn = document.getElementById('btnRandomDrawTrigger');
+      const title = document.getElementById('qualiScreenTitle');
+      const subtitle = document.getElementById('qualiScreenSubtitle');
+
+      if (isRandom) {
+        if (bullView) bullView.classList.add('hidden');
+        if (randomView) randomView.classList.remove('hidden');
+        if (missBtn) missBtn.classList.add('hidden');
+        if (drawBtn) drawBtn.classList.remove('hidden');
+        if (title) title.textContent = 'Zufallsauslosung';
+        if (subtitle) subtitle.textContent = 'Klicke auf „Auslosen“, um die Startplätze zufällig zu verteilen.';
+        renderRandomQuali();
+      } else {
+        if (bullView) bullView.classList.remove('hidden');
+        if (randomView) randomView.classList.add('hidden');
+        if (missBtn) missBtn.classList.remove('hidden');
+        if (drawBtn) drawBtn.classList.add('hidden');
+        if (title) title.textContent = '9 Darts aufs Bull';
+        if (subtitle) subtitle.textContent = 'Trage die Treffer ein (+1 Single Bull | +2 Bullseye). Bei Gleichstand kann ein Stechen durchgeführt werden.';
+        renderQualiCards();
+        renderQualiRanking();
+      }
+      updateStartTournamentBtnState();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updateStartTournamentBtnState() {
+      const btn = document.getElementById('btnStartTournament');
+      if (!btn) return;
+
+      let isBlocked = false;
+      let blockedTitle = '';
+
+      if (state.qualiMethod === 'random') {
+        if (!state.randomDrawDone) {
+          isBlocked = true;
+          blockedTitle = 'Bitte zuerst auf „Auslosen“ klicken!';
+        }
+      } else {
+        const hasUnfinished = state.players.some(p => p.dartsCount < 9);
+        if (hasUnfinished) {
+          isBlocked = true;
+          blockedTitle = 'Turnierstart erst möglich, wenn alle Spieler Status „Beendet“ haben!';
+        }
+      }
+
+      if (isBlocked) {
+        btn.disabled = true;
+        btn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+        btn.classList.remove('hover:bg-emerald-400', 'shadow-emerald-500/20');
+        btn.title = blockedTitle;
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+        btn.classList.add('hover:bg-emerald-400', 'shadow-emerald-500/20');
+        btn.removeAttribute('title');
+      }
+    }
+
+    function renderQualiCards() {
+      const container = document.getElementById('qualiCards');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const activeIdx = state.players.findIndex(p => p.dartsCount < 9);
+
+      state.players.forEach((p, idx) => {
+        const isCurrent = (idx === activeIdx);
+        const isFinished = (p.dartsCount >= 9);
+
+        let statusText = 'Offen';
+        let statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+
+        if (isCurrent) {
+          statusText = 'Jetzt am Board';
+          statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold animate-pulse';
+        } else if (isFinished) {
+          statusText = 'Beendet';
+          statusBadgeClass = 'bg-slate-800 text-slate-400';
+        }
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border transition ${
+          isCurrent 
+            ? 'bg-slate-900 border-2 border-emerald-500 shadow-xl shadow-emerald-500/10' 
+            : 'bg-slate-900 border-slate-800'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 font-display font-bold text-xs flex items-center justify-center">
+                P${idx + 1}
+              </span>
+              <div>
+                <h4 class="font-bold text-white text-sm leading-tight">${escapeHtml(p.name)}</h4>
+                <div class="flex items-center gap-2 mt-0.5">
+                  <span class="text-[11px] text-slate-400">Darts: ${p.dartsCount} / 9</span>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${statusBadgeClass}">
+                    ${statusText}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="font-display font-bold text-xl text-white">${p.qualiScore}</span>
+              <span class="block text-[10px] text-slate-400 uppercase font-semibold">Punkte</span>
+            </div>
+          </div>
+
+          <!-- Buttons: 0 Miss (Red), +1 Single Bull (Sky), +2 Bullseye (Purple) -->
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="addBullThrow(${idx}, 0)" 
+              ${!isCurrent ? 'disabled' : ''}
+              class="py-2.5 px-2 rounded-xl font-bold font-display text-xs transition border ${
+                isCurrent 
+                  ? 'bg-red-500/20 border-red-500/40 text-red-400 hover:bg-red-500/30 active:scale-95' 
+                  : 'bg-slate-950/60 border-slate-800 text-slate-600 cursor-not-allowed'
+              }">
+              0 Miss
+            </button>
+
+            <button type="button" onclick="addBullThrow(${idx}, 1)" 
+              ${!isCurrent ? 'disabled' : ''}
+              class="py-2.5 px-2 rounded-xl font-bold font-display text-xs transition border ${
+                isCurrent 
+                  ? 'bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30 active:scale-95' 
+                  : 'bg-slate-950/60 border-slate-800 text-slate-600 cursor-not-allowed'
+              }">
+              +1 Single Bull
+            </button>
+
+            <button type="button" onclick="addBullThrow(${idx}, 2)" 
+              ${!isCurrent ? 'disabled' : ''}
+              class="py-2.5 px-2 rounded-xl font-bold font-display text-xs transition border ${
+                isCurrent 
+                  ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 hover:bg-purple-500/30 active:scale-95' 
+                  : 'bg-slate-950/60 border-slate-800 text-slate-600 cursor-not-allowed'
+              }">
+              +2 Bullseye
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function addBullThrow(playerIdx, points) {
+      const p = state.players[playerIdx];
+      if (!p || p.dartsCount >= 9) return;
+
+      state.qualiHistory.push({
+        playerIndex: playerIdx,
+        points: points
+      });
+
+      p.qualiScore += points;
+      p.dartsCount += 1;
+
+      renderQualiCards();
+      renderQualiRanking();
+      updateStartTournamentBtnState();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function fillRemainingMisses() {
+      state.players.forEach((p, idx) => {
+        while (p.dartsCount < 9) {
+          state.qualiHistory.push({ playerIndex: idx, points: 0 });
+          p.dartsCount++;
+        }
+      });
+      renderQualiCards();
+      renderQualiRanking();
+      updateStartTournamentBtnState();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderQualiRanking() {
+      const tbody = document.getElementById('qualiRankingTableBody');
+      const tieWarning = document.getElementById('tieWarningBadge');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const sorted = getSortedPlayersForQuali();
+      const n = state.playerCount;
+      const m = state.mode;
+
+      // Count scores only for players who are FINISHED (dartsCount >= 9)
+      const finishedScores = {};
+      sorted.forEach(p => {
+        if (p.dartsCount >= 9) {
+          finishedScores[p.qualiScore] = (finishedScores[p.qualiScore] || 0) + 1;
+        }
+      });
+
+      let hasTieActive = false;
+
+      sorted.forEach((p, idx) => {
+        const rank = idx + 1;
+        let rankDisplay = `${rank}.`;
+        if (rank === 1) rankDisplay = '🥇';
+        else if (rank === 2) rankDisplay = '🥈';
+        else if (rank === 3) rankDisplay = '🥉';
+
+        const isCompleted = p.dartsCount >= 9;
+        // Strict tie: only flag tie if THIS player is completed AND at least another completed player shares the score
+        const isTie = isCompleted && finishedScores[p.qualiScore] > 1;
+        if (isTie) hasTieActive = true;
+
+        const statusLabel = isCompleted ? 'Beendet' : (p.dartsCount > 0 ? 'Am Board' : 'Offen');
+        const statusBadgeClass = isCompleted 
+          ? 'bg-slate-800 text-slate-400' 
+          : (p.dartsCount > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400');
+
+        const seedText = getSeedingStatusText(rank, n, m);
+
+        // Can shift up/down only if neighbor is also completed and shares the score
+        const canShiftUp = isTie && idx > 0 && sorted[idx - 1].dartsCount >= 9 && sorted[idx - 1].qualiScore === p.qualiScore;
+        const canShiftDown = isTie && idx < sorted.length - 1 && sorted[idx + 1].dartsCount >= 9 && sorted[idx + 1].qualiScore === p.qualiScore;
+
+        const tr = document.createElement('tr');
+        tr.className = isTie ? 'bg-amber-500/5' : '';
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-2 text-center font-display font-bold ${rank <= 3 ? 'text-sm' : 'text-slate-400'}">
+            ${rankDisplay}
+          </td>
+          <td class="py-2.5 px-2 font-bold text-white whitespace-nowrap">
+            ${escapeHtml(p.name)}
+            ${isTie ? '<span class="ml-1 text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 font-semibold">Gleichstand</span>' : ''}
+          </td>
+          <td class="py-2.5 px-1.5 text-center font-display font-bold text-white">
+            ${p.qualiScore}
+          </td>
+          <td class="py-2.5 px-1.5 text-center whitespace-nowrap">
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${statusBadgeClass}">
+              ${statusLabel}
+            </span>
+          </td>
+          <td class="py-2.5 px-2 whitespace-nowrap">
+            <span class="text-[11px] font-medium text-slate-300">
+              ${seedText}
+            </span>
+          </td>
+          <td class="py-2.5 px-2 text-center whitespace-nowrap">
+            ${isTie ? `
+              <div class="flex items-center justify-center gap-1">
+                <button type="button" onclick="shiftTieBreakOrder(${idx}, -1)" ${!canShiftUp ? 'disabled' : ''}
+                  class="w-6 h-6 rounded flex items-center justify-center text-[10px] transition border ${
+                    canShiftUp 
+                      ? 'bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 border-slate-700' 
+                      : 'opacity-20 text-slate-600 border-transparent cursor-not-allowed'
+                  }" title="Stechen: Vorrücken">
+                  ▲
+                </button>
+                <button type="button" onclick="shiftTieBreakOrder(${idx}, 1)" ${!canShiftDown ? 'disabled' : ''}
+                  class="w-6 h-6 rounded flex items-center justify-center text-[10px] transition border ${
+                    canShiftDown 
+                      ? 'bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 border-slate-700' 
+                      : 'opacity-20 text-slate-600 border-transparent cursor-not-allowed'
+                  }" title="Stechen: Nach hinten">
+                  ▼
+                </button>
+              </div>
+            ` : '<span class="text-slate-600 text-[11px]">-</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (tieWarning) {
+        tieWarning.classList.toggle('hidden', !hasTieActive);
+      }
+
+      renderSeedingLegend();
+    }
+
+    function shiftTieBreakOrder(sortedIndex, direction) {
+      const sorted = getSortedPlayersForQuali();
+      const targetIndex = sortedIndex + direction;
+      if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+      const pCurrent = sorted[sortedIndex];
+      const pTarget = sorted[targetIndex];
+
+      const temp = pCurrent.tieBreakRank;
+      pCurrent.tieBreakRank = pTarget.tieBreakRank;
+      pTarget.tieBreakRank = temp;
+
+      renderQualiRanking();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function getSortedPlayersForQuali() {
+      if (state.qualiMethod === 'random') {
+        return [...state.players].sort((a, b) => (a.randomRank || 0) - (b.randomRank || 0));
+      }
+      return [...state.players].sort((a, b) => {
+        if (b.qualiScore !== a.qualiScore) {
+          return b.qualiScore - a.qualiScore;
+        }
+        return a.tieBreakRank - b.tieBreakRank;
+      });
+    }
+
+    function getSeedingStatusText(rank, n, m) {
+      if (m === 'gruppen') {
+        return rank % 2 === 1 ? 'Gruppe A' : 'Gruppe B';
+      } else if (m === 'liga') {
+        return `Startplatz ${rank}`;
+      } else {
+        if (n === 3) return rank === 1 ? 'Freilos Finale' : 'Auftaktspiel';
+        if (n === 4) return 'Halbfinale';
+        if (n === 5) return rank <= 3 ? 'Freilos Halbfinale' : 'Match 1';
+        if (n === 6) return rank <= 2 ? 'Freilos Halbfinale' : 'Runde 1';
+        if (n === 7) return rank === 1 ? 'Freilos Halbfinale' : 'Runde 1';
+        if (n === 8) return 'Viertelfinale';
+      }
+      return `Platz ${rank}`;
+    }
+
+    function renderSeedingLegend() {
+      const box = document.getElementById('seedingLegendBox');
+      if (!box) return;
+      const n = state.playerCount;
+      const m = state.mode;
+
+      let msg = '';
+      if (m === 'dko') {
+        if (n === 4) msg = '<strong>4 Spieler:</strong> Keine Freilose. Rang 1 vs 4 und Rang 2 vs 3 starten direkt im Halbfinale.';
+        else if (n === 5) msg = '<strong>5 Spieler:</strong> Ränge 1, 2 und 3 erhalten ein Freilos ins Halbfinale. Rang 4 und 5 bestreiten Match 1.';
+        else if (n === 6) msg = '<strong>6 Spieler:</strong> Ränge 1 und 2 erhalten ein Freilos ins Halbfinale. Ränge 3 bis 6 spielen Runde 1.';
+        else if (n === 7) msg = '<strong>7 Spieler:</strong> Rang 1 erhält das einzige Freilos ins Halbfinale.';
+        else if (n === 8) msg = '<strong>8 Spieler:</strong> Volles 8er-Feld ohne Freilose. Alle starten im Viertelfinale.';
+        else msg = '<strong>3 Spieler:</strong> Rang 1 steht direkt im Finale!';
+      } else if (m === 'gruppen') {
+        msg = '<strong>Snake-Verteilung:</strong> Ränge 1 &amp; 4 in Gruppe A, Ränge 2 &amp; 3 in Gruppe B für maximal ausgeglichene Gruppen.';
+      } else {
+        msg = '<strong>Ligamodus:</strong> Die Platzierung bestimmt die Anwurf-Reihenfolge im Berger-Spielplan.';
+      }
+
+      box.innerHTML = `<p class="text-slate-300 text-[11px] leading-relaxed">${msg}</p>`;
+    }
+
+    function performRandomDraw(animate = true) {
+      state.randomDrawDone = true;
+      const n = state.players.length;
+      const order = Array.from({ length: n }, (_, i) => i + 1);
+
+      // Fisher-Yates
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+
+      state.players.forEach((p, idx) => {
+        p.randomRank = order[idx];
+      });
+
+      if (!animate) {
+        renderRandomQuali();
+        return;
+      }
+
+      const drawBtn = document.getElementById('btnRandomDrawTrigger');
+      const grid = document.getElementById('randomDrawGrid');
+
+      if (drawBtn) {
+        drawBtn.disabled = true;
+        drawBtn.classList.add('opacity-75', 'cursor-not-allowed');
+        const icon = drawBtn.querySelector('i');
+        if (icon) icon.classList.add('animate-spin');
+      }
+
+      let step = 0;
+      const allNames = state.players.map(p => p.name);
+      const interval = setInterval(() => {
+        step++;
+        if (grid) {
+          const nameEls = grid.querySelectorAll('.draw-player-name');
+          nameEls.forEach(el => {
+            el.textContent = allNames[Math.floor(Math.random() * allNames.length)];
+          });
+        }
+
+        if (step >= 6) {
+          clearInterval(interval);
+          renderRandomQuali();
+          updateStartTournamentBtnState();
+          triggerPersistence();
+          if (drawBtn) {
+            drawBtn.disabled = false;
+            drawBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            const icon = drawBtn.querySelector('i');
+            if (icon) icon.classList.remove('animate-spin');
+          }
+        }
+      }, 60);
+    }
+
+    function renderRandomQuali() {
+      const grid = document.getElementById('randomDrawGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const n = state.playerCount;
+      const m = state.mode;
+
+      if (!state.randomDrawDone) {
+        for (let idx = 0; idx < n; idx++) {
+          const rank = idx + 1;
+          const seedText = getSeedingStatusText(rank, n, m);
+
+          const card = document.createElement('div');
+          card.className = 'p-3.5 rounded-xl border border-dashed border-slate-800 bg-slate-950/40 transition-all';
+          card.innerHTML = `
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+              <span class="font-display font-bold text-slate-400">Los ${rank}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-500">${seedText}</span>
+            </div>
+            <h4 class="draw-player-name font-bold text-slate-500 text-sm truncate italic">Noch nicht ausgelost</h4>
+          `;
+          grid.appendChild(card);
+        }
+        return;
+      }
+
+      const sorted = getSortedPlayersForQuali();
+
+      sorted.forEach((p, idx) => {
+        const rank = idx + 1;
+        const seedText = getSeedingStatusText(rank, n, m);
+
+        const card = document.createElement('div');
+        card.className = 'p-3.5 rounded-xl border border-slate-800 bg-slate-950 transition-all duration-300';
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+            <span class="font-display font-bold text-amber-400">Los ${rank}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-300">${seedText}</span>
+          </div>
+          <h4 class="draw-player-name font-bold text-white text-sm truncate transition-colors">${escapeHtml(p.name)}</h4>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // TOURNAMENT CONTROLLERS & ENGINE
+    // ==========================================
+    function startTournament() {
+      if (state.qualiMethod === 'random' && !state.randomDrawDone) {
+        return;
+      }
+
+      if (state.qualiMethod === 'bull') {
+        const hasUnfinished = state.players.some(p => p.dartsCount < 9);
+        if (hasUnfinished) {
+          return;
+        }
+      }
+
+      const seeded = getSortedPlayersForQuali();
+      seeded.forEach((p, idx) => {
+        p.seed = String.fromCharCode(65 + idx);
+      });
+
+      state.currentPhase = 'tournament';
+      updateStepBadges();
+
+      document.getElementById('screenQuali').classList.add('hidden');
+      document.getElementById('screenTournament').classList.remove('hidden');
+
+      const grTables = document.getElementById('groupsLiveTablesContainer');
+      const ligaTable = document.getElementById('leagueLiveTableBox');
+      const titleEl = document.getElementById('tournamentModeTitle');
+      const treeLabel = document.getElementById('tabTreeLabel');
+
+      if (state.mode === 'gruppen') {
+        if (grTables) grTables.classList.remove('hidden');
+        if (ligaTable) ligaTable.classList.add('hidden');
+        if (titleEl) titleEl.textContent = '2 Gruppen + K.o.-Phase';
+        if (treeLabel) treeLabel.textContent = 'K.o.-Baum & Gruppe';
+        buildTwoGroupsSchedule(seeded);
+      } else if (state.mode === 'liga') {
+        if (grTables) grTables.classList.add('hidden');
+        if (ligaTable) ligaTable.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = 'Ligamodus';
+        if (treeLabel) treeLabel.textContent = 'Tabelle & Spielplan';
+        buildLeagueSchedule(seeded);
+      } else {
+        if (grTables) grTables.classList.add('hidden');
+        if (ligaTable) ligaTable.classList.add('hidden');
+        if (titleEl) titleEl.textContent = 'Doppel-K.o. Turnierbaum';
+        if (treeLabel) treeLabel.textContent = 'Turnierbaum';
+        buildDoubleElimBracket(seeded);
+      }
+
+      setTournamentView('runner');
+      renderActiveMatch();
+      renderScheduleList();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ------------------------------------------
+    // DOUBLE ELIMINATION GENERATOR
+    // ------------------------------------------
+    function buildDoubleElimBracket(seeded) {
+      state.matches = [];
+      const n = state.playerCount;
+      const P = seeded.map(p => p.name);
+
+      if (n === 4) {
+        state.matches = [
+          { id: 'M1', roundName: 'Halbfinale 1', bracket: 'winner', p1: P[0], p2: P[3], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M2', roundName: 'Halbfinale 2', bracket: 'winner', p1: P[1], p2: P[2], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M3', roundName: 'Verlierer-Halbfinale', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M4', roundName: 'Finale Hauptrunde', bracket: 'winner', p1: 'Sieger M1', p2: 'Sieger M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M5', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M3', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M6', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M4', p2: 'Sieger M5', s1: null, s2: null, winner: null, loser: null, finished: false }
+        ];
+      } else if (n === 5) {
+        state.matches = [
+          { id: 'M1', roundName: 'Hauptrunde R1', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M2', roundName: 'Hauptrunde HF 1', bracket: 'winner', p1: P[0], p2: P[1], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M3', roundName: 'Hauptrunde HF 2', bracket: 'winner', p1: P[2], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M4', roundName: 'Verlierer R1', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M5', roundName: 'Verlierer-HF', bracket: 'loser', p1: 'Sieger M4', p2: 'Verlierer M3', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M6', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M2', p2: 'Sieger M3', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M7', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M5', p2: 'Verlierer M6', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M8', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M6', p2: 'Sieger M7', s1: null, s2: null, winner: null, loser: null, finished: false }
+        ];
+      } else if (n === 6) {
+        state.matches = [
+          { id: 'M1', roundName: 'Hauptrunde R1 (1)', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M2', roundName: 'Hauptrunde R1 (2)', bracket: 'winner', p1: P[2], p2: P[5], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M3', roundName: 'Hauptrunde HF 1', bracket: 'winner', p1: P[0], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M4', roundName: 'Hauptrunde HF 2', bracket: 'winner', p1: P[1], p2: 'Sieger M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M5', roundName: 'Verlierer R1', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M6', roundName: 'Verlierer R2', bracket: 'loser', p1: 'Sieger M5', p2: 'Verlierer M3', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M7', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M3', p2: 'Sieger M4', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M8', roundName: 'Verlierer-HF', bracket: 'loser', p1: 'Sieger M6', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M9', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M8', p2: 'Verlierer M7', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M10', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M7', p2: 'Sieger M9', s1: null, s2: null, winner: null, loser: null, finished: false }
+        ];
+      } else if (n === 7) {
+        state.matches = [
+          { id: 'M1', roundName: 'Hauptrunde R1 (1)', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M2', roundName: 'Hauptrunde R1 (2)', bracket: 'winner', p1: P[2], p2: P[5], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M3', roundName: 'Hauptrunde R1 (3)', bracket: 'winner', p1: P[1], p2: P[6], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M4', roundName: 'Hauptrunde HF 1', bracket: 'winner', p1: P[0], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M5', roundName: 'Hauptrunde HF 2', bracket: 'winner', p1: 'Sieger M2', p2: 'Sieger M3', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M6', roundName: 'Verlierer R1', bracket: 'loser', p1: 'Verlierer M2', p2: 'Verlierer M3', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M7', roundName: 'Verlierer R2', bracket: 'loser', p1: 'Sieger M6', p2: 'Verlierer M1', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M8', roundName: 'Verlierer R3 (1)', bracket: 'loser', p1: 'Sieger M7', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M9', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M4', p2: 'Sieger M5', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M10', roundName: 'Verlierer R3 (2)', bracket: 'loser', p1: 'Sieger M8', p2: 'Verlierer M5', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M11', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M10', p2: 'Verlierer M9', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M12', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M9', p2: 'Sieger M11', s1: null, s2: null, winner: null, loser: null, finished: false }
+        ];
+      } else if (n === 8) {
+        state.matches = [
+          { id: 'M1', roundName: 'Viertelfinale 1', bracket: 'winner', p1: P[0], p2: P[7], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M2', roundName: 'Viertelfinale 2', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M3', roundName: 'Viertelfinale 3', bracket: 'winner', p1: P[1], p2: P[6], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M4', roundName: 'Viertelfinale 4', bracket: 'winner', p1: P[2], p2: P[5], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M5', roundName: 'Verlierer R1 (1)', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M6', roundName: 'Verlierer R1 (2)', bracket: 'loser', p1: 'Verlierer M3', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M7', roundName: 'Halbfinale 1', bracket: 'winner', p1: 'Sieger M1', p2: 'Sieger M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M8', roundName: 'Halbfinale 2', bracket: 'winner', p1: 'Sieger M3', p2: 'Sieger M4', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M9', roundName: 'Verlierer R2 (1)', bracket: 'loser', p1: 'Sieger M5', p2: 'Verlierer M7', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M10', roundName: 'Verlierer R2 (2)', bracket: 'loser', p1: 'Sieger M6', p2: 'Verlierer M8', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M11', roundName: 'Verlierer R3', bracket: 'loser', p1: 'Sieger M9', p2: 'Sieger M10', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M12', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M7', p2: 'Sieger M8', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M13', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M11', p2: 'Verlierer M12', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M14', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M12', p2: 'Sieger M13', s1: null, s2: null, winner: null, loser: null, finished: false }
+        ];
+      } else {
+        // 3 Players
+        state.matches = [
+          { id: 'M1', roundName: 'Auftaktspiel', bracket: 'winner', p1: P[1], p2: P[2], s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M2', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: P[0], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M3', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
+          { id: 'M4', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M2', p2: 'Sieger M3', s1: null, s2: null, winner: null, loser: null, finished: false }
+        ];
+      }
+
+      state.activeMatchId = state.matches[0].id;
+    }
+
+    // ------------------------------------------
+    // 2 GRUPPEN GENERATOR
+    // ------------------------------------------
+    function buildTwoGroupsSchedule(seeded) {
+      state.matches = [];
+      state.groupA = [];
+      state.groupB = [];
+
+      seeded.forEach((p, idx) => {
+        if (idx % 2 === 0) state.groupA.push(p.name);
+        else state.groupB.push(p.name);
+      });
+
+      let matchNum = 1;
+
+      for (let i = 0; i < state.groupA.length; i++) {
+        for (let j = i + 1; j < state.groupA.length; j++) {
+          state.matches.push({
+            id: `M${matchNum++}`,
+            roundName: 'Gruppe A',
+            group: 'A',
+            p1: state.groupA[i],
+            p2: state.groupA[j],
+            s1: null, s2: null, winner: null, loser: null, finished: false
+          });
+        }
+      }
+
+      for (let i = 0; i < state.groupB.length; i++) {
+        for (let j = i + 1; j < state.groupB.length; j++) {
+          state.matches.push({
+            id: `M${matchNum++}`,
+            roundName: 'Gruppe B',
+            group: 'B',
+            p1: state.groupB[i],
+            p2: state.groupB[j],
+            s1: null, s2: null, winner: null, loser: null, finished: false
+          });
+        }
+      }
+
+      if (state.rounds === 2) {
+        const firstRoundCount = state.matches.length;
+        for (let k = 0; k < firstRoundCount; k++) {
+          const m = state.matches[k];
+          state.matches.push({
+            id: `M${matchNum++}`,
+            roundName: `${m.roundName} (Rückrunde)`,
+            group: m.group,
+            p1: m.p2,
+            p2: m.p1,
+            s1: null, s2: null, winner: null, loser: null, finished: false
+          });
+        }
+      }
+
+      state.matches.push(
+        { id: `M${matchNum++}`, roundName: 'Halbfinale 1', stage: 'semi', p1: '1. Gruppe A', p2: '2. Gruppe B', s1: null, s2: null, winner: null, loser: null, finished: false },
+        { id: `M${matchNum++}`, roundName: 'Halbfinale 2', stage: 'semi', p1: '1. Gruppe B', p2: '2. Gruppe A', s1: null, s2: null, winner: null, loser: null, finished: false },
+        { id: `M${matchNum++}`, roundName: 'Spiel um Platz 3', stage: 'bronze', p1: 'Verlierer HF 1', p2: 'Verlierer HF 2', s1: null, s2: null, winner: null, loser: null, finished: false },
+        { id: `M${matchNum++}`, roundName: 'Großes Finale um Gold', stage: 'final', p1: 'Sieger HF 1', p2: 'Sieger HF 2', s1: null, s2: null, winner: null, loser: null, finished: false }
+      );
+
+      state.activeMatchId = state.matches[0].id;
+      renderGroupTables();
+    }
+
+    // ------------------------------------------
+    // LIGAMODUS GENERATOR
+    // ------------------------------------------
+    function buildLeagueSchedule(seeded) {
+      state.matches = [];
+      state.leaguePlayoffGenerated = false;
+
+      let list = seeded.map(p => p.name);
+      if (list.length % 2 !== 0) list.push(null);
+      const n = list.length;
+      let matchCounter = 1;
+
+      for (let round = 0; round < n - 1; round++) {
+        for (let i = 0; i < n / 2; i++) {
+          const p1 = list[i];
+          const p2 = list[n - 1 - i];
+          if (p1 !== null && p2 !== null) {
+            state.matches.push({
+              id: `M${matchCounter++}`,
+              roundName: `Spieltag ${round + 1}`,
+              p1: p1,
+              p2: p2,
+              s1: null, s2: null, winner: null, loser: null, finished: false
+            });
+          }
+        }
+        list.splice(1, 0, list.pop());
+      }
+
+      if (state.rounds === 2) {
+        const round1Count = state.matches.length;
+        for (let r = 0; r < round1Count; r++) {
+          const prev = state.matches[r];
+          state.matches.push({
+            id: `M${matchCounter++}`,
+            roundName: `${prev.roundName} (Rückspiel)`,
+            p1: prev.p2,
+            p2: prev.p1,
+            s1: null, s2: null, winner: null, loser: null, finished: false
+          });
+        }
+      }
+
+      state.activeMatchId = state.matches[0].id;
+      renderLeagueTable();
+    }
+
+    // ------------------------------------------
+    // MATCH SCORING & UNDO SYSTEM
+    // ------------------------------------------
+    function recordMatchResult(matchId, s1, s2) {
+      const match = state.matches.find(m => m.id === matchId);
+      if (!match) return;
+
+      pushTournamentSnapshot();
+
+      match.s1 = s1;
+      match.s2 = s2;
+      match.winner = s1 > s2 ? match.p1 : match.p2;
+      match.loser = s1 > s2 ? match.p2 : match.p1;
+      match.finished = true;
+
+      if (state.mode === 'dko') {
+        propagateDoubleElim(match);
+      } else if (state.mode === 'gruppen') {
+        propagateGroups(match);
+      } else if (state.mode === 'liga') {
+        propagateLeague(match);
+      }
+
+      updateActiveMatchPointer();
+      renderActiveMatch();
+      renderScheduleList();
+      renderTree();
+      updateHeaderActions();
+      triggerPersistence();
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function pushTournamentSnapshot() {
+      state.history.push({
+        matches: JSON.parse(JSON.stringify(state.matches)),
+        activeMatchId: state.activeMatchId,
+        leaguePlayoffGenerated: state.leaguePlayoffGenerated
+      });
+    }
+
+    function updateActiveMatchPointer() {
+      const next = state.matches.find(m => !m.finished && isMatchPlayable(m));
+      state.activeMatchId = next ? next.id : null;
+
+      const allDone = state.matches.every(m => m.finished);
+      if (allDone) {
+        finishTournament();
+      }
+    }
+
+    function isMatchPlayable(m) {
+      if (!m || m.finished) return false;
+      const invalid = ['Sieger', 'Verlierer', 'Gruppe', '1.', '2.', 'HF'];
+      const p1Blocked = invalid.some(k => (m.p1 || '').includes(k));
+      const p2Blocked = invalid.some(k => (m.p2 || '').includes(k));
+      return !p1Blocked && !p2Blocked;
+    }
+
+    function propagateDoubleElim(m) {
+      const win = m.winner;
+      const lose = m.loser;
+      const id = m.id;
+
+      state.matches.forEach(item => {
+        if (!item.finished) {
+          if (item.p1 === `Sieger ${id}`) item.p1 = win;
+          if (item.p2 === `Sieger ${id}`) item.p2 = win;
+          if (item.p1 === `Verlierer ${id}`) item.p1 = lose;
+          if (item.p2 === `Verlierer ${id}`) item.p2 = lose;
+        }
+      });
+
+      // Bracket Reset Check in Grand Final
+      if (m.roundName.includes('Grand Final') && !m.isResetMatch) {
+        if (m.winner === m.p2) {
+          const resetId = `M${state.matches.length + 1}`;
+          state.matches.push({
+            id: resetId,
+            roundName: 'Grand Final (Bracket-Reset Decider)',
+            bracket: 'final',
+            p1: m.p1,
+            p2: m.p2,
+            s1: null, s2: null, winner: null, loser: null,
+            finished: false,
+            isResetMatch: true
+          });
+        }
+      }
+    }
+
+    function propagateGroups(m) {
+      renderGroupTables();
+
+      const groupMatches = state.matches.filter(item => item.group);
+      const allGroupDone = groupMatches.every(item => item.finished);
+
+      if (allGroupDone) {
+        const standA = calculateGroupStandings('A');
+        const standB = calculateGroupStandings('B');
+
+        const top1A = standA[0] ? standA[0].name : '1. Gruppe A';
+        const top2A = standA[1] ? standA[1].name : '2. Gruppe A';
+        const top1B = standB[0] ? standB[0].name : '1. Gruppe B';
+        const top2B = standB[1] ? standB[1].name : '2. Gruppe B';
+
+        state.matches.forEach(item => {
+          if (item.roundName === 'Halbfinale 1') {
+            item.p1 = top1A;
+            item.p2 = top2B;
+          }
+          if (item.roundName === 'Halbfinale 2') {
+            item.p1 = top1B;
+            item.p2 = top2A;
+          }
+        });
+      }
+
+      const hf1 = state.matches.find(item => item.roundName === 'Halbfinale 1');
+      const hf2 = state.matches.find(item => item.roundName === 'Halbfinale 2');
+
+      if (hf1 && hf2 && (m.id === hf1.id || m.id === hf2.id)) {
+        const finalMatch = state.matches.find(item => item.roundName === 'Großes Finale um Gold');
+        const bronzeMatch = state.matches.find(item => item.roundName === 'Spiel um Platz 3');
+
+        if (hf1.finished && hf2.finished) {
+          if (finalMatch) {
+            finalMatch.p1 = hf1.winner;
+            finalMatch.p2 = hf2.winner;
+          }
+          if (bronzeMatch) {
+            bronzeMatch.p1 = hf1.loser;
+            bronzeMatch.p2 = hf2.loser;
+          }
+        }
+      }
+    }
+
+    function propagateLeague(m) {
+      renderLeagueTable();
+
+      const regularMatches = state.matches.filter(item => !item.isPlayoff);
+      const allRegularDone = regularMatches.every(item => item.finished);
+
+      if (allRegularDone && !state.leaguePlayoffGenerated && state.leaguePlayoff === 'top4') {
+        state.leaguePlayoffGenerated = true;
+        const standings = calculateLeagueStandings();
+        let matchCounter = state.matches.length + 1;
+
+        if (standings.length >= 4) {
+          state.matches.push(
+            { id: `M${matchCounter++}`, roundName: 'Playoff-Halbfinale 1 (1. vs 4.)', isPlayoff: true, p1: standings[0].name, p2: standings[3].name, s1: null, s2: null, winner: null, loser: null, finished: false },
+            { id: `M${matchCounter++}`, roundName: 'Playoff-Halbfinale 2 (2. vs 3.)', isPlayoff: true, p1: standings[1].name, p2: standings[2].name, s1: null, s2: null, winner: null, loser: null, finished: false },
+            { id: `M${matchCounter++}`, roundName: 'Spiel um Platz 3', isPlayoff: true, p1: 'Verlierer HF 1', p2: 'Verlierer HF 2', s1: null, s2: null, winner: null, loser: null, finished: false },
+            { id: `M${matchCounter++}`, roundName: 'Großes Finale um Gold', isPlayoff: true, p1: 'Sieger HF 1', p2: 'Sieger HF 2', s1: null, s2: null, winner: null, loser: null, finished: false }
+          );
+        }
+      }
+
+      const hf1 = state.matches.find(item => item.roundName && item.roundName.includes('Playoff-Halbfinale 1'));
+      const hf2 = state.matches.find(item => item.roundName && item.roundName.includes('Playoff-Halbfinale 2'));
+
+      if (hf1 && hf2 && (m.id === hf1.id || m.id === hf2.id)) {
+        const finalMatch = state.matches.find(item => item.roundName === 'Großes Finale um Gold');
+        const bronzeMatch = state.matches.find(item => item.roundName === 'Spiel um Platz 3');
+
+        if (hf1.finished && hf2.finished) {
+          if (finalMatch) {
+            finalMatch.p1 = hf1.winner;
+            finalMatch.p2 = hf2.winner;
+          }
+          if (bronzeMatch) {
+            bronzeMatch.p1 = hf1.loser;
+            bronzeMatch.p2 = hf2.loser;
+          }
+        }
+      }
+    }
+
+    // ------------------------------------------
+    // RENDERING MATCH RUNNER & ACTIVE MATCH
+    // ------------------------------------------
+    function renderActiveMatch() {
+      const hero = document.getElementById('activeMatchHero');
+      const roundNameEl = document.getElementById('activeMatchRoundName');
+      const distanceEl = document.getElementById('activeMatchDistance');
+      const p1NameEl = document.getElementById('activeP1Name');
+      const p2NameEl = document.getElementById('activeP2Name');
+      const btnsBox = document.getElementById('activeResultButtons');
+
+      const match = state.matches.find(m => m.id === state.activeMatchId);
+
+      if (!match) {
+        if (hero) hero.classList.add('hidden');
+        return;
+      }
+
+      if (hero) hero.classList.remove('hidden');
+      if (roundNameEl) roundNameEl.textContent = `${match.id}: ${match.roundName}`;
+      if (distanceEl) {
+        const wins = Math.ceil(state.bestOf / 2);
+        distanceEl.textContent = `Best of ${state.bestOf} (First to ${wins})`;
+      }
+
+      if (p1NameEl) p1NameEl.textContent = match.p1;
+      if (p2NameEl) p2NameEl.textContent = match.p2;
+
+      if (btnsBox) {
+        btnsBox.innerHTML = '';
+        const wins = Math.ceil(state.bestOf / 2);
+        const pairs = [];
+
+        for (let l = 0; l < wins; l++) {
+          pairs.push([wins, l]);
+        }
+        for (let l = wins - 1; l >= 0; l--) {
+          pairs.push([l, wins]);
+        }
+
+        pairs.forEach(([s1, s2]) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.onclick = () => recordMatchResult(match.id, s1, s2);
+          btn.className = 'px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 hover:border-emerald-500 text-white font-bold font-display text-sm transition active:scale-95 shadow-sm';
+          btn.textContent = `${s1} : ${s2}`;
+          btnsBox.appendChild(btn);
+        });
+      }
+    }
+
+    function renderScheduleList() {
+      const container = document.getElementById('scheduleListContainer');
+      const badge = document.getElementById('scheduleProgressBadge');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const finishedCount = state.matches.filter(m => m.finished).length;
+      if (badge) badge.textContent = `${finishedCount} / ${state.matches.length} beendet`;
+
+      state.matches.forEach((m) => {
+        const isCurrent = (m.id === state.activeMatchId);
+        const isDone = m.finished;
+        const playable = isMatchPlayable(m);
+
+        let statusText = 'Offen';
+        let statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+
+        if (isCurrent) {
+          statusText = 'Jetzt am Board';
+          statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold';
+        } else if (isDone) {
+          statusText = 'Beendet';
+          statusBadgeClass = 'bg-slate-800 text-slate-400';
+        }
+
+        const item = document.createElement('div');
+        item.className = `p-3.5 rounded-xl border transition flex items-center justify-between gap-3 ${
+          isCurrent 
+            ? 'bg-slate-900 border-2 border-emerald-500 shadow-lg shadow-emerald-500/10' 
+            : (isDone ? 'bg-slate-950/60 border-slate-800/80' : 'bg-slate-900/90 border-slate-800')
+        }`;
+
+        item.innerHTML = `
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-display font-bold text-xs flex items-center justify-center shrink-0">
+              ${m.id}
+            </span>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-400">${m.roundName}</span>
+                <span class="text-[10px] px-2 py-0.2 rounded-full font-semibold ${statusBadgeClass}">
+                  ${statusText}
+                </span>
+              </div>
+              <div class="flex items-center gap-2 mt-0.5 text-sm font-bold text-white truncate">
+                <span class="${isDone && m.winner === m.p1 ? 'text-emerald-400' : ''}">${escapeHtml(m.p1)}</span>
+                <span class="text-slate-500 text-xs font-normal">vs</span>
+                <span class="${isDone && m.winner === m.p2 ? 'text-emerald-400' : ''}">${escapeHtml(m.p2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="shrink-0 flex items-center gap-2">
+            ${isDone ? `
+              <span class="font-display font-bold text-sm px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-400 border border-slate-700">
+                ${m.s1} : ${m.s2}
+              </span>
+            ` : (playable && !isCurrent ? `
+              <button onclick="setActiveMatchManual('${m.id}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold transition">
+                Aufrufen
+              </button>
+            ` : '')}
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function setActiveMatchManual(matchId) {
+      state.activeMatchId = matchId;
+      renderActiveMatch();
+      renderScheduleList();
+      renderTree();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ------------------------------------------
+    // TOURNAMENT TREE VIEW
+    // ------------------------------------------
+    function renderTree() {
+      const container = document.getElementById('treeContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const grouped = {};
+      state.matches.forEach(m => {
+        let cat = 'Hauptrunde (Winners Bracket)';
+        if (m.bracket === 'loser') {
+          cat = 'Verlierer-Runde (Loser Bracket)';
+        } else if (m.bracket === 'final') {
+          cat = 'Grand Final';
+        } else if (m.group) {
+          cat = `Gruppe ${m.group}`;
+        } else if (m.stage) {
+          cat = 'K.o.-Hauptrunde (Halbfinale & Finale)';
+        } else if (m.isPlayoff) {
+          cat = 'Playoff-Endrunde';
+        }
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(m);
+      });
+
+      Object.entries(grouped).forEach(([catTitle, matchList]) => {
+        const sec = document.createElement('div');
+        sec.className = 'space-y-3';
+
+        let dotColor = 'bg-emerald-400';
+        let titleColor = 'text-emerald-400';
+
+        if (catTitle.includes('Gruppe B') || catTitle.includes('Loser')) {
+          dotColor = 'bg-red-500';
+          titleColor = 'text-red-400';
+        } else if (catTitle.includes('Final') || catTitle.includes('Playoff') || catTitle.includes('K.o.-Hauptrunde')) {
+          dotColor = 'bg-amber-400';
+          titleColor = 'text-amber-400';
+        } else if (catTitle.includes('Gruppe A') || catTitle.includes('Winners')) {
+          dotColor = 'bg-emerald-400';
+          titleColor = 'text-emerald-400';
+        }
+
+        sec.innerHTML = `
+          <h4 class="font-display font-bold text-xs uppercase tracking-wider text-slate-300 border-b border-slate-800 pb-1.5 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full ${dotColor} shadow-sm"></span>
+            <span class="${titleColor}">${catTitle}</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            ${matchList.map(m => {
+              const isCurrent = (m.id === state.activeMatchId);
+              const isDone = m.finished;
+
+              let statusText = 'Offen';
+              let statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold';
+
+              if (isCurrent) {
+                statusText = 'Jetzt am Board';
+                statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold';
+              } else if (isDone) {
+                statusText = 'Beendet';
+                statusBadgeClass = 'bg-slate-800 text-slate-400';
+              }
+
+              return `
+                <div class="p-3 rounded-xl border transition ${
+                  isCurrent 
+                    ? 'bg-slate-900 border-2 border-emerald-500 shadow-lg shadow-emerald-500/20' 
+                    : 'bg-slate-950 border-slate-800'
+                }">
+                  <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                    <span class="font-bold text-slate-300 font-display">${m.id}: ${m.roundName}</span>
+                    <span class="text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${statusBadgeClass}">
+                      ${statusText}
+                    </span>
+                  </div>
+                  <div class="space-y-1.5 text-xs font-semibold">
+                    <div class="flex items-center justify-between p-1.5 rounded bg-slate-900 border border-slate-800/80">
+                      <span class="${isDone && m.winner === m.p1 ? 'text-emerald-400 font-bold' : 'text-slate-300'} truncate">${escapeHtml(m.p1)}</span>
+                      <span class="font-display font-bold text-white ml-2">${isDone ? m.s1 : '-'}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-1.5 rounded bg-slate-900 border border-slate-800/80">
+                      <span class="${isDone && m.winner === m.p2 ? 'text-emerald-400 font-bold' : 'text-slate-300'} truncate">${escapeHtml(m.p2)}</span>
+                      <span class="font-display font-bold text-white ml-2">${isDone ? m.s2 : '-'}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+        container.appendChild(sec);
+      });
+    }
+
+    function setTournamentView(v) {
+      state.tournamentView = v;
+      const btnR = document.getElementById('tabBtnRunner');
+      const btnT = document.getElementById('tabBtnTree');
+      const viewR = document.getElementById('viewRunner');
+      const viewT = document.getElementById('viewTree');
+
+      if (v === 'runner') {
+        if (btnR) btnR.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 transition';
+        if (btnT) btnT.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+        if (viewR) viewR.classList.remove('hidden');
+        if (viewT) viewT.classList.add('hidden');
+      } else {
+        if (btnT) btnT.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 transition';
+        if (btnR) btnR.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition';
+        if (viewT) viewT.classList.remove('hidden');
+        if (viewR) viewR.classList.add('hidden');
+        renderTree();
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ------------------------------------------
+    // TABLE CALCULATIONS (GROUPS & LEAGUE)
+    // ------------------------------------------
+    function renderGroupTables() {
+      ['A', 'B'].forEach(grKey => {
+        const tbody = document.getElementById(`tableBodyGroup${grKey}`);
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        const list = calculateGroupStandings(grKey);
+
+        const isGroupA = (grKey === 'A');
+        const accentTextClass = isGroupA ? 'text-emerald-400' : 'text-red-400';
+        const accentBgBadgeClass = isGroupA ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400';
+
+        list.forEach((s, idx) => {
+          const rank = idx + 1;
+          const isQuali = rank <= 2;
+          const tr = document.createElement('tr');
+          tr.className = isQuali ? (isGroupA ? 'bg-emerald-500/5' : 'bg-red-500/5') : '';
+          tr.innerHTML = `
+            <td class="py-1.5 px-2 font-display font-bold ${rank <= 2 ? accentTextClass : 'text-slate-400'}">${rank}.</td>
+            <td class="py-1.5 px-2 font-bold text-white whitespace-nowrap">
+              ${escapeHtml(s.name)}
+              ${isQuali ? `<span class="ml-1 text-[9px] px-1 py-0.2 rounded ${accentBgBadgeClass} font-semibold">HF</span>` : ''}
+            </td>
+            <td class="py-1.5 px-1 text-center font-medium">${s.played}</td>
+            <td class="py-1.5 px-1 text-center font-medium">${s.wins}:${s.losses}</td>
+            <td class="py-1.5 px-1 text-center font-medium">${s.legsFor}:${s.legsAgainst}</td>
+            <td class="py-1.5 px-2 text-right font-display font-bold text-slate-200">${s.points}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function calculateGroupStandings(groupKey) {
+      const players = groupKey === 'A' ? state.groupA : state.groupB;
+      const stats = {};
+      players.forEach(name => {
+        stats[name] = { name, played: 0, wins: 0, losses: 0, legsFor: 0, legsAgainst: 0, diff: 0, points: 0 };
+      });
+
+      state.matches.filter(m => m.group === groupKey && m.finished).forEach(m => {
+        if (stats[m.p1] && stats[m.p2]) {
+          stats[m.p1].played++;
+          stats[m.p2].played++;
+          stats[m.p1].legsFor += m.s1;
+          stats[m.p1].legsAgainst += m.s2;
+          stats[m.p2].legsFor += m.s2;
+          stats[m.p2].legsAgainst += m.s1;
+
+          if (state.scoringSystem === 'legs') {
+            stats[m.p1].points += m.s1;
+            stats[m.p2].points += m.s2;
+            if (m.s1 > m.s2) {
+              stats[m.p1].wins++;
+              stats[m.p2].losses++;
+            } else {
+              stats[m.p2].wins++;
+              stats[m.p1].losses++;
+            }
+          } else {
+            if (m.s1 > m.s2) {
+              stats[m.p1].wins++;
+              stats[m.p1].points += 2;
+              stats[m.p2].losses++;
+            } else {
+              stats[m.p2].wins++;
+              stats[m.p2].points += 2;
+              stats[m.p1].losses++;
+            }
+          }
+        }
+      });
+
+      Object.values(stats).forEach(s => s.diff = s.legsFor - s.legsAgainst);
+      return Object.values(stats).sort((a, b) => b.points - a.points || b.diff - a.diff || b.legsFor - a.legsFor);
+    }
+
+    function renderLeagueTable() {
+      const tbody = document.getElementById('tableBodyLeague');
+      const headEl = document.getElementById('leagueTableHeading');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (headEl) {
+        headEl.textContent = `Live-Tabelle (${state.scoringSystem === 'legs' ? '1 Pkt pro Leg' : '2 Pkt pro Sieg'})`;
+      }
+
+      const list = calculateLeagueStandings();
+
+      list.forEach((s, idx) => {
+        const rank = idx + 1;
+        let rankDisplay = `${rank}.`;
+        if (rank === 1) rankDisplay = '🥇';
+        else if (rank === 2) rankDisplay = '🥈';
+        else if (rank === 3) rankDisplay = '🥉';
+
+        let badge = '';
+        if (state.leaguePlayoff === 'top4' && rank <= 4) {
+          badge = '<span class="ml-1 text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Playoff</span>';
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-2 px-2.5 font-display font-bold text-center ${rank <= 3 ? 'text-base' : 'text-slate-400'}">${rankDisplay}</td>
+          <td class="py-2 px-2.5 font-bold text-white whitespace-nowrap">
+            ${escapeHtml(s.name)} ${badge}
+          </td>
+          <td class="py-2 px-2 text-center font-medium">${s.played}</td>
+          <td class="py-2 px-2 text-center font-medium text-emerald-400">${s.wins}</td>
+          <td class="py-2 px-2 text-center font-medium text-red-400">${s.losses}</td>
+          <td class="py-2 px-2 text-center font-medium">${s.legsFor}:${s.legsAgainst}</td>
+          <td class="py-2 px-2 text-center font-medium ${s.diff > 0 ? 'text-emerald-400' : (s.diff < 0 ? 'text-red-400' : 'text-slate-400')}">
+            ${s.diff > 0 ? '+' + s.diff : s.diff}
+          </td>
+          <td class="py-2 px-3 text-right font-display font-bold text-slate-200 text-sm">${s.points}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function calculateLeagueStandings() {
+      const stats = {};
+      state.players.forEach(p => {
+        stats[p.name] = { name: p.name, played: 0, wins: 0, losses: 0, legsFor: 0, legsAgainst: 0, diff: 0, points: 0 };
+      });
+
+      state.matches.filter(m => !m.isPlayoff && m.finished).forEach(m => {
+        if (stats[m.p1] && stats[m.p2]) {
+          stats[m.p1].played++;
+          stats[m.p2].played++;
+          stats[m.p1].legsFor += m.s1;
+          stats[m.p1].legsAgainst += m.s2;
+          stats[m.p2].legsFor += m.s2;
+          stats[m.p2].legsAgainst += m.s1;
+
+          if (state.scoringSystem === 'legs') {
+            stats[m.p1].points += m.s1;
+            stats[m.p2].points += m.s2;
+            if (m.s1 > m.s2) {
+              stats[m.p1].wins++;
+              stats[m.p2].losses++;
+            } else {
+              stats[m.p2].wins++;
+              stats[m.p1].losses++;
+            }
+          } else {
+            if (m.s1 > m.s2) {
+              stats[m.p1].wins++;
+              stats[m.p1].points += 2;
+              stats[m.p2].losses++;
+            } else {
+              stats[m.p2].wins++;
+              stats[m.p2].points += 2;
+              stats[m.p1].losses++;
+            }
+          }
+        }
+      });
+
+      Object.values(stats).forEach(s => s.diff = s.legsFor - s.legsAgainst);
+      return Object.values(stats).sort((a, b) => b.points - a.points || b.diff - a.diff || b.legsFor - a.legsFor);
+    }
+
+    // ==========================================
+    // TOURNAMENT FINISH & PODIUM
+    // ==========================================
+    function finishTournament() {
+      state.currentPhase = 'podium';
+      updateStepBadges();
+
+      document.getElementById('screenTournament').classList.add('hidden');
+      document.getElementById('screenPodium').classList.remove('hidden');
+
+      determineFinalStandings();
+      renderPodium();
+      updateHeaderActions();
+
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function determineFinalStandings() {
+      state.finalStandings = [];
+      const m = state.mode;
+
+      if (m === 'dko') {
+        const grandFinal = [...state.matches].reverse().find(match => match.roundName.includes('Grand Final') && match.finished);
+        const p1 = grandFinal ? grandFinal.winner : 'Sieger';
+        const p2 = grandFinal ? grandFinal.loser : 'Zweiter';
+
+        const loserFinal = state.matches.find(match => match.roundName.includes('Verlierer-Finale') && match.finished);
+        const p3 = loserFinal ? loserFinal.loser : 'Dritter';
+
+        const ranked = [p1, p2, p3];
+        state.players.forEach(p => {
+          if (!ranked.includes(p.name)) ranked.push(p.name);
+        });
+        state.finalStandings = ranked;
+      } else if (m === 'gruppen') {
+        const goldMatch = state.matches.find(match => match.stage === 'final' && match.finished);
+        const bronzeMatch = state.matches.find(match => match.stage === 'bronze' && match.finished);
+
+        const p1 = goldMatch ? goldMatch.winner : 'Gold';
+        const p2 = goldMatch ? goldMatch.loser : 'Silber';
+        const p3 = bronzeMatch ? bronzeMatch.winner : 'Bronze';
+        const p4 = bronzeMatch ? bronzeMatch.loser : 'Platz 4';
+
+        const ranked = [p1, p2, p3, p4];
+        state.players.forEach(p => {
+          if (!ranked.includes(p.name)) ranked.push(p.name);
+        });
+        state.finalStandings = ranked;
+      } else {
+        if (state.leaguePlayoff === 'top4') {
+          const goldMatch = state.matches.find(match => match.roundName && match.roundName.includes('Finale um Gold') && match.finished);
+          const bronzeMatch = state.matches.find(match => match.roundName && match.roundName.includes('Platz 3') && match.finished);
+          const p1 = goldMatch ? goldMatch.winner : 'Gold';
+          const p2 = goldMatch ? goldMatch.loser : 'Silber';
+          const p3 = bronzeMatch ? bronzeMatch.winner : 'Bronze';
+          const p4 = bronzeMatch ? bronzeMatch.loser : 'Platz 4';
+          const ranked = [p1, p2, p3, p4];
+          state.players.forEach(p => {
+            if (!ranked.includes(p.name)) ranked.push(p.name);
+          });
+          state.finalStandings = ranked;
+        } else {
+          const table = calculateLeagueStandings();
+          state.finalStandings = table.map(t => t.name);
+        }
+      }
+    }
+
+    function renderPodium() {
+      const top3 = document.getElementById('podiumTop3Container');
+      const tbody = document.getElementById('podiumTableBody');
+      if (!top3 || !tbody) return;
+
+      const p1 = state.finalStandings[0] || 'Sieger';
+      const p2 = state.finalStandings[1] || 'Zweiter';
+      const p3 = state.finalStandings[2] || 'Dritter';
+
+      const funTitles = [
+        "🥇 Unantastbarer Darts-Gott (unschlagbar)",
+        "🥈 Vize-Legende (Haarscharf am Ruhm vorbei – Pfeile hatten Drall)",
+        "🥉 Treppchen-Abstauber (Hauptsache vor Platz 4, Bronze glänzt wie Gold)",
+        "🍍 Die goldene Ananas (Bester Werfer abseits des Podiums)",
+        "🍻 Meister der Herzen & offizieller Getränkewart",
+        "🧯 Feuerlöscher der Triple-Felder & Decider-Pechvogel",
+        "🎯 Board-Flüsterer auf der Suche nach dem Doppel",
+        "🏮 Ehrenmann der roten Laterne (Die Pfeile waren definitiv schuld!)"
+      ];
+
+      top3.innerHTML = `
+        <!-- 2nd Place -->
+        <div class="flex flex-col items-center">
+          <span class="text-xs sm:text-sm font-bold text-slate-200 mb-1 truncate max-w-[95px] sm:max-w-[130px] flex items-center gap-1">
+            <span>🥈</span> ${escapeHtml(p2)}
+          </span>
+          <span class="text-[10px] text-slate-400 font-semibold mb-1">„Fast gereicht!“</span>
+          <div class="w-24 sm:w-32 h-28 sm:h-36 rounded-t-2xl bg-gradient-to-t from-slate-800 to-slate-700 border-t-4 border-slate-300 flex flex-col items-center justify-center p-2 shadow-xl relative overflow-hidden">
+            <span class="text-2xl sm:text-3xl font-display font-bold text-slate-200">2</span>
+            <span class="text-[10px] uppercase font-bold text-slate-300 tracking-wider">Silber</span>
+          </div>
+        </div>
+
+        <!-- 1st Place -->
+        <div class="flex flex-col items-center z-10">
+          <div class="text-2xl mb-0.5 animate-bounce">👑</div>
+          <span class="text-xs sm:text-base font-extrabold text-amber-300 mb-0.5 truncate max-w-[110px] sm:max-w-[160px] flex items-center gap-1">
+            <span>🥇</span> ${escapeHtml(p1)}
+          </span>
+          <span class="text-[10px] text-slate-400 font-semibold mb-1">„Darts-Gott“</span>
+          <div class="w-28 sm:w-36 h-40 sm:h-52 rounded-t-2xl bg-gradient-to-t from-amber-600 via-amber-500 to-amber-400 border-t-4 border-yellow-200 flex flex-col items-center justify-center p-2 shadow-2xl shadow-amber-500/30 relative">
+            <span class="text-4xl sm:text-5xl font-display font-black text-slate-950">1</span>
+            <span class="text-[11px] uppercase font-black text-slate-950 tracking-wider">Champion</span>
+          </div>
+        </div>
+
+        <!-- 3rd Place -->
+        <div class="flex flex-col items-center">
+          <span class="text-xs sm:text-sm font-bold text-slate-200 mb-1 truncate max-w-[95px] sm:max-w-[130px] flex items-center gap-1">
+            <span>🥉</span> ${escapeHtml(p3)}
+          </span>
+          <span class="text-[10px] text-slate-400 font-semibold mb-1">„Bronze schmeckt!“</span>
+          <div class="w-24 sm:w-32 h-20 sm:h-28 rounded-t-2xl bg-gradient-to-t from-amber-950 to-amber-800 border-t-4 border-amber-600 flex flex-col items-center justify-center p-2 shadow-xl relative overflow-hidden">
+            <span class="text-2xl sm:text-3xl font-display font-bold text-amber-200">3</span>
+            <span class="text-[10px] uppercase font-bold text-amber-300 tracking-wider">Bronze</span>
+          </div>
+        </div>
+      `;
+
+      tbody.innerHTML = '';
+      state.finalStandings.forEach((name, idx) => {
+        const rank = idx + 1;
+        const title = funTitles[idx] || 'Turnier-Teilnehmer & Legenden-Anwärter';
+
+        let rankHtml = `${rank}.`;
+        let rankColorClass = 'text-slate-500';
+        let rowBgClass = '';
+
+        if (rank === 1) {
+          rankHtml = '🥇';
+          rankColorClass = 'text-amber-300 font-black text-base';
+          rowBgClass = 'bg-amber-500/10 border-l-4 border-l-amber-400';
+        } else if (rank === 2) {
+          rankHtml = '🥈';
+          rankColorClass = 'text-slate-200 font-black text-base';
+          rowBgClass = 'bg-slate-400/10 border-l-4 border-l-slate-300';
+        } else if (rank === 3) {
+          rankHtml = '🥉';
+          rankColorClass = 'text-amber-500 font-black text-base';
+          rowBgClass = 'bg-amber-900/15 border-l-4 border-l-amber-600';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = `transition ${rowBgClass}`;
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-center font-display font-bold whitespace-nowrap ${rankColorClass}">
+            ${rankHtml}
+          </td>
+          <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">
+            ${escapeHtml(name)}
+          </td>
+          <td class="py-2.5 px-3 ${rank === 1 ? 'text-amber-200/90 font-semibold' : 'text-slate-300'} text-xs font-medium">
+            ${title}
+          </td>
+          <td class="py-2.5 px-3 text-right font-display text-slate-400">
+            ${getWinLossStats(name)}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getWinLossStats(name) {
+      let w = 0, l = 0;
+      state.matches.filter(m => m.finished).forEach(m => {
+        if (m.winner === name) w++;
+        else if (m.loser === name) l++;
+      });
+      return `${w}S / ${l}N`;
+    }
+
+    // ==========================================
+    // GLOBAL UNDO / KORREKTUR CONTROLLER
+    // ==========================================
+    function undoLastAction() {
+      if (state.currentPhase === 'podium') {
+        state.currentPhase = 'tournament';
+        updateStepBadges();
+        document.getElementById('screenPodium').classList.add('hidden');
+        document.getElementById('screenTournament').classList.remove('hidden');
+        renderActiveMatch();
+        renderScheduleList();
+        updateHeaderActions();
+        triggerPersistence();
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      if (state.currentPhase === 'tournament') {
+        if (state.history.length > 0) {
+          const snapshot = state.history.pop();
+          state.matches = snapshot.matches;
+          state.activeMatchId = snapshot.activeMatchId;
+          state.leaguePlayoffGenerated = snapshot.leaguePlayoffGenerated;
+
+          if (state.mode === 'gruppen') renderGroupTables();
+          if (state.mode === 'liga') renderLeagueTable();
+          renderActiveMatch();
+          renderScheduleList();
+          renderTree();
+          updateHeaderActions();
+          triggerPersistence();
+          if (window.lucide) lucide.createIcons();
+        } else {
+          state.currentPhase = 'quali';
+          updateStepBadges();
+          document.getElementById('screenTournament').classList.add('hidden');
+          document.getElementById('screenQuali').classList.remove('hidden');
+          renderQualiView();
+          updateHeaderActions();
+          triggerPersistence();
+          if (window.lucide) lucide.createIcons();
+        }
+        return;
+      }
+
+      if (state.currentPhase === 'quali') {
+        if (state.qualiHistory.length > 0) {
+          const lastThrow = state.qualiHistory.pop();
+          const p = state.players[lastThrow.playerIndex];
+          if (p) {
+            p.qualiScore = Math.max(0, p.qualiScore - lastThrow.points);
+            p.dartsCount = Math.max(0, p.dartsCount - 1);
+          }
+          renderQualiCards();
+          renderQualiRanking();
+          updateStartTournamentBtnState();
+          updateHeaderActions();
+          triggerPersistence();
+          if (window.lucide) lucide.createIcons();
+        } else {
+          state.currentPhase = 'setup';
+          updateStepBadges();
+          document.getElementById('screenQuali').classList.add('hidden');
+          document.getElementById('screenSetup').classList.remove('hidden');
+          updateHeaderActions();
+          triggerPersistence();
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+    }
+
+    function updateHeaderActions() {
+      const undoBtn = document.getElementById('btnHeaderUndo');
+      if (!undoBtn) return;
+      undoBtn.classList.toggle('hidden', state.currentPhase === 'setup');
+    }
+
+    // ==========================================
+    // RESET / NEUSTART CONTROLLER (MODAL)
+    // ==========================================
+    function openResetModal() {
+      const modal = document.getElementById('resetConfirmModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('resetConfirmModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function confirmReset() {
+      closeResetModal();
+      resetEntireApp();
+    }
+
+    function resetEntireApp() {
+      state.playerCount = 5;
+      state.bestOf = 3;
+      state.mode = 'dko';
+      state.rounds = 1;
+      state.scoringSystem = 'match';
+      state.qualiMethod = 'bull';
+      state.randomDrawDone = false;
+      state.leaguePlayoff = 'top4';
+      state.leaguePlayoffGenerated = false;
+
+      state.players = [
+        { id: 1, name: "Spieler 1", qualiScore: 0, dartsCount: 0, tieBreakRank: 1, randomRank: 1 },
+        { id: 2, name: "Spieler 2", qualiScore: 0, dartsCount: 0, tieBreakRank: 2, randomRank: 2 },
+        { id: 3, name: "Spieler 3", qualiScore: 0, dartsCount: 0, tieBreakRank: 3, randomRank: 3 },
+        { id: 4, name: "Spieler 4", qualiScore: 0, dartsCount: 0, tieBreakRank: 4, randomRank: 4 },
+        { id: 5, name: "Spieler 5", qualiScore: 0, dartsCount: 0, tieBreakRank: 5, randomRank: 5 }
+      ];
+
+      state.qualiHistory = [];
+      state.currentPhase = 'setup';
+      state.tournamentView = 'runner';
+      state.matches = [];
+      state.activeMatchId = null;
+      state.finalStandings = [];
+      state.history = [];
+      state.groupA = [];
+      state.groupB = [];
+
+      try {
+        localStorage.removeItem('darts_tournament_companion_state');
+      } catch (e) {
+        console.warn(e);
+      }
+
+      document.getElementById('screenSetup').classList.remove('hidden');
+      document.getElementById('screenQuali').classList.add('hidden');
+      document.getElementById('screenTournament').classList.add('hidden');
+      document.getElementById('screenPodium').classList.add('hidden');
+
+      setPlayerCount(5);
+      setTournamentMode('dko');
+      setTournamentRounds(1);
+      setScoringSystem('match');
+      setLeaguePlayoff('top4');
+      setQualiMethod('bull');
+      updateBestOfUI();
+      updateStepBadges();
+      updateHeaderActions();
+      updateAdvice();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updateStepBadges() {
+      const map = { setup: 1, quali: 2, tournament: 3, podium: 4 };
+      const currentNum = map[state.currentPhase] || 1;
+
+      for (let i = 1; i <= 4; i++) {
+        const badge = document.getElementById(`stepBadge${i}`);
+        if (!badge) continue;
+        if (i === currentNum) {
+          badge.className = 'flex items-center gap-2 pb-2.5 border-b-2 border-emerald-500 text-emerald-400';
+          const circle = badge.querySelector('span');
+          if (circle) circle.className = 'w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-[11px]';
+        } else if (i < currentNum) {
+          badge.className = 'flex items-center gap-2 pb-2.5 border-b-2 border-slate-700 text-slate-400';
+          const circle = badge.querySelector('span');
+          if (circle) circle.className = 'w-5 h-5 rounded-full bg-slate-800 text-emerald-400 flex items-center justify-center font-bold text-[11px]';
+        } else {
+          badge.className = 'flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-600';
+          const circle = badge.querySelector('span');
+          if (circle) circle.className = 'w-5 h-5 rounded-full bg-slate-900 text-slate-600 flex items-center justify-center font-bold text-[11px]';
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
