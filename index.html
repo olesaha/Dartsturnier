@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="Dartsturnier">
   <meta name="theme-color" content="#020617">
   <meta name="application-name" content="Dartsturnier">
-  <meta name="description" content="Turnier-Manager für Darts: Doppel-K.o., 2 Gruppen &amp; Ligamodus">
+  <meta name="description" content="Turnier-Manager für Darts: Doppel-K.o. &bull; 2 Gruppen &bull; Liga">
 
   <!-- Apple Touch Icon (Dartboard SVG Data URI) -->
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23090d16'/%3E%3Ccircle cx='90' cy='90' r='75' fill='%230f172a' stroke='%2310b981' stroke-width='6'/%3E%3Ccircle cx='90' cy='90' r='55' fill='none' stroke='%23e2e8f0' stroke-width='3' stroke-dasharray='8 4' opacity='0.3'/%3E%3Ccircle cx='90' cy='90' r='35' fill='%230f766e' stroke='%2334d399' stroke-width='4'/%3E%3Ccircle cx='90' cy='90' r='18' fill='%23064e3b' stroke='%2310b981' stroke-width='4'/%3E%3Ccircle cx='90' cy='90' r='8' fill='%23ef4444'/%3E%3C/svg%3E">
@@ -73,7 +73,7 @@
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Gespeichert
             </span>
           </div>
-          <p class="text-xs text-slate-400">Turnier-Manager: Doppel-K.o. &bull; 2 Gruppen &bull; Ligamodus</p>
+          <p class="text-xs text-slate-400">Turnier-Manager: Doppel-K.o. &bull; 2 Gruppen &bull; Liga</p>
         </div>
       </div>
 
@@ -103,17 +103,17 @@
     <nav class="flex items-center justify-between mb-8 overflow-x-auto pb-1 text-xs font-semibold gap-2 border-b border-slate-800/60">
       <div id="stepBadge1" class="flex items-center gap-2 pb-2.5 border-b-2 border-emerald-500 text-emerald-400">
         <span class="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-[11px]">1</span>
-        <span>Setup</span>
+        <span>Turnier konfigurieren</span>
       </div>
       <div id="stepBadge2" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500">
         <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[11px]">2</span>
         <span>Setzliste</span>
       </div>
-      <div id="stepBadge3" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500">
+      <div id="stepBadge3" onclick="navToStep(3)" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500 cursor-pointer hover:text-slate-300 transition">
         <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[11px]">3</span>
         <span>Matches</span>
       </div>
-      <div id="stepBadge4" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500">
+      <div id="stepBadge4" onclick="navToStep(4)" class="flex items-center gap-2 pb-2.5 border-b-2 border-transparent text-slate-500 cursor-pointer hover:text-slate-300 transition">
         <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[11px]">4</span>
         <span>Siegerehrung</span>
       </div>
@@ -131,7 +131,7 @@
 
         <!-- 1. Spieleranzahl (3 bis 8) mit Plus / Minus -->
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spieleranzahl (3 bis 8 Spieler)</label>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spieleranzahl</label>
           <div class="flex items-center gap-3">
             <button type="button" onclick="adjustPlayerCount(-1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
               <i data-lucide="minus" class="w-5 h-5"></i>
@@ -147,13 +147,13 @@
 
         <!-- 2. Spieldistanz Best of Legs mit Plus / Minus -->
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Match-Distanz (Best of Legs)</label>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Match-Distanz</label>
           <div class="flex items-center gap-3">
             <button type="button" onclick="adjustBestOf(-1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
               <i data-lucide="minus" class="w-5 h-5"></i>
             </button>
             <div class="flex-1 py-3 px-4 bg-slate-950/80 border border-slate-800 rounded-xl text-center">
-              <span id="bestOfDisplay" class="font-display font-bold text-lg text-white">Best of 3 Legs</span>
+              <span id="bestOfDisplay" class="font-display font-bold text-lg text-white">Best of 3 Legs (First to 2 Legs)</span>
             </div>
             <button type="button" onclick="adjustBestOf(1)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-lg transition active:scale-95 border border-slate-700">
               <i data-lucide="plus" class="w-5 h-5"></i>
@@ -171,7 +171,7 @@
                 <span class="font-bold text-white font-display text-base">Doppel-K.o.</span>
                 <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">K.o.-Baum</span>
               </div>
-              <p class="text-xs text-slate-300 leading-snug">Jeder hat 2 Leben. Erst nach 2 Niederlagen ist man raus. Mit Loser Bracket &amp; Reset-Finale.</p>
+              <p class="text-xs text-slate-300 leading-snug">Jeder hat 2 Leben: Erst nach 2 Niederlagen scheidet man aus. Mit Haupt- &amp; Verlierer-Runde sowie großem Finale.</p>
             </button>
 
             <!-- 2 Gruppen -->
@@ -180,68 +180,165 @@
                 <span class="font-bold text-slate-200 font-display text-base">2 Gruppen</span>
                 <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">Vorrunde + K.o.</span>
               </div>
-              <p class="text-xs text-slate-400 leading-snug">Teilung in Gruppe A &amp; B, danach Halbfinale über Kreuz, Spiel um Platz 3 &amp; Finale.</p>
+              <p class="text-xs text-slate-400 leading-snug">Vorrunde in zwei Gruppen. Danach K.o.-Phase mit Halbfinale über Kreuz, Spiel um Platz 3 und Finale.</p>
             </button>
 
-            <!-- Ligamodus -->
+            <!-- Liga -->
             <button type="button" id="btnModeLiga" onclick="setTournamentMode('liga')" class="p-4 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700 relative">
               <div class="flex items-center justify-between mb-1">
-                <span class="font-bold text-slate-200 font-display text-base">Ligamodus</span>
+                <span class="font-bold text-slate-200 font-display text-base">Liga</span>
                 <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">1 Tabelle</span>
               </div>
-              <p class="text-xs text-slate-400 leading-snug">Jeder gegen Jeden in einer Tabelle. Wahlweise mit Top-4 Play-offs oder reiner Abschlusstabelle.</p>
+              <p class="text-xs text-slate-400 leading-snug">Klassische Liga: Alle treten gegeneinander an. Abschluss über Top-4 Playoffs oder reine Endtabelle.</p>
             </button>
           </div>
         </div>
 
-        <!-- 4. Wertungssystem (für 2 Gruppen und Ligamodus) -->
-        <div id="scoringOptionBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-2.5">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Wertungssystem</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button type="button" id="btnScoreMatch" onclick="setScoringSystem('match')" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
-              <span class="font-bold block text-white mb-0.5">2 Punkte pro Sieg</span>
-              <span class="text-[10px] text-slate-300">Klassisch (Sieg: 2 Pkt, Niederlage: 0 Pkt).</span>
-            </button>
-            <button type="button" id="btnScoreLegs" onclick="setScoringSystem('legs')" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
-              <span class="font-bold block text-slate-200 mb-0.5">1 Punkt pro gewonnenes Leg</span>
-              <span class="text-[10px] text-slate-400">Belohnt jedes einzelne gewonnene Leg (z.B. bei 1:2).</span>
-            </button>
+        <!-- 4. Einklappbare erweiterte Modus-Einstellungen -->
+        <div id="advancedModeContainer" class="hidden space-y-2">
+          <button type="button" onclick="toggleAdvancedModeAccordion()" class="w-full p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-900/80 transition flex items-center justify-between text-left group">
+            <div class="flex items-center gap-3">
+              <div class="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-emerald-400 group-hover:bg-slate-700 transition">
+                <i data-lucide="settings-2" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300 block">Erweiterte Modus-Einstellungen</span>
+                <span id="advancedModeSummary" class="text-[11px] text-slate-500">2 Pkt pro Sieg &bull; Einfache Runde &bull; Top-4 Halbfinale</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="advancedModeCustomBadge" class="hidden text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                Angepasst
+              </span>
+              <i id="advancedModeChevron" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+            </div>
+          </button>
+
+          <!-- Aufklappbarer Inhalt für erweiterte Modus-Optionen -->
+          <div id="advancedModeOptionsBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-4">
+            <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-800/80">
+              <span class="text-[11px] text-slate-400">Modus-Details flexibel anpassen:</span>
+              <button type="button" onclick="resetAdvancedModeToStandard()" class="text-[10px] text-slate-400 hover:text-emerald-400 underline transition">
+                Auf Standard zurücksetzen
+              </button>
+            </div>
+
+            <!-- Wertungssystem -->
+            <div id="scoringOptionBox" class="space-y-1.5">
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Wertungssystem</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button type="button" id="btnScoreMatch" onclick="setScoringSystem('match')" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
+                  <span class="font-bold block text-white mb-0.5">2 Punkte pro Sieg</span>
+                  <span class="text-[10px] text-slate-300">Klassisch (Sieg: 2 Pkt, Niederlage: 0 Pkt).</span>
+                </button>
+                <button type="button" id="btnScoreLegs" onclick="setScoringSystem('legs')" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+                  <span class="font-bold block text-slate-200 mb-0.5">1 Punkt pro gewonnenes Leg</span>
+                  <span class="text-[10px] text-slate-400">Belohnt jedes einzelne gewonnene Leg (z.B. bei 1:2).</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Spielrunden -->
+            <div id="roundsOptionBox" class="space-y-1.5">
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Spielrunden</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button type="button" id="btnRoundsSingle" onclick="setTournamentRounds(1)" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
+                  <span class="font-bold block text-white mb-0.5">Einfache Runde</span>
+                  <span class="text-[10px] text-slate-300">Jede Paarung trifft 1x aufeinander.</span>
+                </button>
+                <button type="button" id="btnRoundsDouble" onclick="setTournamentRounds(2)" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+                  <span class="font-bold block text-slate-200 mb-0.5">Hin- &amp; Rückrunde</span>
+                  <span class="text-[10px] text-slate-400">Jede Paarung spielt 2x mit getauschtem Anwurf.</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Endrunden-Modus (nur für Ligamodus) -->
+            <div id="leagueOptionBox" class="space-y-1.5">
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Endrunden-Modus nach der Liga</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button type="button" id="btnPlayoffNone" onclick="setLeaguePlayoff('none')" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
+                  <span class="font-bold block text-white mb-0.5">Reine Endtabelle</span>
+                  <span class="text-[10px] text-slate-300">Tabellenerster ist direkt Turniersieger.</span>
+                </button>
+                <button type="button" id="btnPlayoffTop4" onclick="setLeaguePlayoff('top4')" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+                  <span class="font-bold block text-slate-200 mb-0.5">Top-4 Playoffs</span>
+                  <span class="text-[10px] text-slate-400">Platz 1–4 spielen Halbfinale, Spiel um Platz 3 &amp; Finale.</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- 5. Spielrunden (für Gruppen- und Ligamodus) -->
-        <div id="roundsOptionBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-2.5">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spielrunden</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button type="button" id="btnRoundsSingle" onclick="setTournamentRounds(1)" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
-              <span class="font-bold block text-white mb-0.5">Einfache Runde (Nur Hinrunde)</span>
-              <span class="text-[10px] text-slate-300">Jede Paarung trifft 1x aufeinander (Standard, zeitsparend).</span>
-            </button>
-            <button type="button" id="btnRoundsDouble" onclick="setTournamentRounds(2)" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
-              <span class="font-bold block text-slate-200 mb-0.5">Hin- &amp; Rückrunde (Doppelrunde)</span>
-              <span class="text-[10px] text-slate-400">Jede Paarung spielt 2x mit getauschtem Anwurfrecht.</span>
-            </button>
+        <!-- 5. Einklappbare Endrunden-Verlängerungsbox -->
+        <div id="extraLegsAccordionWrapper" class="space-y-2">
+          <button type="button" id="btnExtraLegsAccordionTrigger" onclick="toggleExtraLegsAccordion()" class="w-full p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 hover:bg-slate-900/80 transition flex items-center justify-between text-left group">
+            <div class="flex items-center gap-3">
+              <div class="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-emerald-400 group-hover:bg-slate-700 transition">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span id="extraLegsTitleText" class="text-xs font-bold uppercase tracking-wider text-slate-300 block">Endrunden-Distanzen anpassen</span>
+                <span id="extraLegsSummary" class="text-[11px] text-slate-500">Standardmäßig gleiche Distanz in allen Runden</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="extraLegsActiveBadge" class="hidden text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                Angepasst
+              </span>
+              <i id="extraLegsChevron" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+            </div>
+          </button>
+
+          <!-- Aufklappbarer Inhalt -->
+          <div id="extraLegsOptionsBox" class="hidden p-3.5 rounded-xl border border-slate-800 bg-slate-950/80 space-y-3">
+            <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-800/80">
+              <span class="text-[11px] text-slate-400">Verlängerung flexibel aktivieren (+2 Legs):</span>
+              <button type="button" onclick="resetExtraLegsToStandard()" class="text-[10px] text-slate-400 hover:text-emerald-400 underline transition">
+                Alle auf Standard
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <!-- 1. Halbfinale / Playoffs Toggle -->
+              <button type="button" id="btnToggleSemiLegs" onclick="toggleSemiExtraLegs()" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+                <div class="flex items-center justify-between mb-0.5">
+                  <span class="font-bold text-slate-200 flex items-center gap-1.5 truncate" id="semiTitleLabel">
+                    <span>⚔️</span> Halbfinale
+                  </span>
+                  <span id="semiLegsBadge" class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-white border border-slate-700/80">Best of 3</span>
+                </div>
+                <span id="semiLegsDesc" class="text-[10px] text-slate-400 block">Gleiche Distanz</span>
+              </button>
+
+              <!-- 2. Spiel um Platz 3 / DKO Finale Haupt- & Hoffnungsrunde Toggle -->
+              <button type="button" id="btnToggleBronzeLegs" onclick="toggleBronzeExtraLegs()" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+                <div class="flex items-center justify-between mb-0.5">
+                  <span class="font-bold text-slate-200 flex items-center gap-1.5 truncate" id="bronzeTitleLabel">
+                    <span>🥉</span> Platz 3
+                  </span>
+                  <span id="bronzeLegsBadge" class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-white border border-slate-700/80">Best of 3</span>
+                </div>
+                <span id="bronzeLegsDesc" class="text-[10px] text-slate-400 block">Gleiche Distanz</span>
+              </button>
+
+              <!-- 3. Finale / Grand Final Toggle -->
+              <button type="button" id="btnToggleFinalLegs" onclick="toggleFinalExtraLegs()" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
+                <div class="flex items-center justify-between mb-0.5">
+                  <span class="font-bold text-slate-200 flex items-center gap-1.5 truncate" id="finalTitleLabel">
+                    <span>🏆</span> Finale
+                  </span>
+                  <span id="finalLegsBadge" class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-white border border-slate-700/80">Best of 3</span>
+                </div>
+                <span id="finalLegsDesc" class="text-[10px] text-slate-400 block">Gleiche Distanz</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- 6. Endrunden-Modus (nur für Ligamodus) -->
-        <div id="leagueOptionBox" class="hidden p-4 rounded-xl border border-slate-800 bg-slate-950/80 space-y-2.5">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Endrunden-Modus nach der Liga</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button type="button" id="btnPlayoffTop4" onclick="setLeaguePlayoff('top4')" class="p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300">
-              <span class="font-bold block text-white mb-0.5">Top-4 Halbfinale</span>
-              <span class="text-[10px] text-slate-300">Platz 1–4 spielen Halbfinale, Spiel um Platz 3 &amp; Finale.</span>
-            </button>
-            <button type="button" id="btnPlayoffNone" onclick="setLeaguePlayoff('none')" class="p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">
-              <span class="font-bold block text-slate-200 mb-0.5">Reine Tabelle</span>
-              <span class="text-[10px] text-slate-400">Keine Endspiele, Tabellenerster ist Turniersieger.</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 7. Qualifikations-Methode Auswahl -->
+        <!-- 6. Setzverfahren Auswahl -->
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Qualifikations-Methode</label>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Setzverfahren</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button type="button" id="btnQualiMethodBull" onclick="setQualiMethod('bull')" class="p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition">
               <div class="flex items-center justify-between mb-1">
@@ -249,9 +346,9 @@
                   <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
                   9 Darts aufs Bull
                 </span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Sportlich</span>
+                <span id="qualiBullBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Sportlich</span>
               </div>
-              <p class="text-[11px] text-slate-300 leading-snug">Jeder wirft 9 Darts aufs Bull. Die erspielten Punkte entscheiden über Rangliste &amp; Freilose.</p>
+              <p id="qualiBullDesc" class="text-[11px] text-slate-300 leading-snug">Jeder wirft 9 Darts aufs Bull. Die erspielten Punkte entscheiden über die Setzliste und mögliche Freilose.</p>
             </button>
 
             <button type="button" id="btnQualiMethodRandom" onclick="setQualiMethod('random')" class="p-3.5 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700">
@@ -267,20 +364,16 @@
           </div>
         </div>
 
-        <!-- Sinnhaftigkeits- & Empfehlungs-Box (Dauer ohne Herleitung) -->
+        <!-- Sinnhaftigkeits- & Empfehlungs-Box -->
         <div id="adviceBox" class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-xs text-slate-300 flex items-start gap-3">
           <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
-          <div id="adviceText" class="space-y-1">
-            <!-- Dynamically populated -->
-          </div>
+          <div id="adviceText" class="space-y-1"></div>
         </div>
 
         <!-- Spieler-Namen Inputs -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Spielernamen anpassen</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5" id="playerInputsGrid">
-            <!-- Populated by JS -->
-          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5" id="playerInputsGrid"></div>
         </div>
 
         <button onclick="startQualification()" class="w-full py-4 rounded-xl font-bold font-display text-base bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-[0.98]">
@@ -291,7 +384,7 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- SCREEN 2: QUALIFIKATION -->
+    <!-- SCREEN 2: SETZLISTE -->
     <!-- ========================================== -->
     <section id="screenQuali" class="hidden space-y-6">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
@@ -305,7 +398,7 @@
           <button id="btnQualiMissRemaining" onclick="fillRemainingMisses()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition" title="Offene Darts als Fehlwurf werten">
             Rest = Miss (0)
           </button>
-          <button id="btnRandomDrawTrigger" onclick="performRandomDraw(true)" class="hidden px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold font-display text-sm flex items-center justify-center gap-2 transition active:scale-95 shadow-lg shadow-amber-500/20 shrink-0">
+          <button id="btnRandomDrawTrigger" onclick="performRandomDraw(true)" class="hidden px-5 py-2.5 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold font-display text-sm flex items-center justify-center gap-2 transition active:scale-95 shadow-sm shrink-0">
             <i data-lucide="shuffle" class="w-4 h-4"></i>
             <span>Auslosen</span>
           </button>
@@ -319,19 +412,17 @@
       <!-- VIEW A: 9 Darts aufs Bull -->
       <div id="bullQualiContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Interactive Player Cards -->
-        <div class="lg:col-span-7 space-y-3" id="qualiCards">
-          <!-- Populated by JS -->
-        </div>
+        <div class="lg:col-span-7 space-y-3" id="qualiCards"></div>
 
         <!-- Live Quali Ranking & Seeding Legend -->
         <div class="lg:col-span-5 space-y-4">
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
             <div class="flex items-center justify-between mb-3">
               <h3 class="font-display font-bold text-white text-base flex items-center gap-2">
-                <i data-lucide="award" class="w-5 h-5 text-amber-400"></i>
+                <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
                 <span>Quali-Rangliste</span>
               </h3>
-              <span id="tieWarningBadge" class="hidden text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              <span id="tieWarningBadge" class="hidden text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
                 Stechen aktiv!
               </span>
             </div>
@@ -352,15 +443,11 @@
                     <th class="py-2.5 px-2 text-center whitespace-nowrap min-w-[76px]">Stechen</th>
                   </tr>
                 </thead>
-                <tbody id="qualiRankingTableBody" class="divide-y divide-slate-800 text-slate-300">
-                  <!-- Populated by JS -->
-                </tbody>
+                <tbody id="qualiRankingTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
               </table>
             </div>
 
-            <div class="mt-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs space-y-2" id="seedingLegendBox">
-              <!-- Populated by JS -->
-            </div>
+            <div class="mt-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs space-y-2" id="seedingLegendBox"></div>
           </div>
         </div>
       </div>
@@ -372,9 +459,7 @@
             <h4 class="font-display font-bold text-white text-sm">Ausgeloste Startpositionen</h4>
             <span class="text-xs text-slate-400">Sofort spielbereit</span>
           </div>
-          <div id="randomDrawGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <!-- Populated by JS -->
-          </div>
+          <div id="randomDrawGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
         </div>
       </div>
     </section>
@@ -387,7 +472,7 @@
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-slate-800">
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-emerald-400" id="tournamentPhaseBadge">Phase 2</span>
-          <h2 class="text-2xl font-bold font-display text-white" id="tournamentModeTitle">Doppel-K.o. Turnierbaum</h2>
+          <h2 class="text-2xl font-bold font-display text-white" id="tournamentModeTitle">Doppel-K.o.</h2>
         </div>
         <!-- View Toggle: Runner vs Tree -->
         <div class="flex items-center p-1 bg-slate-900 border border-slate-800 rounded-xl">
@@ -405,8 +490,8 @@
         <!-- Gruppe A -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
           <div class="flex items-center justify-between mb-2">
-            <h4 class="font-display font-bold text-white text-sm flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Gruppe A
+            <h4 class="font-display font-bold text-slate-200 text-sm flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> <span>Gruppe A</span>
             </h4>
             <span class="text-[10px] text-slate-400">Top 2 &rarr; Halbfinale</span>
           </div>
@@ -430,8 +515,8 @@
         <!-- Gruppe B -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
           <div class="flex items-center justify-between mb-2">
-            <h4 class="font-display font-bold text-white text-sm flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm"></span> Gruppe B
+            <h4 class="font-display font-bold text-slate-200 text-sm flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-sm"></span> <span>Gruppe B</span>
             </h4>
             <span class="text-[10px] text-slate-400">Top 2 &rarr; Halbfinale</span>
           </div>
@@ -457,7 +542,7 @@
       <div id="leagueLiveTableBox" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
         <div class="flex items-center justify-between mb-2">
           <h4 class="font-display font-bold text-white text-sm flex items-center gap-1.5">
-            <i data-lucide="table" class="w-4 h-4 text-amber-400"></i>
+            <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i>
             <span id="leagueTableHeading">Live-Tabelle (Ligamodus)</span>
           </h4>
           <span class="text-[10px] text-slate-400" id="leagueTableSubNote">Wertung: Punkte &gt; Diff &gt; Legs</span>
@@ -516,9 +601,7 @@
           <!-- Result Buttons Container -->
           <div class="space-y-2 pt-2 border-t border-slate-800/80">
             <p class="text-[11px] text-center text-slate-400">Ergebnis eintragen (Scolia Leg-Endstand):</p>
-            <div class="flex flex-wrap justify-center gap-2" id="activeResultButtons">
-              <!-- Dynamically rendered based on Best of -->
-            </div>
+            <div class="flex flex-wrap justify-center gap-2" id="activeResultButtons"></div>
           </div>
         </div>
 
@@ -531,9 +614,7 @@
             </h3>
             <span class="text-xs text-slate-400" id="scheduleProgressBadge">0 / 0 beendet</span>
           </div>
-          <div class="space-y-2.5" id="scheduleListContainer">
-            <!-- Populated by JS -->
-          </div>
+          <div class="space-y-2.5" id="scheduleListContainer"></div>
         </div>
       </div>
 
@@ -541,12 +622,10 @@
       <div id="viewTree" class="hidden space-y-6">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-display font-bold text-white text-base mb-4 flex items-center gap-2">
-            <i data-lucide="git-merge" class="w-4 h-4 text-cyan-400"></i>
+            <i data-lucide="git-merge" class="w-4 h-4 text-emerald-400"></i>
             <span>Grafische Turnierbaum-Übersicht</span>
           </h3>
-          <div id="treeContainer" class="space-y-6 overflow-x-auto pb-4">
-            <!-- Populated by JS -->
-          </div>
+          <div id="treeContainer" class="space-y-6 overflow-x-auto pb-4"></div>
         </div>
       </div>
     </section>
@@ -562,9 +641,7 @@
       </div>
 
       <!-- Top 3 Podium -->
-      <div class="flex items-end justify-center gap-3 sm:gap-6 pt-6 pb-2" id="podiumTop3Container">
-        <!-- Rendered by JS -->
-      </div>
+      <div class="flex items-end justify-center gap-3 sm:gap-6 pt-6 pb-2" id="podiumTop3Container"></div>
 
       <!-- Full Standings Table with Fun Titles -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
@@ -582,9 +659,7 @@
                 <th class="py-2.5 px-3 text-right">Bilanz</th>
               </tr>
             </thead>
-            <tbody id="podiumTableBody" class="divide-y divide-slate-800 text-slate-300">
-              <!-- Rendered by JS -->
-            </tbody>
+            <tbody id="podiumTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
           </table>
         </div>
       </div>
@@ -606,7 +681,7 @@
         <button onclick="closeResetModal()" class="flex-1 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold transition">
           Abbrechen
         </button>
-        <button onclick="confirmReset()" class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-400 text-white font-bold text-xs transition">
+        <button onclick="confirmReset()" class="flex-1 py-2.5 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-xs transition active:scale-95 shadow-sm">
           Ja, alles löschen
         </button>
       </div>
@@ -648,116 +723,27 @@
     </div>
   </div>
 
-  <!-- Cloud Storage Sync (Firestore + LocalStorage Fallback) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'darts-companion-app';
-    let db = null;
-    let auth = null;
-    let currentUser = null;
-    let isInitialLoadDone = false;
-
-    // Check Local Storage first for instantaneous offline/PWA restoration
-    try {
-      const cached = localStorage.getItem('darts_tournament_companion_state');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (window.applyLoadedTournamentState) {
-          window.applyLoadedTournamentState(parsed);
-          isInitialLoadDone = true;
-        }
-      }
-    } catch (err) {
-      console.warn("Local storage read error:", err);
-    }
-
-    if (typeof __firebase_config !== 'undefined') {
-      try {
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-
-        const initAuth = async () => {
-          try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-              await signInAnonymously(auth);
-            }
-          } catch (err) {
-            console.error("Auth initialization error:", err);
-          }
-        };
-
-        onAuthStateChanged(auth, (user) => {
-          currentUser = user;
-          if (!user) return;
-          const userId = user.uid;
-
-          // Mandatory Path: /artifacts/{appId}/users/{userId}/tournaments/active
-          const docRef = doc(db, 'artifacts', appId, 'users', userId, 'tournaments', 'active');
-          onSnapshot(docRef, (docSnap) => {
-            if (docSnap.exists() && !isInitialLoadDone) {
-              isInitialLoadDone = true;
-              if (window.applyLoadedTournamentState) {
-                window.applyLoadedTournamentState(docSnap.data());
-              }
-            }
-          }, (err) => {
-            console.error("Snapshot error:", err);
-          });
-        });
-
-        initAuth();
-      } catch (err) {
-        console.error("Firebase storage init failed:", err);
-      }
-    }
-
-    // Global save function with both LocalStorage and Firestore
-    window.persistTournamentState = async function(stateData) {
-      try {
-        localStorage.setItem('darts_tournament_companion_state', JSON.stringify(stateData));
-      } catch (e) {
-        console.warn("LocalStorage save error:", e);
-      }
-
-      if (!db || !currentUser) return;
-      try {
-        const userId = currentUser.uid;
-        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'tournaments', 'active');
-        const payload = JSON.parse(JSON.stringify(stateData));
-        await setDoc(docRef, payload);
-        const ind = document.getElementById('saveStatusIndicator');
-        if (ind) {
-          ind.classList.remove('opacity-0');
-          setTimeout(() => ind && ind.classList.add('opacity-0'), 2000);
-        }
-      } catch (e) {
-        console.error("Cloud save state error:", e);
-      }
-    };
-  </script>
-
-  <!-- ========================================== -->
-  <!-- JAVASCRIPT APPLICATION LOGIC -->
-  <!-- ========================================== -->
+  <!-- JavaScript Logik -->
   <script>
+    const STORAGE_KEY = 'darts_tournament_companion_state';
+
     // Global Application State
     const state = {
       playerCount: 5,
-      bestOf: 3,              // 1, 3, 5, 7
+      bestOf: 3,              // 1, 3, 5, 7, 9
       mode: 'dko',            // 'dko', 'gruppen', 'liga'
       rounds: 1,              // 1 = nur Hinrunde, 2 = Hin- & Rückrunde
       scoringSystem: 'match', // 'match' (2 Pkt Sieg), 'legs' (1 Pkt pro Leg)
       qualiMethod: 'bull',    // 'bull' (9 Darts) or 'random' (Zufallsauslosung)
       randomDrawDone: false,  // Erst nach Klick auf Auslosen aktiv
-      leaguePlayoff: 'top4',  // 'top4', 'none'
+      leaguePlayoff: 'none',  // 'none' (Reine Tabelle default), 'top4'
       leaguePlayoffGenerated: false,
+
+      // Endrunden-Verlängerungsbox (+2 Legs)
+      semiExtraLegs: false,   // Halbfinale / Playoffs
+      bronzeExtraLegs: false, // Spiel um Platz 3
+      finalExtraLegs: false,  // Finale / Grand Final
+
       players: [
         { id: 1, name: "Spieler 1", qualiScore: 0, dartsCount: 0, tieBreakRank: 1, randomRank: 1 },
         { id: 2, name: "Spieler 2", qualiScore: 0, dartsCount: 0, tieBreakRank: 2, randomRank: 2 },
@@ -765,29 +751,46 @@
         { id: 4, name: "Spieler 4", qualiScore: 0, dartsCount: 0, tieBreakRank: 4, randomRank: 4 },
         { id: 5, name: "Spieler 5", qualiScore: 0, dartsCount: 0, tieBreakRank: 5, randomRank: 5 }
       ],
-      qualiHistory: [],        // Tracking bull throws for undo
-      currentPhase: 'setup',  // 'setup', 'quali', 'tournament', 'podium'
-      tournamentView: 'runner',// 'runner' or 'tree'
+      qualiHistory: [],
+      currentPhase: 'setup',   // 'setup', 'quali', 'tournament', 'podium'
+      tournamentView: 'runner', // 'runner' or 'tree'
       matches: [],
       activeMatchId: null,
       finalStandings: [],
-      history: [],             // Full snapshots for undoing match results
+      history: [],
       groupA: [],
       groupB: []
     };
 
     function triggerPersistence() {
-      if (typeof window.persistTournamentState === 'function') {
-        window.persistTournamentState(state);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        const ind = document.getElementById('saveStatusIndicator');
+        if (ind) {
+          ind.classList.remove('opacity-0');
+          setTimeout(() => ind && ind.classList.add('opacity-0'), 2000);
+        }
+      } catch (e) {
+        console.warn("LocalStorage save error:", e);
       }
     }
 
-    // Hydrate state from storage
-    window.applyLoadedTournamentState = function(saved) {
+    function loadPersistedState() {
+      try {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          applyLoadedTournamentState(parsed);
+        }
+      } catch (err) {
+        console.warn("LocalStorage read error:", err);
+      }
+    }
+
+    function applyLoadedTournamentState(saved) {
       if (!saved || !saved.currentPhase) return;
       Object.assign(state, saved);
 
-      // Rehydrate UI according to saved phase
       if (state.currentPhase === 'setup') {
         document.getElementById('screenSetup').classList.remove('hidden');
         document.getElementById('screenQuali').classList.add('hidden');
@@ -797,9 +800,10 @@
         setTournamentMode(state.mode);
         setTournamentRounds(state.rounds || 1);
         setScoringSystem(state.scoringSystem || 'match');
-        setLeaguePlayoff(state.leaguePlayoff || 'top4');
+        setLeaguePlayoff(state.leaguePlayoff || 'none');
         setQualiMethod(state.qualiMethod);
         updateBestOfUI();
+        updateExtraLegsUI();
       } else if (state.currentPhase === 'quali') {
         document.getElementById('screenSetup').classList.add('hidden');
         document.getElementById('screenQuali').classList.remove('hidden');
@@ -811,6 +815,8 @@
         document.getElementById('screenQuali').classList.add('hidden');
         document.getElementById('screenTournament').classList.remove('hidden');
         document.getElementById('screenPodium').classList.add('hidden');
+
+        updateTournamentHeaderTitle();
 
         const grTables = document.getElementById('groupsLiveTablesContainer');
         const ligaTable = document.getElementById('leagueLiveTableBox');
@@ -836,7 +842,7 @@
       updateHeaderActions();
       updateAdvice();
       if (window.lucide) lucide.createIcons();
-    };
+    }
 
     function openPwaModal() {
       const modal = document.getElementById('pwaModal');
@@ -847,20 +853,6 @@
       const modal = document.getElementById('pwaModal');
       if (modal) modal.classList.add('hidden');
     }
-
-    // On Load
-    window.addEventListener('DOMContentLoaded', () => {
-      setPlayerCount(state.playerCount);
-      updateBestOfUI();
-      setTournamentMode(state.mode);
-      setTournamentRounds(state.rounds);
-      setScoringSystem(state.scoringSystem);
-      setLeaguePlayoff(state.leaguePlayoff);
-      updateQualiMethodUI();
-      updateAdvice();
-      updateHeaderActions();
-      if (window.lucide) lucide.createIcons();
-    });
 
     // ==========================================
     // SETUP CONTROLLERS
@@ -880,7 +872,6 @@
         countDisplay.textContent = `${count} Spieler`;
       }
 
-      // Sync players array
       if (state.players.length > count) {
         state.players = state.players.slice(0, count);
       } else {
@@ -924,12 +915,14 @@
     }
 
     function adjustBestOf(delta) {
-      const distances = [1, 3, 5, 7];
+      const distances = [1, 3, 5, 7, 9];
       let idx = distances.indexOf(state.bestOf);
+      if (idx === -1) idx = 1;
       idx += delta;
       if (idx >= 0 && idx < distances.length) {
         state.bestOf = distances[idx];
         updateBestOfUI();
+        updateExtraLegsUI();
         updateAdvice();
         triggerPersistence();
       }
@@ -937,7 +930,10 @@
 
     function updateBestOfUI() {
       const display = document.getElementById('bestOfDisplay');
-      if (display) display.textContent = `Best of ${state.bestOf} Legs`;
+      if (display) {
+        const wins = Math.ceil(state.bestOf / 2);
+        display.textContent = `Best of ${state.bestOf} Legs (First to ${wins} Legs)`;
+      }
     }
 
     function setTournamentMode(m) {
@@ -945,8 +941,7 @@
       const btnDKO = document.getElementById('btnModeDKO');
       const btnGruppen = document.getElementById('btnModeGruppen');
       const btnLiga = document.getElementById('btnModeLiga');
-      const scoringBox = document.getElementById('scoringOptionBox');
-      const roundsBox = document.getElementById('roundsOptionBox');
+      const advancedContainer = document.getElementById('advancedModeContainer');
       const leagueBox = document.getElementById('leagueOptionBox');
 
       const activeCls = "p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition relative";
@@ -956,19 +951,59 @@
       if (btnGruppen) btnGruppen.className = m === 'gruppen' ? activeCls : inactiveCls;
       if (btnLiga) btnLiga.className = m === 'liga' ? activeCls : inactiveCls;
 
-      if (scoringBox) {
-        scoringBox.classList.toggle('hidden', m === 'dko');
-      }
-      if (roundsBox) {
-        roundsBox.classList.toggle('hidden', m === 'dko');
+      if (advancedContainer) {
+        advancedContainer.classList.toggle('hidden', m === 'dko');
       }
       if (leagueBox) {
         leagueBox.classList.toggle('hidden', m !== 'liga');
       }
 
+      if (m !== 'dko' && state.qualiMethod === 'bull') {
+        state.qualiMethod = 'random';
+      }
+
+      updateQualiMethodUI();
+      updateAdvancedModeSummary();
+      updateExtraLegsUI();
       updateAdvice();
       triggerPersistence();
       if (window.lucide) lucide.createIcons();
+    }
+
+    function toggleAdvancedModeAccordion() {
+      const box = document.getElementById('advancedModeOptionsBox');
+      const chevron = document.getElementById('advancedModeChevron');
+      if (!box) return;
+      const isHidden = box.classList.contains('hidden');
+      box.classList.toggle('hidden', !isHidden);
+      if (chevron) {
+        chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    }
+
+    function updateAdvancedModeSummary() {
+      const sumEl = document.getElementById('advancedModeSummary');
+      const badge = document.getElementById('advancedModeCustomBadge');
+      if (!sumEl) return;
+
+      const scoreText = state.scoringSystem === 'match' ? '2 Pkt pro Sieg' : '1 Pkt pro Leg';
+      const roundText = state.rounds === 1 ? 'Einfache Runde' : 'Hin- & Rückrunde';
+      const playoffText = state.leaguePlayoff === 'none' ? 'Reine Endtabelle' : 'Top-4 Playoffs';
+
+      if (state.mode === 'liga') {
+        sumEl.textContent = `${scoreText} • ${roundText} • ${playoffText}`;
+      } else {
+        sumEl.textContent = `${scoreText} • ${roundText}`;
+      }
+
+      const isCustom = state.scoringSystem !== 'match' || state.rounds !== 1 || (state.mode === 'liga' && state.leaguePlayoff !== 'none');
+      if (badge) badge.classList.toggle('hidden', !isCustom);
+    }
+
+    function resetAdvancedModeToStandard() {
+      setScoringSystem('match');
+      setTournamentRounds(1);
+      setLeaguePlayoff('none');
     }
 
     function setTournamentRounds(r) {
@@ -980,6 +1015,7 @@
 
       if (btnSingle) btnSingle.className = r === 1 ? activeCls : inactiveCls;
       if (btnDouble) btnDouble.className = r === 2 ? activeCls : inactiveCls;
+      updateAdvancedModeSummary();
       updateAdvice();
       triggerPersistence();
     }
@@ -993,24 +1029,183 @@
 
       if (btnM) btnM.className = s === 'match' ? activeCls : inactiveCls;
       if (btnL) btnL.className = s === 'legs' ? activeCls : inactiveCls;
+      updateAdvancedModeSummary();
+      updateAdvice();
       triggerPersistence();
     }
 
     function setLeaguePlayoff(p) {
       state.leaguePlayoff = p;
-      ['top4', 'none'].forEach(k => {
-        const el = document.getElementById(`btnPlayoff${k.charAt(0).toUpperCase() + k.slice(1)}`);
-        if (el) {
-          el.className = state.leaguePlayoff === k 
-            ? "p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300"
-            : "p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700";
-        }
-      });
+      const btnNone = document.getElementById('btnPlayoffNone');
+      const btnTop4 = document.getElementById('btnPlayoffTop4');
+      const activeCls = "p-2.5 rounded-xl border text-left text-xs transition border-emerald-500 bg-emerald-500/10 text-emerald-300";
+      const inactiveCls = "p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700";
+
+      if (btnNone) btnNone.className = p === 'none' ? activeCls : inactiveCls;
+      if (btnTop4) btnTop4.className = p === 'top4' ? activeCls : inactiveCls;
+
+      updateAdvancedModeSummary();
+      updateExtraLegsUI();
       updateAdvice();
       triggerPersistence();
     }
 
+    function toggleExtraLegsAccordion() {
+      if (state.mode === 'liga' && state.leaguePlayoff === 'none') return;
+      const box = document.getElementById('extraLegsOptionsBox');
+      const chevron = document.getElementById('extraLegsChevron');
+      if (!box) return;
+      const isHidden = box.classList.contains('hidden');
+      box.classList.toggle('hidden', !isHidden);
+      if (chevron) {
+        chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    }
+
+    function resetExtraLegsToStandard() {
+      state.semiExtraLegs = false;
+      state.bronzeExtraLegs = false;
+      state.finalExtraLegs = false;
+      updateExtraLegsUI();
+      updateAdvice();
+      triggerPersistence();
+    }
+
+    function toggleSemiExtraLegs() {
+      if (state.mode === 'liga' && state.leaguePlayoff === 'none') return;
+      state.semiExtraLegs = !state.semiExtraLegs;
+      updateExtraLegsUI();
+      updateAdvice();
+      triggerPersistence();
+    }
+
+    function toggleBronzeExtraLegs() {
+      if (state.mode === 'liga' && state.leaguePlayoff === 'none') return;
+      state.bronzeExtraLegs = !state.bronzeExtraLegs;
+      updateExtraLegsUI();
+      updateAdvice();
+      triggerPersistence();
+    }
+
+    function toggleFinalExtraLegs() {
+      if (state.mode === 'liga' && state.leaguePlayoff === 'none') return;
+      state.finalExtraLegs = !state.finalExtraLegs;
+      updateExtraLegsUI();
+      updateAdvice();
+      triggerPersistence();
+    }
+
+    function updateExtraLegsUI() {
+      const isDko = state.mode === 'dko';
+      const extendedDistance = state.bestOf + 2;
+
+      const btnSemi = document.getElementById('btnToggleSemiLegs');
+      const semiTitle = document.getElementById('semiTitleLabel');
+      const semiBadge = document.getElementById('semiLegsBadge');
+      const semiDesc = document.getElementById('semiLegsDesc');
+
+      const btnBronze = document.getElementById('btnToggleBronzeLegs');
+      const bronzeTitle = document.getElementById('bronzeTitleLabel');
+      const bronzeBadge = document.getElementById('bronzeLegsBadge');
+      const bronzeDesc = document.getElementById('bronzeLegsDesc');
+
+      const btnFinal = document.getElementById('btnToggleFinalLegs');
+      const finalTitle = document.getElementById('finalTitleLabel');
+      const finalBadge = document.getElementById('finalLegsBadge');
+      const finalDesc = document.getElementById('finalLegsDesc');
+
+      const activeBadge = document.getElementById('extraLegsActiveBadge');
+      const summaryText = document.getElementById('extraLegsSummary');
+      const triggerBtn = document.getElementById('btnExtraLegsAccordionTrigger');
+      const titleText = document.getElementById('extraLegsTitleText');
+
+      const isTableOnlyLeague = (state.mode === 'liga' && state.leaguePlayoff === 'none');
+      if (isTableOnlyLeague) {
+        state.semiExtraLegs = false;
+        state.bronzeExtraLegs = false;
+        state.finalExtraLegs = false;
+        if (triggerBtn) triggerBtn.classList.add('opacity-40', 'cursor-not-allowed');
+        if (titleText) titleText.textContent = 'Endrunden-Distanzen anpassen';
+        if (summaryText) summaryText.textContent = 'Deaktiviert (Reine Endtabelle hat keine Endspiele)';
+        if (activeBadge) activeBadge.classList.add('hidden');
+        const box = document.getElementById('extraLegsOptionsBox');
+        if (box) box.classList.add('hidden');
+        return;
+      } else {
+        if (triggerBtn) triggerBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+      }
+
+      const uniformBadgeClass = 'text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-white border border-slate-700/80';
+
+      if (semiTitle) semiTitle.innerHTML = '<span>⚔️</span> Halbfinale';
+      if (btnSemi && semiBadge && semiDesc) {
+        semiBadge.className = uniformBadgeClass;
+        if (state.semiExtraLegs) {
+          btnSemi.className = 'p-2.5 rounded-xl border-2 text-left text-xs transition border-emerald-500 bg-slate-900 text-slate-300';
+          semiBadge.textContent = `Best of ${extendedDistance}`;
+          semiDesc.textContent = isDko ? `First to ${Math.ceil(extendedDistance / 2)} (Haupt- & Verlierer-HF)` : `First to ${Math.ceil(extendedDistance / 2)}`;
+          semiDesc.className = 'text-[10px] text-slate-400 block font-medium';
+        } else {
+          btnSemi.className = 'p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700';
+          semiBadge.textContent = `Best of ${state.bestOf}`;
+          semiDesc.textContent = 'Gleiche Distanz';
+          semiDesc.className = 'text-[10px] text-slate-500 block';
+        }
+      }
+
+      if (bronzeTitle) bronzeTitle.innerHTML = isDko ? '<span>🔥</span> Finale HR & VR' : '<span>🥉</span> Platz 3';
+      if (btnBronze && bronzeBadge && bronzeDesc) {
+        bronzeBadge.className = uniformBadgeClass;
+        if (state.bronzeExtraLegs) {
+          btnBronze.className = 'p-2.5 rounded-xl border-2 text-left text-xs transition border-emerald-500 bg-slate-900 text-slate-300';
+          bronzeBadge.textContent = `Best of ${extendedDistance}`;
+          bronzeDesc.textContent = isDko ? `First to ${Math.ceil(extendedDistance / 2)} (Hauptrunden- & Verlierer-Finale)` : `First to ${Math.ceil(extendedDistance / 2)}`;
+          bronzeDesc.className = 'text-[10px] text-slate-400 block font-medium';
+        } else {
+          btnBronze.className = 'p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700';
+          bronzeBadge.textContent = `Best of ${state.bestOf}`;
+          bronzeDesc.textContent = 'Gleiche Distanz';
+          bronzeDesc.className = 'text-[10px] text-slate-500 block';
+        }
+      }
+
+      if (finalTitle) finalTitle.innerHTML = isDko ? '<span>🏆</span> Grand Final' : '<span>🏆</span> Finale';
+      if (btnFinal && finalBadge && finalDesc) {
+        finalBadge.className = uniformBadgeClass;
+        if (state.finalExtraLegs) {
+          btnFinal.className = 'p-2.5 rounded-xl border-2 text-left text-xs transition border-emerald-500 bg-slate-900 text-slate-300';
+          finalBadge.textContent = `Best of ${extendedDistance}`;
+          finalDesc.textContent = isDko ? `First to ${Math.ceil(extendedDistance / 2)} (Grand Final)` : `First to ${Math.ceil(extendedDistance / 2)}`;
+          finalDesc.className = 'text-[10px] text-slate-400 block font-medium';
+        } else {
+          btnFinal.className = 'p-2.5 rounded-xl border text-left text-xs transition border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700';
+          finalBadge.textContent = `Best of ${state.bestOf}`;
+          finalDesc.textContent = 'Gleiche Distanz';
+          finalDesc.className = 'text-[10px] text-slate-500 block';
+        }
+      }
+
+      if (titleText) titleText.textContent = 'Endrunden-Distanzen anpassen';
+
+      const activeTitles = [];
+      if (state.semiExtraLegs) activeTitles.push('Halbfinale');
+      if (state.bronzeExtraLegs) activeTitles.push(isDko ? 'Finale HR & VR' : 'Platz 3');
+      if (state.finalExtraLegs) activeTitles.push(isDko ? 'Grand Final' : 'Finale');
+
+      if (activeTitles.length > 0) {
+        if (activeBadge) {
+          activeBadge.classList.remove('hidden');
+          activeBadge.textContent = 'Angepasst';
+        }
+        if (summaryText) summaryText.textContent = `Verlängerung auf Best of ${extendedDistance} aktiv (${activeTitles.join(', ')})`;
+      } else {
+        if (activeBadge) activeBadge.classList.add('hidden');
+        if (summaryText) summaryText.textContent = 'Standardmäßig gleiche Distanz in allen Runden';
+      }
+    }
+
     function setQualiMethod(method) {
+      if (state.mode !== 'dko' && method === 'bull') return;
       state.qualiMethod = method;
       updateQualiMethodUI();
       triggerPersistence();
@@ -1022,13 +1217,48 @@
       const activeCls = "p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left transition";
       const inactiveCls = "p-3.5 rounded-xl border-2 border-slate-800 bg-slate-950/60 text-left transition hover:border-slate-700";
 
-      if (btnBull) btnBull.className = state.qualiMethod === 'bull' ? activeCls : inactiveCls;
-      if (btnRandom) btnRandom.className = state.qualiMethod === 'random' ? activeCls : inactiveCls;
+      const isBullDisabled = state.mode !== 'dko';
 
-      const btnStart = document.getElementById('btnStartQualiText');
-      if (btnStart) {
-        btnStart.textContent = 'Zur Setzliste';
+      if (btnBull) {
+        if (isBullDisabled) {
+          btnBull.className = "p-3.5 rounded-xl border-2 border-slate-800/50 bg-slate-950/40 text-left transition opacity-40 pointer-events-none cursor-not-allowed";
+        } else {
+          btnBull.className = state.qualiMethod === 'bull' ? activeCls : inactiveCls;
+        }
       }
+
+      if (btnRandom) {
+        btnRandom.className = state.qualiMethod === 'random' ? activeCls : inactiveCls;
+      }
+    }
+
+    function getMatchDistance(m) {
+      if (!m) return state.bestOf;
+      const base = state.bestOf;
+      if (state.mode === 'liga' && state.leaguePlayoff === 'none') {
+        return base;
+      }
+
+      const rName = (m.roundName || '').toLowerCase();
+
+      const isSemi = rName.includes('halbfinale') || rName.includes('hf') || (m.stage === 'semi') || (m.isPlayoff && rName.includes('halbfinale')) || (state.mode === 'dko' && state.playerCount === 3 && m.id === 'M1');
+      if (isSemi && state.semiExtraLegs) return base + 2;
+
+      if (state.mode === 'dko') {
+        const isPreFinal = rName.includes('hauptrunden-finale') || rName.includes('verlierer-finale') || rName.includes('finale hauptrunde');
+        if (isPreFinal && state.bronzeExtraLegs) return base + 2;
+
+        const isGrandFinal = rName.includes('grand final') || m.isResetMatch;
+        if (isGrandFinal && state.finalExtraLegs) return base + 2;
+      } else {
+        const isBronze = rName.includes('platz 3') || (m.stage === 'bronze');
+        if (isBronze && state.bronzeExtraLegs) return base + 2;
+
+        const isFinal = rName.includes('finale') || (m.stage === 'final');
+        if (isFinal && state.finalExtraLegs) return base + 2;
+      }
+
+      return base;
     }
 
     function updateAdvice() {
@@ -1039,45 +1269,96 @@
       const r = state.rounds;
       const bo = state.bestOf;
 
-      // Realistic match duration for ~40 Average:
-      const estMatchMins = bo === 1 ? 7 : (bo === 3 ? 17 : (bo === 5 ? 27 : 37));
-      let matchesCount = 0;
+      const legDurationMin = 7.0;
+      const avgLegsForBo = (dist) => {
+        if (dist === 1) return 1;
+        if (dist === 3) return 2.4;
+        if (dist === 5) return 3.8;
+        if (dist === 7) return 5.3;
+        if (dist === 9) return 6.8;
+        return 2.4;
+      };
+
+      let standardMatches = 0;
+      let semiMatches = 0;
+      let bronzeMatches = 0;
+      let finalMatches = 0;
+      let preFinalMatches = 0;
       let headline = '';
       let desc = '';
+      let settingsSummary = '';
+
+      const scoreTxt = state.scoringSystem === 'legs' ? '1 Pkt pro Leg' : '2 Pkt pro Sieg';
+      const roundTxt = r === 2 ? 'Hin- & Rückrunde' : 'Einfache Runde';
 
       if (m === 'dko') {
-        matchesCount = n === 3 ? 4 : (n === 4 ? 6 : (n === 5 ? 8 : (n === 6 ? 10 : (n === 7 ? 12 : 14))));
-        const hours = Math.round((matchesCount * estMatchMins) / 60 * 10) / 10;
-        headline = `Doppel-K.o. bei ${n} Spielern: ca. ${matchesCount} bis ${matchesCount + 1} Matches`;
-        desc = `Dauer: ca. <strong>${hours} Std.</strong> Jeder hat zwei Leben. Höchste Fairness für ein einzelnes Board!`;
+        const totalMatches = n === 3 ? 4 : (n === 4 ? 6 : (n === 5 ? 8 : (n === 6 ? 10 : (n === 7 ? 12 : 14))));
+        semiMatches = n === 3 ? 1 : 3;
+        preFinalMatches = 2;
+        finalMatches = 1;
+        standardMatches = Math.max(0, totalMatches - semiMatches - preFinalMatches - finalMatches);
+        headline = `Doppel-K.o.: ${totalMatches} bis ${totalMatches + 1} Matches gesamt`;
+        settingsSummary = '2 Leben • Haupt- & Verlierer-Runde • Reset-Finale';
+        desc = `Jeder hat 2 Leben: Erst nach 2 Niederlagen scheidet man aus. Mit Haupt- & Verlierer-Runde sowie großem Finale.`;
       } else if (m === 'gruppen') {
         const grA = Math.ceil(n / 2);
         const grB = Math.floor(n / 2);
         const matchesA = (grA * (grA - 1)) / 2;
         const matchesB = (grB * (grB - 1)) / 2;
-        const groupMatches = (matchesA + matchesB) * r;
-        const koMatches = 4; // HF1, HF2, Spiel um Platz 3, Finale
-        matchesCount = groupMatches + koMatches;
-        const hours = Math.round((matchesCount * estMatchMins) / 60 * 10) / 10;
-        headline = `2 Gruppen (${grA} & ${grB} Spieler): ${matchesCount} Matches gesamt`;
-        desc = `Vorrunde (${groupMatches} Spiele) + Halbfinale, Spiel um Platz 3 & Finale (${koMatches} Spiele). Dauer: ca. <strong>${hours} Std.</strong>`;
+        standardMatches = (matchesA + matchesB) * r;
+        semiMatches = 2;
+        bronzeMatches = 1;
+        finalMatches = 1;
+        const total = standardMatches + 4;
+        headline = `2 Gruppen: ${total} Matches gesamt`;
+        settingsSummary = `${scoreTxt} • ${roundTxt}`;
+        desc = `Vorrunde in zwei Gruppen. Danach K.o.-Phase mit Halbfinale über Kreuz, Spiel um Platz 3 und Finale.`;
       } else {
-        const leagueMatches = ((n * (n - 1)) / 2) * r;
-        const playoffMatches = state.leaguePlayoff === 'top4' ? 4 : 0;
-        matchesCount = leagueMatches + playoffMatches;
-        const hours = Math.round((matchesCount * estMatchMins) / 60 * 10) / 10;
-        headline = `Ligamodus (${r === 2 ? 'Hin- & Rückrunde' : 'Einfache Runde'}): ${matchesCount} Matches`;
-        desc = `Jeder gegen Jeden. ${state.leaguePlayoff === 'top4' ? 'Inklusive Top-4 Halbfinale, Spiel um Platz 3 & Finale!' : 'Reine Tabelle: Direkte Endplatzierung nach Tabelle ohne Endspiele.'} Dauer: ca. <strong>${hours} Std.</strong>`;
+        standardMatches = ((n * (n - 1)) / 2) * r;
+        if (state.leaguePlayoff === 'top4') {
+          semiMatches = 2;
+          bronzeMatches = 1;
+          finalMatches = 1;
+        }
+        const total = standardMatches + (state.leaguePlayoff === 'top4' ? 4 : 0);
+        headline = `Liga: ${total} Matches gesamt`;
+        const playoffTxt = state.leaguePlayoff === 'top4' ? 'Top-4 Playoffs' : 'Reine Endtabelle';
+        settingsSummary = `${scoreTxt} • ${roundTxt} • ${playoffTxt}`;
+        desc = state.leaguePlayoff === 'top4' 
+          ? `Klassische Liga: Alle treten gegeneinander an. Abschluss über Top-4 Playoffs.`
+          : `Klassische Liga: Alle treten gegeneinander an. Abschluss über reine Endtabelle.`;
       }
+
+      const isExtraLegsActive = (state.semiExtraLegs || state.bronzeExtraLegs || state.finalExtraLegs) && !(m === 'liga' && state.leaguePlayoff === 'none');
+      if (isExtraLegsActive) {
+        settingsSummary += ' • Angepasste Endrunden-Distanzen';
+      }
+
+      const semiDist = (state.semiExtraLegs && !(m === 'liga' && state.leaguePlayoff === 'none')) ? bo + 2 : bo;
+      const bronzeDist = (state.bronzeExtraLegs && !(m === 'liga' && state.leaguePlayoff === 'none')) ? bo + 2 : bo;
+      const finalDist = (state.finalExtraLegs && !(m === 'liga' && state.leaguePlayoff === 'none')) ? bo + 2 : bo;
+
+      let totalMins = (standardMatches * avgLegsForBo(bo) * legDurationMin) +
+                      (semiMatches * avgLegsForBo(semiDist) * legDurationMin) +
+                      (finalMatches * avgLegsForBo(finalDist) * legDurationMin);
+
+      if (m === 'dko') {
+        totalMins += (preFinalMatches * avgLegsForBo(bronzeDist) * legDurationMin);
+      } else {
+        totalMins += (bronzeMatches * avgLegsForBo(bronzeDist) * legDurationMin);
+      }
+
+      const hours = Math.round((totalMins / 60) * 10) / 10;
 
       textEl.innerHTML = `
         <p class="font-bold text-emerald-400 text-sm">${headline}</p>
-        <p class="text-slate-300 leading-snug">${desc}</p>
+        ${settingsSummary ? `<p class="text-[11px] font-semibold text-slate-400">${settingsSummary}</p>` : ''}
+        <p class="text-slate-300 leading-snug">${desc} Dauer: ca. <strong>${hours} Std.</strong></p>
       `;
     }
 
     // ==========================================
-    // QUALIFIKATION CONTROLLERS
+    // QUALIFIKATION / SETZLISTE CONTROLLERS
     // ==========================================
     function startQualification() {
       state.currentPhase = 'quali';
@@ -1174,7 +1455,7 @@
         const isFinished = (p.dartsCount >= 9);
 
         let statusText = 'Offen';
-        let statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        let statusBadgeClass = 'bg-red-500/20 text-red-400 border border-red-500/30';
 
         if (isCurrent) {
           statusText = 'Jetzt am Board';
@@ -1213,13 +1494,12 @@
             </div>
           </div>
 
-          <!-- Buttons: 0 Miss, +1 Single Bull, +2 Bullseye -->
           <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="addBullThrow(${idx}, 0)" 
               ${!isCurrent ? 'disabled' : ''}
               class="py-2.5 px-2 rounded-xl font-bold font-display text-xs transition border ${
                 isCurrent 
-                  ? 'bg-red-500/20 border-red-500/40 text-red-400 hover:bg-red-500/30 active:scale-95' 
+                  ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white active:scale-95' 
                   : 'bg-slate-950/60 border-slate-800 text-slate-600 cursor-not-allowed'
               }">
               0 Miss
@@ -1318,15 +1598,16 @@
         const statusLabel = isCompleted ? 'Beendet' : (p.dartsCount > 0 ? 'Am Board' : 'Offen');
         const statusBadgeClass = isCompleted 
           ? 'bg-slate-800 text-slate-400' 
-          : (p.dartsCount > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400');
+          : (p.dartsCount > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400 border border-red-500/30');
 
         const seedText = getSeedingStatusText(rank, n, m);
+        const seedBadgeHtml = getSeedBadgeHtml(seedText);
 
         const canShiftUp = isTie && idx > 0 && sorted[idx - 1].dartsCount >= 9 && sorted[idx - 1].qualiScore === p.qualiScore;
         const canShiftDown = isTie && idx < sorted.length - 1 && sorted[idx + 1].dartsCount >= 9 && sorted[idx + 1].qualiScore === p.qualiScore;
 
         const tr = document.createElement('tr');
-        tr.className = isTie ? 'bg-amber-500/5' : '';
+        tr.className = isTie ? 'bg-red-500/5' : '';
 
         tr.innerHTML = `
           <td class="py-2.5 px-2 text-center font-display font-bold ${rank <= 3 ? 'text-sm' : 'text-slate-400'}">
@@ -1334,7 +1615,7 @@
           </td>
           <td class="py-2.5 px-2 font-bold text-white whitespace-nowrap">
             ${escapeHtml(p.name)}
-            ${isTie ? '<span class="ml-1 text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 font-semibold">Gleichstand</span>' : ''}
+            ${isTie ? '<span class="ml-1 text-[10px] px-1.5 py-0.2 rounded bg-red-500/20 text-red-400 border border-red-500/30 font-semibold">Gleichstand</span>' : ''}
           </td>
           <td class="py-2.5 px-1.5 text-center font-display font-bold text-white">
             ${p.qualiScore}
@@ -1345,9 +1626,7 @@
             </span>
           </td>
           <td class="py-2.5 px-2 whitespace-nowrap">
-            <span class="text-[11px] font-medium text-slate-300">
-              ${seedText}
-            </span>
+            ${seedBadgeHtml}
           </td>
           <td class="py-2.5 px-2 text-center whitespace-nowrap">
             ${isTie ? `
@@ -1355,7 +1634,7 @@
                 <button type="button" onclick="shiftTieBreakOrder(${idx}, -1)" ${!canShiftUp ? 'disabled' : ''}
                   class="w-6 h-6 rounded flex items-center justify-center text-[10px] transition border ${
                     canShiftUp 
-                      ? 'bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 border-slate-700' 
+                      ? 'bg-slate-800 hover:bg-red-500 hover:text-white text-slate-200 border-slate-700' 
                       : 'opacity-20 text-slate-600 border-transparent cursor-not-allowed'
                   }" title="Stechen: Vorrücken">
                   ▲
@@ -1363,7 +1642,7 @@
                 <button type="button" onclick="shiftTieBreakOrder(${idx}, 1)" ${!canShiftDown ? 'disabled' : ''}
                   class="w-6 h-6 rounded flex items-center justify-center text-[10px] transition border ${
                     canShiftDown 
-                      ? 'bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 border-slate-700' 
+                      ? 'bg-slate-800 hover:bg-red-500 hover:text-white text-slate-200 border-slate-700' 
                       : 'opacity-20 text-slate-600 border-transparent cursor-not-allowed'
                   }" title="Stechen: Nach hinten">
                   ▼
@@ -1380,6 +1659,823 @@
       }
 
       renderSeedingLegend();
+    }
+
+    function renderSeedingLegend() {
+      const box = document.getElementById('seedingLegendBox');
+      if (!box) return;
+      const n = state.playerCount;
+      const m = state.mode;
+
+      let html = '';
+      if (m === 'gruppen') {
+        html = `
+          <div class="font-bold text-slate-300">Gruppeneinteilung (Schlangenlinien-Verfahren):</div>
+          <p class="text-slate-400">Ungerade Plätze (1, 3, 5, 7) spielen in <span class="text-blue-300 font-semibold">Gruppe A</span>, gerade Plätze (2, 4, 6, 8) in <span class="text-purple-300 font-semibold">Gruppe B</span>.</p>
+        `;
+      } else if (m === 'liga') {
+        html = `
+          <div class="font-bold text-slate-300">Setzliste für Spielplan-Reihenfolge:</div>
+          <p class="text-slate-400">Die Rangliste bestimmt die Spielplan-Nummerierung und die Anwurf-Reihenfolge der Liga-Matches.</p>
+        `;
+      } else {
+        html = `
+          <div class="font-bold text-slate-300">Freilose & Doppel-K.o.-Baum:</div>
+          <p class="text-slate-400">Die Top-Platzierten erhalten die begehrten Freilose für die späteren Runden (z.B. Halbfinale), während die Verfolger im Auftaktspiel antreten.</p>
+        `;
+      }
+      box.innerHTML = html;
+    }
+
+    function renderRandomQuali() {
+      const grid = document.getElementById('randomDrawGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const n = state.playerCount;
+      const m = state.mode;
+      const sorted = [...state.players].sort((a, b) => (a.randomRank || 0) - (b.randomRank || 0));
+
+      sorted.forEach((p, idx) => {
+        const rank = idx + 1;
+        const seedText = getSeedingStatusText(rank, n, m);
+        const seedBadgeHtml = getSeedBadgeHtml(seedText);
+
+        const card = document.createElement('div');
+        card.className = 'p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-red-400 font-display font-bold text-xs">Los ${rank}</span>
+            ${state.randomDrawDone ? seedBadgeHtml : '<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400 border border-slate-700/80">Ausstehend</span>'}
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-sm truncate">${state.randomDrawDone ? escapeHtml(p.name) : '<span class="text-slate-500 font-normal">???</span>'}</span>
+            <span class="text-xs text-slate-500 font-display">P${p.id}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function performRandomDraw(animate) {
+      const indices = state.players.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+
+      indices.forEach((playerIdx, drawPos) => {
+        state.players[playerIdx].randomRank = drawPos + 1;
+      });
+
+      state.randomDrawDone = true;
+      renderRandomQuali();
+      updateStartTournamentBtnState();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function isMatchPlayable(m) {
+      if (!m || m.finished) return false;
+      const p1Known = m.p1 && !m.p1.startsWith('Sieger') && !m.p1.startsWith('Verlierer') && !m.p1.startsWith('Platz') && !m.p1.startsWith('1.') && !m.p1.startsWith('2.');
+      const p2Known = m.p2 && !m.p2.startsWith('Sieger') && !m.p2.startsWith('Verlierer') && !m.p2.startsWith('Platz') && !m.p2.startsWith('1.') && !m.p2.startsWith('2.');
+      return Boolean(p1Known && p2Known);
+    }
+
+    // Wählt strikt in der Reihenfolge des Spielplans das nächste spielbare Match aus
+    function findNextPlayableMatch() {
+      const playable = state.matches.filter(m => isMatchPlayable(m));
+      if (playable.length === 0) return null;
+      return playable[0];
+    }
+
+    // Intelligenter Algorithmus zur optimalen Pausen- & Wartezeitverteilung im Round-Robin
+    function sequenceRoundRobinMatches(pairs, initialPrevMatch = null) {
+      if (!pairs || pairs.length <= 1) return pairs || [];
+      const remaining = [...pairs];
+      const result = [];
+
+      const lastPlayedStep = {};
+      let step = 1;
+
+      // Berücksichtigt ggf. das letzte Spiel der vorherigen Runde für einen nahtlosen Übergang
+      if (initialPrevMatch) {
+        if (initialPrevMatch.p1) lastPlayedStep[initialPrevMatch.p1] = 0;
+        if (initialPrevMatch.p2) lastPlayedStep[initialPrevMatch.p2] = 0;
+
+        let bestIdx = 0;
+        let bestScore = -Infinity;
+        const prevPlayers = [initialPrevMatch.p1, initialPrevMatch.p2];
+
+        for (let i = 0; i < remaining.length; i++) {
+          const cand = remaining[i];
+          let overlap = 0;
+          if (prevPlayers.includes(cand.p1)) overlap++;
+          if (prevPlayers.includes(cand.p2)) overlap++;
+
+          const rest1 = lastPlayedStep[cand.p1] !== undefined ? (step - lastPlayedStep[cand.p1]) : 99;
+          const rest2 = lastPlayedStep[cand.p2] !== undefined ? (step - lastPlayedStep[cand.p2]) : 99;
+          const score = (-overlap * 1000) + (Math.min(rest1, rest2) * 10) + (rest1 + rest2);
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestIdx = i;
+          }
+        }
+
+        const chosen = remaining.splice(bestIdx, 1)[0];
+        lastPlayedStep[chosen.p1] = step;
+        lastPlayedStep[chosen.p2] = step;
+        result.push(chosen);
+        step++;
+      } else {
+        // Erstes Spiel auswählen
+        result.push(remaining.shift());
+        if (result[0].p1) lastPlayedStep[result[0].p1] = 0;
+        if (result[0].p2) lastPlayedStep[result[0].p2] = 0;
+      }
+
+      while (remaining.length > 0) {
+        const prev = result[result.length - 1];
+        const prevPlayers = [prev.p1, prev.p2];
+
+        let bestIdx = 0;
+        let bestScore = -Infinity;
+
+        for (let i = 0; i < remaining.length; i++) {
+          const cand = remaining[i];
+          let overlap = 0;
+          if (prevPlayers.includes(cand.p1)) overlap++;
+          if (prevPlayers.includes(cand.p2)) overlap++;
+
+          const rest1 = lastPlayedStep[cand.p1] !== undefined ? (step - lastPlayedStep[cand.p1]) : 99;
+          const rest2 = lastPlayedStep[cand.p2] !== undefined ? (step - lastPlayedStep[cand.p2]) : 99;
+          const minRest = Math.min(rest1, rest2);
+
+          // Strikte Vermeidung von direktem Weiterspielen (overlap) + Belohnung langer Pausen
+          const score = (-overlap * 1000) + (minRest * 10) + (rest1 + rest2);
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestIdx = i;
+          }
+        }
+
+        const chosen = remaining.splice(bestIdx, 1)[0];
+        lastPlayedStep[chosen.p1] = step;
+        lastPlayedStep[chosen.p2] = step;
+        result.push(chosen);
+        step++;
+      }
+      return result;
+    }
+
+    function updateTournamentHeaderTitle() {
+      const titleEl = document.getElementById('tournamentModeTitle');
+      const treeLabelEl = document.getElementById('tabTreeLabel');
+      if (!titleEl) return;
+
+      if (state.mode === 'dko') {
+        titleEl.textContent = 'Doppel-K.o.';
+        if (treeLabelEl) treeLabelEl.textContent = 'Turnierbaum';
+      } else if (state.mode === 'gruppen') {
+        titleEl.textContent = '2 Gruppen – Vorrunde & K.o.-Phase';
+        if (treeLabelEl) treeLabelEl.textContent = 'Turnierbaum';
+      } else if (state.mode === 'liga') {
+        if (state.leaguePlayoff === 'top4') {
+          titleEl.textContent = 'Liga & Top-4 Playoffs';
+          if (treeLabelEl) treeLabelEl.textContent = 'Playoff-Baum';
+        } else {
+          titleEl.textContent = 'Liga – Spielplan & Tabelle';
+          if (treeLabelEl) treeLabelEl.textContent = 'Übersicht';
+        }
+      }
+    }
+
+    function startTournament() {
+      state.currentPhase = 'tournament';
+      state.history = [];
+      updateStepBadges();
+      updateTournamentHeaderTitle();
+
+      document.getElementById('screenQuali').classList.add('hidden');
+      document.getElementById('screenTournament').classList.remove('hidden');
+
+      const sorted = getSortedPlayersForQuali();
+
+      if (state.mode === 'gruppen') {
+        state.groupA = [];
+        state.groupB = [];
+        sorted.forEach((p, idx) => {
+          if (idx % 2 === 0) state.groupA.push(p.name);
+          else state.groupB.push(p.name);
+        });
+        generateGroupMatches();
+      } else if (state.mode === 'liga') {
+        generateLeagueMatches(sorted);
+      } else {
+        generateDkoMatches(sorted);
+      }
+
+      const firstPlayable = findNextPlayableMatch();
+      state.activeMatchId = firstPlayable ? firstPlayable.id : (state.matches[0] ? state.matches[0].id : null);
+
+      const grTables = document.getElementById('groupsLiveTablesContainer');
+      const ligaTable = document.getElementById('leagueLiveTableBox');
+      if (grTables) grTables.classList.toggle('hidden', state.mode !== 'gruppen');
+      if (ligaTable) ligaTable.classList.toggle('hidden', state.mode !== 'liga');
+
+      if (state.mode === 'gruppen') renderGroupTables();
+      if (state.mode === 'liga') renderLeagueTable();
+
+      setTournamentView('runner');
+      renderActiveMatch();
+      renderScheduleList();
+      renderTree();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function generateGroupMatches() {
+      state.matches = [];
+      let mIdx = 1;
+
+      // 1. HINRUNDE: Alle Paarungen erzeugen & optimal sequenzieren
+      const pairsA_Hin = [];
+      for (let i = 0; i < state.groupA.length; i++) {
+        for (let j = i + 1; j < state.groupA.length; j++) {
+          pairsA_Hin.push({ p1: state.groupA[i], p2: state.groupA[j], group: 'A', cycle: 1 });
+        }
+      }
+      const sequencedA_Hin = sequenceRoundRobinMatches(pairsA_Hin);
+
+      const pairsB_Hin = [];
+      for (let i = 0; i < state.groupB.length; i++) {
+        for (let j = i + 1; j < state.groupB.length; j++) {
+          pairsB_Hin.push({ p1: state.groupB[i], p2: state.groupB[j], group: 'B', cycle: 1 });
+        }
+      }
+      const sequencedB_Hin = sequenceRoundRobinMatches(pairsB_Hin);
+
+      // Matches der Hinrunde abwechselnd (A, B, A, B ...) verschränken
+      const maxHin = Math.max(sequencedA_Hin.length, sequencedB_Hin.length);
+      for (let i = 0; i < maxHin; i++) {
+        if (sequencedA_Hin[i]) {
+          state.matches.push({
+            id: `M${mIdx++}`,
+            group: 'A',
+            roundName: state.rounds > 1 ? `Gruppe A Hinrunde Spiel ${i + 1}` : `Gruppe A Spiel ${i + 1}`,
+            p1: sequencedA_Hin[i].p1,
+            p2: sequencedA_Hin[i].p2,
+            s1: 0,
+            s2: 0,
+            finished: false,
+            winner: null,
+            loser: null
+          });
+        }
+        if (sequencedB_Hin[i]) {
+          state.matches.push({
+            id: `M${mIdx++}`,
+            group: 'B',
+            roundName: state.rounds > 1 ? `Gruppe B Hinrunde Spiel ${i + 1}` : `Gruppe B Spiel ${i + 1}`,
+            p1: sequencedB_Hin[i].p1,
+            p2: sequencedB_Hin[i].p2,
+            s1: 0,
+            s2: 0,
+            finished: false,
+            winner: null,
+            loser: null
+          });
+        }
+      }
+
+      // 2. RÜCKRUNDE (nur wenn Hin- & Rückrunde ausgewählt wurde)
+      if (state.rounds === 2) {
+        const pairsA_Rueck = [];
+        for (let i = 0; i < state.groupA.length; i++) {
+          for (let j = i + 1; j < state.groupA.length; j++) {
+            pairsA_Rueck.push({ p1: state.groupA[j], p2: state.groupA[i], group: 'A', cycle: 2 });
+          }
+        }
+        const lastA = sequencedA_Hin[sequencedA_Hin.length - 1];
+        const sequencedA_Rueck = sequenceRoundRobinMatches(pairsA_Rueck, lastA);
+
+        const pairsB_Rueck = [];
+        for (let i = 0; i < state.groupB.length; i++) {
+          for (let j = i + 1; j < state.groupB.length; j++) {
+            pairsB_Rueck.push({ p1: state.groupB[j], p2: state.groupB[i], group: 'B', cycle: 2 });
+          }
+        }
+        const lastB = sequencedB_Hin[sequencedB_Hin.length - 1];
+        const sequencedB_Rueck = sequenceRoundRobinMatches(pairsB_Rueck, lastB);
+
+        const maxRueck = Math.max(sequencedA_Rueck.length, sequencedB_Rueck.length);
+        for (let i = 0; i < maxRueck; i++) {
+          if (sequencedA_Rueck[i]) {
+            state.matches.push({
+              id: `M${mIdx++}`,
+              group: 'A',
+              roundName: `Gruppe A Rückrunde Spiel ${i + 1}`,
+              p1: sequencedA_Rueck[i].p1,
+              p2: sequencedA_Rueck[i].p2,
+              s1: 0,
+              s2: 0,
+              finished: false,
+              winner: null,
+              loser: null
+            });
+          }
+          if (sequencedB_Rueck[i]) {
+            state.matches.push({
+              id: `M${mIdx++}`,
+              group: 'B',
+              roundName: `Gruppe B Rückrunde Spiel ${i + 1}`,
+              p1: sequencedB_Rueck[i].p1,
+              p2: sequencedB_Rueck[i].p2,
+              s1: 0,
+              s2: 0,
+              finished: false,
+              winner: null,
+              loser: null
+            });
+          }
+        }
+      }
+
+      state.matches.push({
+        id: `M${mIdx++}`,
+        stage: 'semi',
+        roundName: 'Halbfinale 1',
+        p1: '1. Gruppe A',
+        p2: '2. Gruppe B',
+        s1: 0,
+        s2: 0,
+        finished: false,
+        winner: null,
+        loser: null
+      });
+
+      state.matches.push({
+        id: `M${mIdx++}`,
+        stage: 'semi',
+        roundName: 'Halbfinale 2',
+        p1: '1. Gruppe B',
+        p2: '2. Gruppe A',
+        s1: 0,
+        s2: 0,
+        finished: false,
+        winner: null,
+        loser: null
+      });
+
+      state.matches.push({
+        id: `M${mIdx++}`,
+        stage: 'bronze',
+        roundName: 'Spiel um Platz 3',
+        p1: 'Verlierer HF1',
+        p2: 'Verlierer HF2',
+        s1: 0,
+        s2: 0,
+        finished: false,
+        winner: null,
+        loser: null
+      });
+
+      state.matches.push({
+        id: `M${mIdx++}`,
+        stage: 'final',
+        roundName: 'Großes Finale um Gold',
+        p1: 'Sieger HF1',
+        p2: 'Sieger HF2',
+        s1: 0,
+        s2: 0,
+        finished: false,
+        winner: null,
+        loser: null
+      });
+    }
+
+    function generateLeagueMatches(sorted) {
+      state.matches = [];
+      let mIdx = 1;
+      const names = sorted.map(p => p.name);
+      const matchesPerRound = Math.max(1, Math.floor(names.length / 2));
+
+      // 1. HINRUNDE: Alle Paarungen erzeugen & optimal sequenzieren
+      const hinPairs = [];
+      for (let i = 0; i < names.length; i++) {
+        for (let j = i + 1; j < names.length; j++) {
+          hinPairs.push({ p1: names[i], p2: names[j], cycle: 1 });
+        }
+      }
+      const sequencedHin = sequenceRoundRobinMatches(hinPairs);
+
+      sequencedHin.forEach((pair, idx) => {
+        const roundNum = Math.floor(idx / matchesPerRound) + 1;
+        state.matches.push({
+          id: `M${mIdx++}`,
+          roundName: state.rounds > 1 ? `Liga Hinrunde Runde ${roundNum}` : `Liga Runde ${roundNum}`,
+          p1: pair.p1,
+          p2: pair.p2,
+          s1: 0,
+          s2: 0,
+          finished: false,
+          winner: null,
+          loser: null
+        });
+      });
+
+      // 2. RÜCKRUNDE (nur wenn Hin- & Rückrunde ausgewählt wurde)
+      if (state.rounds === 2) {
+        const rueckPairs = [];
+        for (let i = 0; i < names.length; i++) {
+          for (let j = i + 1; j < names.length; j++) {
+            // Getauschter Anwurf
+            rueckPairs.push({ p1: names[j], p2: names[i], cycle: 2 });
+          }
+        }
+
+        // Übergang ohne Doppeleinsatz: Letztes Match der Hinrunde berücksichtigen
+        const lastHin = sequencedHin[sequencedHin.length - 1];
+        const sequencedRueck = sequenceRoundRobinMatches(rueckPairs, lastHin);
+
+        const totalHinRounds = Math.floor((sequencedHin.length - 1) / matchesPerRound) + 1;
+        sequencedRueck.forEach((pair, idx) => {
+          const roundNum = totalHinRounds + Math.floor(idx / matchesPerRound) + 1;
+          state.matches.push({
+            id: `M${mIdx++}`,
+            roundName: `Liga Rückrunde Runde ${roundNum}`,
+            p1: pair.p1,
+            p2: pair.p2,
+            s1: 0,
+            s2: 0,
+            finished: false,
+            winner: null,
+            loser: null
+          });
+        });
+      }
+
+      if (state.leaguePlayoff === 'top4') {
+        state.matches.push({
+          id: `M${mIdx++}`,
+          isPlayoff: true,
+          stage: 'semi',
+          roundName: 'Playoff-Halbfinale 1',
+          p1: 'Platz 1',
+          p2: 'Platz 4',
+          s1: 0,
+          s2: 0,
+          finished: false,
+          winner: null,
+          loser: null
+        });
+
+        state.matches.push({
+          id: `M${mIdx++}`,
+          isPlayoff: true,
+          stage: 'semi',
+          roundName: 'Playoff-Halbfinale 2',
+          p1: 'Platz 2',
+          p2: 'Platz 3',
+          s1: 0,
+          s2: 0,
+          finished: false,
+          winner: null,
+          loser: null
+        });
+
+        state.matches.push({
+          id: `M${mIdx++}`,
+          isPlayoff: true,
+          stage: 'bronze',
+          roundName: 'Spiel um Platz 3',
+          p1: 'Verlierer HF1',
+          p2: 'Verlierer HF2',
+          s1: 0,
+          s2: 0,
+          finished: false,
+          winner: null,
+          loser: null
+        });
+
+        state.matches.push({
+          id: `M${mIdx++}`,
+          isPlayoff: true,
+          stage: 'final',
+          roundName: 'Großes Finale um Gold',
+          p1: 'Sieger HF1',
+          p2: 'Sieger HF2',
+          s1: 0,
+          s2: 0,
+          finished: false,
+          winner: null,
+          loser: null
+        });
+      }
+    }
+
+    function generateDkoMatches(sorted) {
+      state.matches = [];
+      const p = sorted.map(s => s.name);
+      const n = p.length;
+
+      if (n === 3) {
+        // 3 Spieler: Ausgewogene Taktung (M2 muss gespielt werden, um Verlierer M2 zu ermitteln)
+        state.matches = [
+          { id: 'M1', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale', p1: p[1], p2: p[2], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M2', bracket: 'winner', roundName: 'Hauptrunden-Finale', p1: p[0], p2: 'Sieger M1', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M3', bracket: 'loser', roundName: 'Verlierer-Finale', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M4', bracket: 'final', roundName: 'Grand Final', p1: 'Sieger M2', p2: 'Sieger M3', s1: 0, s2: 0, finished: false, winner: null, loser: null }
+        ];
+      } else if (n === 4) {
+        // 4 Spieler: Verlierer-Runde 1 (M3) wird VOR dem Hauptrunden-Finale (M4) gespielt
+        state.matches = [
+          { id: 'M1', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 1', p1: p[0], p2: p[3], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M2', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 2', p1: p[1], p2: p[2], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M3', bracket: 'loser', roundName: 'Verlierer-Runde 1', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M4', bracket: 'winner', roundName: 'Hauptrunden-Finale', p1: 'Sieger M1', p2: 'Sieger M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M5', bracket: 'loser', roundName: 'Verlierer-Finale', p1: 'Sieger M3', p2: 'Verlierer M4', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M6', bracket: 'final', roundName: 'Grand Final', p1: 'Sieger M4', p2: 'Sieger M5', s1: 0, s2: 0, finished: false, winner: null, loser: null }
+        ];
+      } else if (n === 5) {
+        // 5 Spieler: Verlierer-Runde 1 (M4) wird VOR dem Hauptrunden-Finale (M5) gespielt
+        state.matches = [
+          { id: 'M1', bracket: 'winner', roundName: 'Hauptrunde Auftakt', p1: p[3], p2: p[4], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M2', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 2', p1: p[1], p2: p[2], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M3', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 1', p1: p[0], p2: 'Sieger M1', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M4', bracket: 'loser', roundName: 'Verlierer-Runde 1', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M5', bracket: 'winner', roundName: 'Hauptrunden-Finale', p1: 'Sieger M3', p2: 'Sieger M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M6', bracket: 'loser', roundName: 'Verlierer-Halbfinale', p1: 'Sieger M4', p2: 'Verlierer M3', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M7', bracket: 'loser', roundName: 'Verlierer-Finale', p1: 'Sieger M6', p2: 'Verlierer M5', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M8', bracket: 'final', roundName: 'Grand Final', p1: 'Sieger M5', p2: 'Sieger M7', s1: 0, s2: 0, finished: false, winner: null, loser: null }
+        ];
+      } else if (n === 6) {
+        // 6 Spieler: Verlierer-Runde 1 vor Halbfinale 2 & Verlierer-Runde 2 vor Hauptrunden-Finale!
+        state.matches = [
+          { id: 'M1', bracket: 'winner', roundName: 'Hauptrunde Auftakt 1', p1: p[3], p2: p[4], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M2', bracket: 'winner', roundName: 'Hauptrunde Auftakt 2', p1: p[2], p2: p[5], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M3', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 1', p1: p[0], p2: 'Sieger M1', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M4', bracket: 'loser', roundName: 'Verlierer-Runde 1', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M5', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 2', p1: p[1], p2: 'Sieger M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M6', bracket: 'loser', roundName: 'Verlierer-Runde 2', p1: 'Sieger M4', p2: 'Verlierer M3', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M7', bracket: 'winner', roundName: 'Hauptrunden-Finale', p1: 'Sieger M3', p2: 'Sieger M5', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M8', bracket: 'loser', roundName: 'Verlierer-Halbfinale', p1: 'Sieger M6', p2: 'Verlierer M5', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M9', bracket: 'loser', roundName: 'Verlierer-Finale', p1: 'Sieger M8', p2: 'Verlierer M7', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M10', bracket: 'final', roundName: 'Grand Final', p1: 'Sieger M7', p2: 'Sieger M9', s1: 0, s2: 0, finished: false, winner: null, loser: null }
+        ];
+      } else if (n === 7) {
+        // 7 Spieler: Verlierer-Runde 1 vor Halbfinale 2 & Verlierer-Runde 2 (beide Partien) vor Hauptrunden-Finale!
+        state.matches = [
+          { id: 'M1', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 1', p1: p[3], p2: p[4], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M2', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 2', p1: p[1], p2: p[6], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M3', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 3', p1: p[2], p2: p[5], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M4', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 1', p1: p[0], p2: 'Sieger M1', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M5', bracket: 'loser', roundName: 'Verlierer-Runde 1', p1: 'Verlierer M2', p2: 'Verlierer M3', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M6', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 2', p1: 'Sieger M2', p2: 'Sieger M3', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M7', bracket: 'loser', roundName: 'Verlierer-Runde 2 (1)', p1: 'Verlierer M1', p2: 'Verlierer M4', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M8', bracket: 'loser', roundName: 'Verlierer-Runde 2 (2)', p1: 'Sieger M5', p2: 'Verlierer M6', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M9', bracket: 'winner', roundName: 'Hauptrunden-Finale', p1: 'Sieger M4', p2: 'Sieger M6', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M10', bracket: 'loser', roundName: 'Verlierer-Halbfinale', p1: 'Sieger M7', p2: 'Sieger M8', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M11', bracket: 'loser', roundName: 'Verlierer-Finale', p1: 'Sieger M10', p2: 'Verlierer M9', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M12', bracket: 'final', roundName: 'Grand Final', p1: 'Sieger M9', p2: 'Sieger M11', s1: 0, s2: 0, finished: false, winner: null, loser: null }
+        ];
+      } else {
+        // 8 Spieler: Verlierer-Runden werden jeweils vor den entsprechenden Hauptrunden-Matches ausgetragen!
+        state.matches = [
+          { id: 'M1', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 1', p1: p[0], p2: p[7], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M2', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 2', p1: p[3], p2: p[4], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M3', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 3', p1: p[1], p2: p[6], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M4', bracket: 'winner', roundName: 'Hauptrunden-Viertelfinale 4', p1: p[2], p2: p[5], s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M5', bracket: 'loser', roundName: 'Verlierer-Runde 1 (1)', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M6', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 1', p1: 'Sieger M1', p2: 'Sieger M2', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M7', bracket: 'loser', roundName: 'Verlierer-Runde 1 (2)', p1: 'Verlierer M3', p2: 'Verlierer M4', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M8', bracket: 'winner', roundName: 'Hauptrunden-Halbfinale 2', p1: 'Sieger M3', p2: 'Sieger M4', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M9', bracket: 'loser', roundName: 'Verlierer-Runde 2 (1)', p1: 'Sieger M7', p2: 'Verlierer M6', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M10', bracket: 'loser', roundName: 'Verlierer-Runde 2 (2)', p1: 'Sieger M5', p2: 'Verlierer M8', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M11', bracket: 'winner', roundName: 'Hauptrunden-Finale', p1: 'Sieger M6', p2: 'Sieger M8', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M12', bracket: 'loser', roundName: 'Verlierer-Halbfinale', p1: 'Sieger M9', p2: 'Sieger M10', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M13', bracket: 'loser', roundName: 'Verlierer-Finale', p1: 'Sieger M12', p2: 'Verlierer M11', s1: 0, s2: 0, finished: false, winner: null, loser: null },
+          { id: 'M14', bracket: 'final', roundName: 'Grand Final', p1: 'Sieger M11', p2: 'Sieger M13', s1: 0, s2: 0, finished: false, winner: null, loser: null }
+        ];
+      }
+    }
+
+    function renderActiveMatch() {
+      const hero = document.getElementById('activeMatchHero');
+      const rNameEl = document.getElementById('activeMatchRoundName');
+      const distEl = document.getElementById('activeMatchDistance');
+      const p1El = document.getElementById('activeP1Name');
+      const p2El = document.getElementById('activeP2Name');
+      const buttonsContainer = document.getElementById('activeResultButtons');
+      if (!hero) return;
+
+      const currentMatch = state.matches.find(m => m.id === state.activeMatchId);
+      if (!currentMatch || !isMatchPlayable(currentMatch)) {
+        const nextPlayable = findNextPlayableMatch();
+        if (nextPlayable) {
+          state.activeMatchId = nextPlayable.id;
+          renderActiveMatch();
+          return;
+        }
+
+        const allDone = state.matches.length > 0 && state.matches.every(m => m.finished);
+        if (allDone) {
+          if (rNameEl) rNameEl.textContent = 'Alle Matches beendet!';
+          if (distEl) distEl.textContent = 'Turnier abgeschlossen';
+          if (p1El) p1El.textContent = 'Turnier';
+          if (p2El) p2El.textContent = 'Beendet';
+          if (buttonsContainer) {
+            buttonsContainer.innerHTML = `
+              <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 pb-1">
+                <button type="button" onclick="finishTournament()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold font-display text-sm transition flex items-center gap-2 shadow-lg shadow-amber-500/20 active:scale-95">
+                  <i data-lucide="trophy" class="w-4 h-4"></i>
+                  <span>Zur Siegerehrung</span>
+                </button>
+                <button type="button" onclick="undoLastAction()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 font-bold text-xs transition flex items-center gap-1.5 active:scale-95">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                  <span>Letztes Match korrigieren</span>
+                </button>
+              </div>
+            `;
+          }
+          if (window.lucide) lucide.createIcons();
+          return;
+        }
+
+        if (rNameEl) rNameEl.textContent = 'Warten auf Spielausgang';
+        if (distEl) distEl.textContent = '-';
+        if (p1El) p1El.textContent = 'Offen';
+        if (p2El) p2El.textContent = 'Offen';
+        if (buttonsContainer) buttonsContainer.innerHTML = '<span class="text-xs text-slate-500">Vorherige Matches müssen beendet werden.</span>';
+        return;
+      }
+
+      const bo = getMatchDistance(currentMatch);
+      const winsNeeded = Math.ceil(bo / 2);
+
+      const cleanRoundName = formatRoundDisplayName(currentMatch.roundName);
+      if (rNameEl) rNameEl.textContent = `${currentMatch.id}: ${cleanRoundName}`;
+      if (distEl) distEl.textContent = `Best of ${bo} (First to ${winsNeeded})`;
+      if (p1El) p1El.textContent = currentMatch.p1;
+      if (p2El) p2El.textContent = currentMatch.p2;
+
+      if (!buttonsContainer) return;
+      buttonsContainer.innerHTML = '';
+
+      for (let opp = 0; opp < winsNeeded; opp++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => recordMatchResult(currentMatch.id, winsNeeded, opp);
+        btn.className = 'px-3 py-2 rounded-xl bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-white font-display font-bold text-xs border border-slate-700 transition active:scale-95';
+        btn.textContent = `${winsNeeded} : ${opp}`;
+        buttonsContainer.appendChild(btn);
+      }
+
+      for (let opp = 0; opp < winsNeeded; opp++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => recordMatchResult(currentMatch.id, opp, winsNeeded);
+        btn.className = 'px-3 py-2 rounded-xl bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-white font-display font-bold text-xs border border-slate-700 transition active:scale-95';
+        btn.textContent = `${opp} : ${winsNeeded}`;
+        buttonsContainer.appendChild(btn);
+      }
+    }
+
+    function recordMatchResult(matchId, s1, s2) {
+      const match = state.matches.find(m => m.id === matchId);
+      if (!match) return;
+
+      state.history.push({
+        matches: JSON.parse(JSON.stringify(state.matches)),
+        activeMatchId: state.activeMatchId,
+        leaguePlayoffGenerated: state.leaguePlayoffGenerated
+      });
+
+      match.s1 = s1;
+      match.s2 = s2;
+      match.finished = true;
+      match.winner = s1 > s2 ? match.p1 : match.p2;
+      match.loser = s1 > s2 ? match.p2 : match.p1;
+
+      advanceTournamentProgression(match);
+
+      if (state.mode === 'gruppen') renderGroupTables();
+      if (state.mode === 'liga') renderLeagueTable();
+
+      // Find next playable match strikt in Spielplan-Reihenfolge
+      const next = findNextPlayableMatch();
+      state.activeMatchId = next ? next.id : null;
+
+      // Check if tournament is completely finished
+      const allDone = state.matches.length > 0 && state.matches.every(m => m.finished);
+      if (allDone) {
+        finishTournament();
+        return;
+      }
+
+      renderActiveMatch();
+      renderScheduleList();
+      renderTree();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function advanceTournamentProgression(completedMatch) {
+      const mId = completedMatch.id;
+      const w = completedMatch.winner;
+      const l = completedMatch.loser;
+
+      state.matches.forEach(m => {
+        if (!m.finished) {
+          if (m.p1 === `Sieger ${mId}`) m.p1 = w;
+          if (m.p2 === `Sieger ${mId}`) m.p2 = w;
+          if (m.p1 === `Verlierer ${mId}`) m.p1 = l;
+          if (m.p2 === `Verlierer ${mId}`) m.p2 = l;
+        }
+      });
+
+      if (state.mode === 'dko' && completedMatch.bracket === 'final' && !completedMatch.isResetMatch) {
+        if (completedMatch.winner === completedMatch.p2) {
+          const hasResetAlready = state.matches.some(m => m.isResetMatch);
+          if (!hasResetAlready) {
+            const nextMatchId = `M${state.matches.length + 1}`;
+            state.matches.push({
+              id: nextMatchId,
+              bracket: 'final',
+              isResetMatch: true,
+              roundName: 'Grand Final',
+              p1: completedMatch.p1,
+              p2: completedMatch.p2,
+              s1: 0,
+              s2: 0,
+              finished: false,
+              winner: null,
+              loser: null
+            });
+          }
+        }
+      }
+
+      if (state.mode === 'gruppen') {
+        const groupMatchesDone = state.matches.filter(m => m.group && !m.finished).length === 0;
+        if (groupMatchesDone) {
+          const tableA = calculateGroupStandings('A');
+          const tableB = calculateGroupStandings('B');
+          state.matches.forEach(m => {
+            if (m.stage === 'semi') {
+              if (m.p1 === '1. Gruppe A' && tableA[0]) m.p1 = tableA[0].name;
+              if (m.p2 === '2. Gruppe B' && tableB[1]) m.p2 = tableB[1].name;
+              if (m.p1 === '1. Gruppe B' && tableB[0]) m.p1 = tableB[0].name;
+              if (m.p2 === '2. Gruppe A' && tableA[1]) m.p2 = tableA[1].name;
+            }
+          });
+        }
+
+        const semi1 = state.matches.find(m => m.stage === 'semi' && m.roundName.includes('Halbfinale 1'));
+        const semi2 = state.matches.find(m => m.stage === 'semi' && m.roundName.includes('Halbfinale 2'));
+        state.matches.forEach(m => {
+          if (m.stage === 'bronze') {
+            if (semi1 && semi1.finished && m.p1 === 'Verlierer HF1') m.p1 = semi1.loser;
+            if (semi2 && semi2.finished && m.p2 === 'Verlierer HF2') m.p2 = semi2.loser;
+          }
+          if (m.stage === 'final') {
+            if (semi1 && semi1.finished && m.p1 === 'Sieger HF1') m.p1 = semi1.winner;
+            if (semi2 && semi2.finished && m.p2 === 'Sieger HF2') m.p2 = semi2.winner;
+          }
+        });
+      }
+
+      if (state.mode === 'liga' && state.leaguePlayoff === 'top4') {
+        const regularDone = state.matches.filter(m => !m.isPlayoff && !m.finished).length === 0;
+        if (regularDone) {
+          const lTable = calculateLeagueStandings();
+          state.matches.forEach(m => {
+            if (m.isPlayoff && m.stage === 'semi') {
+              if (m.p1 === 'Platz 1' && lTable[0]) m.p1 = lTable[0].name;
+              if (m.p2 === 'Platz 4' && lTable[3]) m.p2 = lTable[3].name;
+              if (m.p1 === 'Platz 2' && lTable[1]) m.p1 = lTable[1].name;
+              if (m.p2 === 'Platz 3' && lTable[2]) m.p2 = lTable[2].name;
+            }
+          });
+        }
+
+        const semi1 = state.matches.find(m => m.isPlayoff && m.roundName.includes('Halbfinale 1'));
+        const semi2 = state.matches.find(m => m.isPlayoff && m.roundName.includes('Halbfinale 2'));
+        state.matches.forEach(m => {
+          if (m.isPlayoff && m.stage === 'bronze') {
+            if (semi1 && semi1.finished && m.p1 === 'Verlierer HF1') m.p1 = semi1.loser;
+            if (semi2 && semi2.finished && m.p2 === 'Verlierer HF2') m.p2 = semi2.loser;
+          }
+          if (m.isPlayoff && m.stage === 'final') {
+            if (semi1 && semi1.finished && m.p1 === 'Sieger HF1') m.p1 = semi1.winner;
+            if (semi2 && semi2.finished && m.p2 === 'Sieger HF2') m.p2 = semi2.winner;
+          }
+        });
+      }
     }
 
     function shiftTieBreakOrder(sortedIndex, direction) {
@@ -1427,616 +2523,228 @@
       return `Platz ${rank}`;
     }
 
-    function renderSeedingLegend() {
-      const box = document.getElementById('seedingLegendBox');
-      if (!box) return;
-      const n = state.playerCount;
-      const m = state.mode;
+    function getSeedBadgeHtml(seedText) {
+      if (!seedText) return '';
+      const lower = seedText.toLowerCase();
 
-      let msg = '';
-      if (m === 'dko') {
-        if (n === 4) msg = '<strong>4 Spieler:</strong> Keine Freilose. Rang 1 vs 4 und Rang 2 vs 3 starten direkt im Halbfinale.';
-        else if (n === 5) msg = '<strong>5 Spieler:</strong> Ränge 1, 2 und 3 erhalten ein Freilos ins Halbfinale. Rang 4 und 5 bestreiten Match 1.';
-        else if (n === 6) msg = '<strong>6 Spieler:</strong> Ränge 1 und 2 erhalten ein Freilos ins Halbfinale. Ränge 3 bis 6 spielen Runde 1.';
-        else if (n === 7) msg = '<strong>7 Spieler:</strong> Rang 1 erhält das einzige Freilos ins Halbfinale.';
-        else if (n === 8) msg = '<strong>8 Spieler:</strong> Volles 8er-Feld ohne Freilose. Alle starten im Viertelfinale.';
-        else msg = '<strong>3 Spieler:</strong> Rang 1 steht direkt im Finale!';
-      } else if (m === 'gruppen') {
-        msg = '<strong>Snake-Verteilung:</strong> Ränge 1 &amp; 4 in Gruppe A, Ränge 2 &amp; 3 in Gruppe B für maximal ausgeglichene Gruppen.';
-      } else {
-        msg = '<strong>Ligamodus:</strong> Die Platzierung bestimmt die Anwurf-Reihenfolge im Berger-Spielplan.';
+      // Freilos Badge in Farbe der Hauptrunde (Single Bull Blau) ohne Punkt
+      if (lower.includes('freilos')) {
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-950/80 text-blue-300 border border-blue-500/50 shadow-sm inline-flex items-center">${seedText}</span>`;
       }
-
-      box.innerHTML = `<p class="text-slate-300 text-[11px] leading-relaxed">${msg}</p>`;
+      // Gruppe A in Single Bull Blau
+      if (lower.includes('gruppe a')) {
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-950/80 text-blue-300 border border-blue-500/50 shadow-sm inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Gruppe A</span>`;
+      }
+      // Gruppe B in Bullseye Lila
+      if (lower.includes('gruppe b')) {
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-950/80 text-purple-300 border border-purple-500/50 shadow-sm inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Gruppe B</span>`;
+      }
+      // Halbfinale (z.B. 4 Spieler Doppel-K.o.)
+      if (lower.includes('halbfinale')) {
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-950/80 text-blue-300 border border-blue-500/50 shadow-sm inline-flex items-center">${seedText}</span>`;
+      }
+      // Viertelfinale (z.B. 8 Spieler Doppel-K.o.)
+      if (lower.includes('viertelfinale')) {
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-300 border border-slate-700/80 inline-flex items-center">${seedText}</span>`;
+      }
+      // Startplatz (Ligamodus) sowie Match 1 & Auftaktrunden im K.o.-System als graues Badge
+      if (lower.includes('startplatz') || lower.includes('match 1') || lower.includes('auftakt') || lower.includes('runde 1')) {
+        return `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400 border border-slate-700/80 inline-flex items-center">${seedText}</span>`;
+      }
+      // Einheitliches Badge für jeden anderen Text (z.B. Platz X) bei jeder Spieleranzahl
+      return `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-300 border border-slate-700/80 inline-flex items-center">${seedText}</span>`;
     }
 
-    function performRandomDraw(animate = true) {
-      state.randomDrawDone = true;
-      const n = state.players.length;
-      const order = Array.from({ length: n }, (_, i) => i + 1);
+    // Match- / Runden-Badge ausschließlich in Single Bull Blau & Bullseye Lila nach Rundenzugehörigkeit
+    function getMatchRoundsBadge(m) {
+      if (!m) return '';
+      const rName = (m.roundName || '').toLowerCase();
+      const isGrandFinal = rName.includes('grand final') || rName.includes('großes finale um gold') || (m.stage === 'final') || (m.isPlayoff && rName.includes('finale um gold')) || m.isResetMatch;
+      const isSemi = rName.includes('halbfinale') || rName.includes('hf') || (m.stage === 'semi') || (m.isPlayoff && rName.includes('halbfinale')) || (state.mode === 'dko' && state.playerCount === 3 && m.id === 'M1');
+      const isBronze = rName.includes('platz 3') || (m.stage === 'bronze');
+      const isDkoPreFinal = state.mode === 'dko' && (rName.includes('hauptrunden-finale') || rName.includes('verlierer-finale') || rName.includes('finale hauptrunde'));
+      const isGroupA = (m.group === 'A') || rName.includes('gruppe a');
+      const isGroupB = (m.group === 'B') || rName.includes('gruppe b');
+      const isVR = (m.bracket === 'loser') || rName.includes('verlierer');
 
-      for (let i = order.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [order[i], order[j]] = [order[j], order[i]];
+      const blueBadge = 'bg-blue-950/80 text-blue-300 border border-blue-500/50 shadow-sm';
+      const purpleBadge = 'bg-purple-950/80 text-purple-300 border border-purple-500/50 shadow-sm';
+      const goldBadge = 'bg-amber-950/80 text-amber-300 border border-amber-500/50 shadow-sm';
+      const bronzeBadge = 'bg-amber-950/80 text-amber-400 border border-amber-600/60 shadow-sm';
+
+      if (isGrandFinal) {
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${goldBadge}">🏆 Grand Final</span>`;
       }
-
-      state.players.forEach((p, idx) => {
-        p.randomRank = order[idx];
-      });
-
-      if (!animate) {
-        renderRandomQuali();
-        return;
+      if (isDkoPreFinal) {
+        return isVR 
+          ? `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${purpleBadge}">🔥 Pre-Final</span>`
+          : `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${blueBadge}">🔥 Pre-Final</span>`;
       }
-
-      const drawBtn = document.getElementById('btnRandomDrawTrigger');
-      const grid = document.getElementById('randomDrawGrid');
-
-      if (drawBtn) {
-        drawBtn.disabled = true;
-        drawBtn.classList.add('opacity-75', 'cursor-not-allowed');
-        const icon = drawBtn.querySelector('i');
-        if (icon) icon.classList.add('animate-spin');
+      if (isBronze) {
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${bronzeBadge}">🥉 Platz 3</span>`;
       }
-
-      let step = 0;
-      const allNames = state.players.map(p => p.name);
-      const interval = setInterval(() => {
-        step++;
-        if (grid) {
-          const nameEls = grid.querySelectorAll('.draw-player-name');
-          nameEls.forEach(el => {
-            el.textContent = allNames[Math.floor(Math.random() * allNames.length)];
-          });
+      if (isSemi) {
+        if (m.bracket === 'winner' || rName.includes('hauptrunde')) {
+          return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${blueBadge}">⚔️ Halbfinale</span>`;
         }
-
-        if (step >= 6) {
-          clearInterval(interval);
-          renderRandomQuali();
-          updateStartTournamentBtnState();
-          triggerPersistence();
-          if (drawBtn) {
-            drawBtn.disabled = false;
-            drawBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-            const icon = drawBtn.querySelector('i');
-            if (icon) icon.classList.remove('animate-spin');
-          }
+        if (isVR || rName.includes('verlierer')) {
+          return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${purpleBadge}">⚔️ Halbfinale</span>`;
         }
-      }, 60);
+        if (m.isPlayoff || state.mode === 'liga') {
+          return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${blueBadge}">⚔️ Halbfinale</span>`;
+        }
+        if (rName.includes('halbfinale 2') || rName.includes('hf2') || rName.includes('hf 2')) {
+          return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${purpleBadge}">⚔️ Halbfinale</span>`;
+        }
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${blueBadge}">⚔️ Halbfinale</span>`;
+      }
+      if (isGroupA) {
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${blueBadge}">Gruppe A</span>`;
+      }
+      if (isGroupB) {
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${purpleBadge}">Gruppe B</span>`;
+      }
+      if (m.bracket === 'winner') {
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${blueBadge}">Hauptrunde</span>`;
+      }
+      if (m.bracket === 'loser' || isVR) {
+        return `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${purpleBadge}">Verlierer-Runde</span>`;
+      }
+      return '';
     }
 
-    function renderRandomQuali() {
-      const grid = document.getElementById('randomDrawGrid');
-      if (!grid) return;
-      grid.innerHTML = '';
-
-      const n = state.playerCount;
-      const m = state.mode;
-
-      if (!state.randomDrawDone) {
-        for (let idx = 0; idx < n; idx++) {
-          const rank = idx + 1;
-          const seedText = getSeedingStatusText(rank, n, m);
-
-          const card = document.createElement('div');
-          card.className = 'p-3.5 rounded-xl border border-dashed border-slate-800 bg-slate-950/40 transition-all';
-          card.innerHTML = `
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-              <span class="font-display font-bold text-slate-400">Los ${rank}</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-900 text-slate-500">${seedText}</span>
-            </div>
-            <h4 class="draw-player-name font-bold text-slate-500 text-sm truncate italic">Noch nicht ausgelost</h4>
-          `;
-          grid.appendChild(card);
-        }
-        return;
-      }
-
-      const sorted = getSortedPlayersForQuali();
-
-      sorted.forEach((p, idx) => {
-        const rank = idx + 1;
-        const seedText = getSeedingStatusText(rank, n, m);
-
-        const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-xl border border-slate-800 bg-slate-950 transition-all duration-300';
-        card.innerHTML = `
-          <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-            <span class="font-display font-bold text-amber-400">Los ${rank}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-300">${seedText}</span>
-          </div>
-          <h4 class="draw-player-name font-bold text-white text-sm truncate transition-colors">${escapeHtml(p.name)}</h4>
-        `;
-        grid.appendChild(card);
-      });
+    function formatRoundDisplayName(name) {
+      if (!name) return '';
+      return name
+        .replace(/\(Runde (\d+)\)/gi, 'Runde $1')
+        .replace(/\s*\([^)]*\)/g, '')
+        .trim();
     }
 
     // ==========================================
-    // TOURNAMENT CONTROLLERS & ENGINE
+    // KANDIDATEN-AUFLÖSUNG (MAX. 4 SPIELER)
     // ==========================================
-    function startTournament() {
-      if (state.qualiMethod === 'random' && !state.randomDrawDone) {
-        return;
-      }
+    function parseRecursiveNode(rawVal, depth = 0) {
+      if (!rawVal || depth > 4) return null;
 
-      if (state.qualiMethod === 'bull') {
-        const hasUnfinished = state.players.some(p => p.dartsCount < 9);
-        if (hasUnfinished) {
-          return;
-        }
-      }
-
-      const seeded = getSortedPlayersForQuali();
-      seeded.forEach((p, idx) => {
-        p.seed = String.fromCharCode(65 + idx);
-      });
-
-      state.currentPhase = 'tournament';
-      updateStepBadges();
-
-      document.getElementById('screenQuali').classList.add('hidden');
-      document.getElementById('screenTournament').classList.remove('hidden');
-
-      const grTables = document.getElementById('groupsLiveTablesContainer');
-      const ligaTable = document.getElementById('leagueLiveTableBox');
-      const titleEl = document.getElementById('tournamentModeTitle');
-      const treeLabel = document.getElementById('tabTreeLabel');
-
+      // Vorrunden Live-Tabellenstände für 2 Gruppen & Liga auflösen
       if (state.mode === 'gruppen') {
-        if (grTables) grTables.classList.remove('hidden');
-        if (ligaTable) ligaTable.classList.add('hidden');
-        if (titleEl) titleEl.textContent = '2 Gruppen + K.o.-Phase';
-        if (treeLabel) treeLabel.textContent = 'K.o.-Baum & Gruppe';
-        buildTwoGroupsSchedule(seeded);
-      } else if (state.mode === 'liga') {
-        if (grTables) grTables.classList.add('hidden');
-        if (ligaTable) ligaTable.classList.remove('hidden');
-        if (titleEl) titleEl.textContent = 'Ligamodus';
-        if (treeLabel) treeLabel.textContent = 'Tabelle & Spielplan';
-        buildLeagueSchedule(seeded);
-      } else {
-        if (grTables) grTables.classList.add('hidden');
-        if (ligaTable) ligaTable.classList.add('hidden');
-        if (titleEl) titleEl.textContent = 'Doppel-K.o. Turnierbaum';
-        if (treeLabel) treeLabel.textContent = 'Turnierbaum';
-        buildDoubleElimBracket(seeded);
+        const tableA = calculateGroupStandings('A');
+        const tableB = calculateGroupStandings('B');
+        if (rawVal.includes('1. Gruppe A')) return { text: tableA[0]?.name || '1. Gruppe A', players: tableA[0] ? [tableA[0].name] : [], isLeaf: true };
+        if (rawVal.includes('2. Gruppe A')) return { text: tableA[1]?.name || '2. Gruppe A', players: tableA[1] ? [tableA[1].name] : [], isLeaf: true };
+        if (rawVal.includes('1. Gruppe B')) return { text: tableB[0]?.name || '1. Gruppe B', players: tableB[0] ? [tableB[0].name] : [], isLeaf: true };
+        if (rawVal.includes('2. Gruppe B')) return { text: tableB[1]?.name || '2. Gruppe B', players: tableB[1] ? [tableB[1].name] : [], isLeaf: true };
       }
 
-      setTournamentView('runner');
-      renderActiveMatch();
-      renderScheduleList();
-      updateHeaderActions();
-      triggerPersistence();
-      if (window.lucide) lucide.createIcons();
-    }
-
-    // ------------------------------------------
-    // DOUBLE ELIMINATION GENERATOR
-    // ------------------------------------------
-    function buildDoubleElimBracket(seeded) {
-      state.matches = [];
-      const n = state.playerCount;
-      const P = seeded.map(p => p.name);
-
-      if (n === 4) {
-        state.matches = [
-          { id: 'M1', roundName: 'Halbfinale 1', bracket: 'winner', p1: P[0], p2: P[3], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M2', roundName: 'Halbfinale 2', bracket: 'winner', p1: P[1], p2: P[2], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M3', roundName: 'Verlierer-Halbfinale', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M4', roundName: 'Finale Hauptrunde', bracket: 'winner', p1: 'Sieger M1', p2: 'Sieger M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M5', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M3', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M6', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M4', p2: 'Sieger M5', s1: null, s2: null, winner: null, loser: null, finished: false }
-        ];
-      } else if (n === 5) {
-        state.matches = [
-          { id: 'M1', roundName: 'Hauptrunde R1', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M2', roundName: 'Hauptrunde HF 1', bracket: 'winner', p1: P[0], p2: P[1], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M3', roundName: 'Hauptrunde HF 2', bracket: 'winner', p1: P[2], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M4', roundName: 'Verlierer R1', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M5', roundName: 'Verlierer-HF', bracket: 'loser', p1: 'Sieger M4', p2: 'Verlierer M3', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M6', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M2', p2: 'Sieger M3', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M7', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M5', p2: 'Verlierer M6', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M8', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M6', p2: 'Sieger M7', s1: null, s2: null, winner: null, loser: null, finished: false }
-        ];
-      } else if (n === 6) {
-        state.matches = [
-          { id: 'M1', roundName: 'Hauptrunde R1 (1)', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M2', roundName: 'Hauptrunde R1 (2)', bracket: 'winner', p1: P[2], p2: P[5], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M3', roundName: 'Hauptrunde HF 1', bracket: 'winner', p1: P[0], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M4', roundName: 'Hauptrunde HF 2', bracket: 'winner', p1: P[1], p2: 'Sieger M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M5', roundName: 'Verlierer R1', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M6', roundName: 'Verlierer R2', bracket: 'loser', p1: 'Sieger M5', p2: 'Verlierer M3', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M7', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M3', p2: 'Sieger M4', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M8', roundName: 'Verlierer-HF', bracket: 'loser', p1: 'Sieger M6', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M9', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M8', p2: 'Verlierer M7', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M10', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M7', p2: 'Sieger M9', s1: null, s2: null, winner: null, loser: null, finished: false }
-        ];
-      } else if (n === 7) {
-        state.matches = [
-          { id: 'M1', roundName: 'Hauptrunde R1 (1)', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M2', roundName: 'Hauptrunde R1 (2)', bracket: 'winner', p1: P[2], p2: P[5], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M3', roundName: 'Hauptrunde R1 (3)', bracket: 'winner', p1: P[1], p2: P[6], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M4', roundName: 'Hauptrunde HF 1', bracket: 'winner', p1: P[0], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M5', roundName: 'Hauptrunde HF 2', bracket: 'winner', p1: 'Sieger M2', p2: 'Sieger M3', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M6', roundName: 'Verlierer R1', bracket: 'loser', p1: 'Verlierer M2', p2: 'Verlierer M3', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M7', roundName: 'Verlierer R2', bracket: 'loser', p1: 'Sieger M6', p2: 'Verlierer M1', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M8', roundName: 'Verlierer R3 (1)', bracket: 'loser', p1: 'Sieger M7', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M9', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M4', p2: 'Sieger M5', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M10', roundName: 'Verlierer R3 (2)', bracket: 'loser', p1: 'Sieger M8', p2: 'Verlierer M5', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M11', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M10', p2: 'Verlierer M9', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M12', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M9', p2: 'Sieger M11', s1: null, s2: null, winner: null, loser: null, finished: false }
-        ];
-      } else if (n === 8) {
-        state.matches = [
-          { id: 'M1', roundName: 'Viertelfinale 1', bracket: 'winner', p1: P[0], p2: P[7], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M2', roundName: 'Viertelfinale 2', bracket: 'winner', p1: P[3], p2: P[4], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M3', roundName: 'Viertelfinale 3', bracket: 'winner', p1: P[1], p2: P[6], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M4', roundName: 'Viertelfinale 4', bracket: 'winner', p1: P[2], p2: P[5], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M5', roundName: 'Verlierer R1 (1)', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M6', roundName: 'Verlierer R1 (2)', bracket: 'loser', p1: 'Verlierer M3', p2: 'Verlierer M4', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M7', roundName: 'Halbfinale 1', bracket: 'winner', p1: 'Sieger M1', p2: 'Sieger M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M8', roundName: 'Halbfinale 2', bracket: 'winner', p1: 'Sieger M3', p2: 'Sieger M4', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M9', roundName: 'Verlierer R2 (1)', bracket: 'loser', p1: 'Sieger M5', p2: 'Verlierer M7', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M10', roundName: 'Verlierer R2 (2)', bracket: 'loser', p1: 'Sieger M6', p2: 'Verlierer M8', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M11', roundName: 'Verlierer R3', bracket: 'loser', p1: 'Sieger M9', p2: 'Sieger M10', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M12', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: 'Sieger M7', p2: 'Sieger M8', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M13', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Sieger M11', p2: 'Verlierer M12', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M14', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M12', p2: 'Sieger M13', s1: null, s2: null, winner: null, loser: null, finished: false }
-        ];
-      } else {
-        // 3 Players
-        state.matches = [
-          { id: 'M1', roundName: 'Auftaktspiel', bracket: 'winner', p1: P[1], p2: P[2], s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M2', roundName: 'Hauptrunden-Finale', bracket: 'winner', p1: P[0], p2: 'Sieger M1', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M3', roundName: 'Verlierer-Finale', bracket: 'loser', p1: 'Verlierer M1', p2: 'Verlierer M2', s1: null, s2: null, winner: null, loser: null, finished: false },
-          { id: 'M4', roundName: 'Grand Final', bracket: 'final', p1: 'Sieger M2', p2: 'Sieger M3', s1: null, s2: null, winner: null, loser: null, finished: false }
-        ];
+      if (state.mode === 'liga' && state.leaguePlayoff === 'top4') {
+        const lTable = calculateLeagueStandings();
+        if (rawVal.includes('Platz 1')) return { text: lTable[0]?.name || 'Platz 1', players: lTable[0] ? [lTable[0].name] : [], isLeaf: true };
+        if (rawVal.includes('Platz 2')) return { text: lTable[1]?.name || 'Platz 2', players: lTable[1] ? [lTable[1].name] : [], isLeaf: true };
+        if (rawVal.includes('Platz 3')) return { text: lTable[2]?.name || 'Platz 3', players: lTable[2] ? [lTable[2].name] : [], isLeaf: true };
+        if (rawVal.includes('Platz 4')) return { text: lTable[3]?.name || 'Platz 4', players: lTable[3] ? [lTable[3].name] : [], isLeaf: true };
       }
 
-      state.activeMatchId = state.matches[0].id;
-    }
-
-    // ------------------------------------------
-    // 2 GRUPPEN GENERATOR
-    // ------------------------------------------
-    function buildTwoGroupsSchedule(seeded) {
-      state.matches = [];
-      state.groupA = [];
-      state.groupB = [];
-
-      seeded.forEach((p, idx) => {
-        if (idx % 2 === 0) state.groupA.push(p.name);
-        else state.groupB.push(p.name);
-      });
-
-      let matchNum = 1;
-
-      for (let i = 0; i < state.groupA.length; i++) {
-        for (let j = i + 1; j < state.groupA.length; j++) {
-          state.matches.push({
-            id: `M${matchNum++}`,
-            roundName: 'Gruppe A',
-            group: 'A',
-            p1: state.groupA[i],
-            p2: state.groupA[j],
-            s1: null, s2: null, winner: null, loser: null, finished: false
-          });
-        }
-      }
-
-      for (let i = 0; i < state.groupB.length; i++) {
-        for (let j = i + 1; j < state.groupB.length; j++) {
-          state.matches.push({
-            id: `M${matchNum++}`,
-            roundName: 'Gruppe B',
-            group: 'B',
-            p1: state.groupB[i],
-            p2: state.groupB[j],
-            s1: null, s2: null, winner: null, loser: null, finished: false
-          });
-        }
-      }
-
-      if (state.rounds === 2) {
-        const firstRoundCount = state.matches.length;
-        for (let k = 0; k < firstRoundCount; k++) {
-          const m = state.matches[k];
-          state.matches.push({
-            id: `M${matchNum++}`,
-            roundName: `${m.roundName} (Rückrunde)`,
-            group: m.group,
-            p1: m.p2,
-            p2: m.p1,
-            s1: null, s2: null, winner: null, loser: null, finished: false
-          });
-        }
-      }
-
-      state.matches.push(
-        { id: `M${matchNum++}`, roundName: 'Halbfinale 1', stage: 'semi', p1: '1. Gruppe A', p2: '2. Gruppe B', s1: null, s2: null, winner: null, loser: null, finished: false },
-        { id: `M${matchNum++}`, roundName: 'Halbfinale 2', stage: 'semi', p1: '1. Gruppe B', p2: '2. Gruppe A', s1: null, s2: null, winner: null, loser: null, finished: false },
-        { id: `M${matchNum++}`, roundName: 'Spiel um Platz 3', stage: 'bronze', p1: 'Verlierer HF 1', p2: 'Verlierer HF 2', s1: null, s2: null, winner: null, loser: null, finished: false },
-        { id: `M${matchNum++}`, roundName: 'Großes Finale um Gold', stage: 'final', p1: 'Sieger HF 1', p2: 'Sieger HF 2', s1: null, s2: null, winner: null, loser: null, finished: false }
-      );
-
-      state.activeMatchId = state.matches[0].id;
-      renderGroupTables();
-    }
-
-    // ------------------------------------------
-    // LIGAMODUS GENERATOR
-    // ------------------------------------------
-    function buildLeagueSchedule(seeded) {
-      state.matches = [];
-      state.leaguePlayoffGenerated = false;
-
-      let list = seeded.map(p => p.name);
-      if (list.length % 2 !== 0) list.push(null);
-      const n = list.length;
-      let matchCounter = 1;
-
-      for (let round = 0; round < n - 1; round++) {
-        for (let i = 0; i < n / 2; i++) {
-          const p1 = list[i];
-          const p2 = list[n - 1 - i];
-          if (p1 !== null && p2 !== null) {
-            state.matches.push({
-              id: `M${matchCounter++}`,
-              roundName: `Spieltag ${round + 1}`,
-              p1: p1,
-              p2: p2,
-              s1: null, s2: null, winner: null, loser: null, finished: false
-            });
+      // Halbfinals in Gruppen-/Ligamodus
+      if (rawVal.includes('HF1') || rawVal.includes('HF2')) {
+        const isHF1 = rawVal.includes('HF1');
+        const isWinner = rawVal.startsWith('Sieger');
+        const semi = state.matches.find(x => x.stage === 'semi' && (isHF1 ? x.roundName.includes('1') : x.roundName.includes('2')));
+        if (semi) {
+          if (semi.finished) {
+            const winner = semi.winner || rawVal;
+            const loser = semi.loser || rawVal;
+            const res = isWinner ? winner : loser;
+            return { text: res, players: [res], isLeaf: true };
           }
-        }
-        list.splice(1, 0, list.pop());
-      }
+          const leftNode = parseRecursiveNode(semi.p1, depth + 1);
+          const rightNode = parseRecursiveNode(semi.p2, depth + 1);
+          const p1Text = leftNode?.text || semi.p1;
+          const p2Text = rightNode?.text || semi.p2;
+          const combinedPlayers = Array.from(new Set([...(leftNode?.players || []), ...(rightNode?.players || [])]));
 
-      if (state.rounds === 2) {
-        const round1Count = state.matches.length;
-        for (let r = 0; r < round1Count; r++) {
-          const prev = state.matches[r];
-          state.matches.push({
-            id: `M${matchCounter++}`,
-            roundName: `${prev.roundName} (Rückspiel)`,
-            p1: prev.p2,
-            p2: prev.p1,
-            s1: null, s2: null, winner: null, loser: null, finished: false
-          });
-        }
-      }
-
-      state.activeMatchId = state.matches[0].id;
-      renderLeagueTable();
-    }
-
-    // ------------------------------------------
-    // MATCH SCORING & UNDO SYSTEM
-    // ------------------------------------------
-    function recordMatchResult(matchId, s1, s2) {
-      const match = state.matches.find(m => m.id === matchId);
-      if (!match) return;
-
-      pushTournamentSnapshot();
-
-      match.s1 = s1;
-      match.s2 = s2;
-      match.winner = s1 > s2 ? match.p1 : match.p2;
-      match.loser = s1 > s2 ? match.p2 : match.p1;
-      match.finished = true;
-
-      if (state.mode === 'dko') {
-        propagateDoubleElim(match);
-      } else if (state.mode === 'gruppen') {
-        propagateGroups(match);
-      } else if (state.mode === 'liga') {
-        propagateLeague(match);
-      }
-
-      updateActiveMatchPointer();
-      renderActiveMatch();
-      renderScheduleList();
-      renderTree();
-      updateHeaderActions();
-      triggerPersistence();
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function pushTournamentSnapshot() {
-      state.history.push({
-        matches: JSON.parse(JSON.stringify(state.matches)),
-        activeMatchId: state.activeMatchId,
-        leaguePlayoffGenerated: state.leaguePlayoffGenerated
-      });
-    }
-
-    function updateActiveMatchPointer() {
-      const next = state.matches.find(m => !m.finished && isMatchPlayable(m));
-      state.activeMatchId = next ? next.id : null;
-
-      const allDone = state.matches.every(m => m.finished);
-      if (allDone) {
-        finishTournament();
-      }
-    }
-
-    function isMatchPlayable(m) {
-      if (!m || m.finished) return false;
-      const invalid = ['Sieger', 'Verlierer', 'Gruppe', '1.', '2.', 'HF'];
-      const p1Blocked = invalid.some(k => (m.p1 || '').includes(k));
-      const p2Blocked = invalid.some(k => (m.p2 || '').includes(k));
-      return !p1Blocked && !p2Blocked;
-    }
-
-    function propagateDoubleElim(m) {
-      const win = m.winner;
-      const lose = m.loser;
-      const id = m.id;
-
-      state.matches.forEach(item => {
-        if (!item.finished) {
-          if (item.p1 === `Sieger ${id}`) item.p1 = win;
-          if (item.p2 === `Sieger ${id}`) item.p2 = win;
-          if (item.p1 === `Verlierer ${id}`) item.p1 = lose;
-          if (item.p2 === `Verlierer ${id}`) item.p2 = lose;
-        }
-      });
-
-      if (m.roundName.includes('Grand Final') && !m.isResetMatch) {
-        if (m.winner === m.p2) {
-          const resetId = `M${state.matches.length + 1}`;
-          state.matches.push({
-            id: resetId,
-            roundName: 'Grand Final (Bracket-Reset Decider)',
-            bracket: 'final',
-            p1: m.p1,
-            p2: m.p2,
-            s1: null, s2: null, winner: null, loser: null,
-            finished: false,
-            isResetMatch: true
-          });
-        }
-      }
-    }
-
-    function propagateGroups(m) {
-      renderGroupTables();
-
-      const groupMatches = state.matches.filter(item => item.group);
-      const allGroupDone = groupMatches.every(item => item.finished);
-
-      if (allGroupDone) {
-        const standA = calculateGroupStandings('A');
-        const standB = calculateGroupStandings('B');
-
-        const top1A = standA[0] ? standA[0].name : '1. Gruppe A';
-        const top2A = standA[1] ? standA[1].name : '2. Gruppe A';
-        const top1B = standB[0] ? standB[0].name : '1. Gruppe B';
-        const top2B = standB[1] ? standB[1].name : '2. Gruppe B';
-
-        state.matches.forEach(item => {
-          if (item.roundName === 'Halbfinale 1') {
-            item.p1 = top1A;
-            item.p2 = top2B;
+          if (combinedPlayers.length > 4) {
+            return {
+              text: `${isWinner ? 'Sieger' : 'Verlierer'} ${formatRoundDisplayName(semi.roundName)}`,
+              players: combinedPlayers,
+              isLeaf: false
+            };
           }
-          if (item.roundName === 'Halbfinale 2') {
-            item.p1 = top1B;
-            item.p2 = top2A;
-          }
-        });
-      }
 
-      const hf1 = state.matches.find(item => item.roundName === 'Halbfinale 1');
-      const hf2 = state.matches.find(item => item.roundName === 'Halbfinale 2');
-
-      if (hf1 && hf2 && (m.id === hf1.id || m.id === hf2.id)) {
-        const finalMatch = state.matches.find(item => item.roundName === 'Großes Finale um Gold');
-        const bronzeMatch = state.matches.find(item => item.roundName === 'Spiel um Platz 3');
-
-        if (hf1.finished && hf2.finished) {
-          if (finalMatch) {
-            finalMatch.p1 = hf1.winner;
-            finalMatch.p2 = hf2.winner;
-          }
-          if (bronzeMatch) {
-            bronzeMatch.p1 = hf1.loser;
-            bronzeMatch.p2 = hf2.loser;
-          }
+          return {
+            text: `${isWinner ? 'Sieger' : 'Verlierer'} (${p1Text} vs. ${p2Text})`,
+            players: combinedPlayers,
+            isLeaf: false
+          };
         }
       }
+
+      // Doppel-K.o. Verweise (z.B. "Sieger M1", "Verlierer M2")
+      if (rawVal.startsWith('Sieger M') || rawVal.startsWith('Verlierer M')) {
+        const isWinner = rawVal.startsWith('Sieger');
+        const mId = rawVal.replace(/^Sieger\s+/, '').replace(/^Verlierer\s+/, '').trim();
+        const targetMatch = state.matches.find(x => x.id === mId);
+        if (targetMatch) {
+          if (targetMatch.finished) {
+            const res = isWinner ? (targetMatch.winner || rawVal) : (targetMatch.loser || rawVal);
+            return { text: res, players: [res], isLeaf: true };
+          }
+          const leftNode = parseRecursiveNode(targetMatch.p1, depth + 1);
+          const rightNode = parseRecursiveNode(targetMatch.p2, depth + 1);
+          const p1Text = leftNode?.isLeaf ? leftNode.text : (leftNode?.text ? `(${leftNode.text.replace(/^(Sieger|Verlierer)\s+/, '')})` : targetMatch.p1);
+          const p2Text = rightNode?.isLeaf ? rightNode.text : (rightNode?.text ? `(${rightNode.text.replace(/^(Sieger|Verlierer)\s+/, '')})` : targetMatch.p2);
+          const combinedPlayers = Array.from(new Set([...(leftNode?.players || []), ...(rightNode?.players || [])]));
+
+          const prefix = isWinner ? 'Sieger' : 'Verlierer';
+
+          // Wenn mehr als 4 Spieler infrage kämen: saubere Rundenbezeichnung anzeigen
+          if (combinedPlayers.length > 4) {
+            return {
+              text: `${prefix} ${formatRoundDisplayName(targetMatch.roundName || targetMatch.id)}`,
+              players: combinedPlayers,
+              isLeaf: false
+            };
+          }
+
+          // Bei bis zu 4 Spielern: Direkte Paarungs-Vorschau in Klammern
+          let displayText = '';
+          if (leftNode?.isLeaf && rightNode?.isLeaf) {
+            displayText = `${prefix} (${p1Text} vs. ${p2Text})`;
+          } else {
+            displayText = `${prefix} aus [${p1Text} / ${p2Text}]`;
+          }
+
+          return {
+            text: displayText,
+            players: combinedPlayers,
+            isLeaf: false
+          };
+        }
+      }
+
+      // Reiner Spielername (Blattknoten)
+      return { text: rawVal, players: [rawVal], isLeaf: true };
     }
 
-    function propagateLeague(m) {
-      renderLeagueTable();
+    function getMatchParticipantDisplay(m, slot) {
+      if (!m) return '';
+      const rawVal = m[slot] || '';
 
-      const regularMatches = state.matches.filter(item => !item.isPlayoff);
-      const allRegularDone = regularMatches.every(item => item.finished);
+      const isResolved = !rawVal.startsWith('Sieger') && !rawVal.startsWith('Verlierer') && !rawVal.startsWith('Platz') && !rawVal.startsWith('1.') && !rawVal.startsWith('2.');
+      if (isResolved) return rawVal;
 
-      if (allRegularDone && !state.leaguePlayoffGenerated && state.leaguePlayoff === 'top4') {
-        state.leaguePlayoffGenerated = true;
-        const standings = calculateLeagueStandings();
-        let matchCounter = state.matches.length + 1;
+      const parsed = parseRecursiveNode(rawVal);
+      if (!parsed) return rawVal;
 
-        if (standings.length >= 4) {
-          state.matches.push(
-            { id: `M${matchCounter++}`, roundName: 'Playoff-Halbfinale 1 (1. vs 4.)', isPlayoff: true, p1: standings[0].name, p2: standings[3].name, s1: null, s2: null, winner: null, loser: null, finished: false },
-            { id: `M${matchCounter++}`, roundName: 'Playoff-Halbfinale 2 (2. vs 3.)', isPlayoff: true, p1: standings[1].name, p2: standings[2].name, s1: null, s2: null, winner: null, loser: null, finished: false },
-            { id: `M${matchCounter++}`, roundName: 'Spiel um Platz 3', isPlayoff: true, p1: 'Verlierer HF 1', p2: 'Verlierer HF 2', s1: null, s2: null, winner: null, loser: null, finished: false },
-            { id: `M${matchCounter++}`, roundName: 'Großes Finale um Gold', isPlayoff: true, p1: 'Sieger HF 1', p2: 'Sieger HF 2', s1: null, s2: null, winner: null, loser: null, finished: false }
-          );
-        }
-      }
-
-      const hf1 = state.matches.find(item => item.roundName && item.roundName.includes('Playoff-Halbfinale 1'));
-      const hf2 = state.matches.find(item => item.roundName && item.roundName.includes('Playoff-Halbfinale 2'));
-
-      if (hf1 && hf2 && (m.id === hf1.id || m.id === hf2.id)) {
-        const finalMatch = state.matches.find(item => item.roundName === 'Großes Finale um Gold');
-        const bronzeMatch = state.matches.find(item => item.roundName === 'Spiel um Platz 3');
-
-        if (hf1.finished && hf2.finished) {
-          if (finalMatch) {
-            finalMatch.p1 = hf1.winner;
-            finalMatch.p2 = hf2.winner;
-          }
-          if (bronzeMatch) {
-            bronzeMatch.p1 = hf1.loser;
-            bronzeMatch.p2 = hf2.loser;
-          }
-        }
-      }
+      return parsed.text || rawVal;
     }
 
-    // ------------------------------------------
-    // RENDERING MATCH RUNNER & ACTIVE MATCH
-    // ------------------------------------------
-    function renderActiveMatch() {
-      const hero = document.getElementById('activeMatchHero');
-      const roundNameEl = document.getElementById('activeMatchRoundName');
-      const distanceEl = document.getElementById('activeMatchDistance');
-      const p1NameEl = document.getElementById('activeP1Name');
-      const p2NameEl = document.getElementById('activeP2Name');
-      const btnsBox = document.getElementById('activeResultButtons');
+    function getMatchParticipantHtml(m, slot) {
+      const rawVal = m[slot] || '';
+      const display = getMatchParticipantDisplay(m, slot);
+      const isWinner = m.finished && m.winner && (m.winner === rawVal || m.winner === display);
 
-      const match = state.matches.find(m => m.id === state.activeMatchId);
-
-      if (!match) {
-        if (hero) hero.classList.add('hidden');
-        return;
-      }
-
-      if (hero) hero.classList.remove('hidden');
-      if (roundNameEl) roundNameEl.textContent = `${match.id}: ${match.roundName}`;
-      if (distanceEl) {
-        const wins = Math.ceil(state.bestOf / 2);
-        distanceEl.textContent = `Best of ${state.bestOf} (First to ${wins})`;
-      }
-
-      if (p1NameEl) p1NameEl.textContent = match.p1;
-      if (p2NameEl) p2NameEl.textContent = match.p2;
-
-      if (btnsBox) {
-        btnsBox.innerHTML = '';
-        const wins = Math.ceil(state.bestOf / 2);
-        const pairs = [];
-
-        for (let l = 0; l < wins; l++) {
-          pairs.push([wins, l]);
-        }
-        for (let l = wins - 1; l >= 0; l--) {
-          pairs.push([l, wins]);
-        }
-
-        pairs.forEach(([s1, s2]) => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.onclick = () => recordMatchResult(match.id, s1, s2);
-          btn.className = 'px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/90 hover:bg-emerald-500 hover:text-slate-950 hover:border-emerald-500 text-white font-bold font-display text-sm transition active:scale-95 shadow-sm';
-          btn.textContent = `${s1} : ${s2}`;
-          btnsBox.appendChild(btn);
-        });
-      }
+      return `<span class="${isWinner ? 'text-emerald-400 font-bold' : ''}">${escapeHtml(display)}</span>`;
     }
 
     function renderScheduleList() {
@@ -2052,12 +2760,16 @@
         const isCurrent = (m.id === state.activeMatchId);
         const isDone = m.finished;
         const playable = isMatchPlayable(m);
+        const matchBestOf = getMatchDistance(m);
+        const matchBadgeHtml = getMatchRoundsBadge(m);
+        const p1Html = getMatchParticipantHtml(m, 'p1');
+        const p2Html = getMatchParticipantHtml(m, 'p2');
 
         let statusText = 'Offen';
-        let statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        let statusBadgeClass = 'bg-red-500/20 text-red-400 border border-red-500/30';
 
         if (isCurrent) {
-          statusText = 'Jetzt am Board';
+          statusText = '<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1"></span>Jetzt am Board';
           statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold';
         } else if (isDone) {
           statusText = 'Beendet';
@@ -2071,22 +2783,26 @@
             : (isDone ? 'bg-slate-950/60 border-slate-800/80' : 'bg-slate-900/90 border-slate-800')
         }`;
 
+        const cleanRoundName = formatRoundDisplayName(m.roundName);
+
         item.innerHTML = `
           <div class="flex items-center gap-3 min-w-0">
             <span class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-display font-bold text-xs flex items-center justify-center shrink-0">
               ${m.id}
             </span>
             <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-semibold text-slate-400">${m.roundName}</span>
-                <span class="text-[10px] px-2 py-0.2 rounded-full font-semibold ${statusBadgeClass}">
+              <div class="flex items-center flex-wrap gap-1.5 sm:gap-2">
+                <span class="text-xs font-semibold text-slate-400">${cleanRoundName}</span>
+                ${matchBadgeHtml}
+                <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-white border border-slate-700/80 shadow-sm">Best of ${matchBestOf}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ${statusBadgeClass}">
                   ${statusText}
                 </span>
               </div>
               <div class="flex items-center gap-2 mt-0.5 text-sm font-bold text-white truncate">
-                <span class="${isDone && m.winner === m.p1 ? 'text-emerald-400' : ''}">${escapeHtml(m.p1)}</span>
+                ${p1Html}
                 <span class="text-slate-500 text-xs font-normal">vs</span>
-                <span class="${isDone && m.winner === m.p2 ? 'text-emerald-400' : ''}">${escapeHtml(m.p2)}</span>
+                ${p2Html}
               </div>
             </div>
           </div>
@@ -2125,15 +2841,15 @@
 
       const grouped = {};
       state.matches.forEach(m => {
-        let cat = 'Hauptrunde (Winners Bracket)';
+        let cat = 'Hauptrunde';
         if (m.bracket === 'loser') {
-          cat = 'Verlierer-Runde (Loser Bracket)';
+          cat = 'Verlierer-Runde';
         } else if (m.bracket === 'final') {
           cat = 'Grand Final';
         } else if (m.group) {
           cat = `Gruppe ${m.group}`;
         } else if (m.stage) {
-          cat = 'K.o.-Hauptrunde (Halbfinale & Finale)';
+          cat = 'K.o.-Hauptrunde';
         } else if (m.isPlayoff) {
           cat = 'Playoff-Endrunde';
         }
@@ -2145,35 +2861,33 @@
         const sec = document.createElement('div');
         sec.className = 'space-y-3';
 
-        let dotColor = 'bg-emerald-400';
-        let titleColor = 'text-emerald-400';
-
-        if (catTitle.includes('Gruppe B') || catTitle.includes('Loser')) {
-          dotColor = 'bg-red-500';
-          titleColor = 'text-red-400';
-        } else if (catTitle.includes('Final') || catTitle.includes('Playoff') || catTitle.includes('K.o.-Hauptrunde')) {
+        let dotColor = 'bg-blue-400';
+        if (catTitle.includes('Gruppe B') || catTitle.includes('Verlierer') || catTitle.includes('Verlierer-Runde')) {
+          dotColor = 'bg-purple-400';
+        } else if (catTitle.includes('Grand Final') || catTitle.includes('K.o.-Hauptrunde')) {
           dotColor = 'bg-amber-400';
-          titleColor = 'text-amber-400';
-        } else if (catTitle.includes('Gruppe A') || catTitle.includes('Winners')) {
-          dotColor = 'bg-emerald-400';
-          titleColor = 'text-emerald-400';
         }
 
         sec.innerHTML = `
-          <h4 class="font-display font-bold text-xs uppercase tracking-wider text-slate-300 border-b border-slate-800 pb-1.5 flex items-center gap-2">
+          <h4 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200 border-b border-slate-800 pb-1.5 flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full ${dotColor} shadow-sm"></span>
-            <span class="${titleColor}">${catTitle}</span>
+            <span>${catTitle}</span>
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             ${matchList.map(m => {
               const isCurrent = (m.id === state.activeMatchId);
               const isDone = m.finished;
+              const matchBestOf = getMatchDistance(m);
+              const matchBadgeHtml = getMatchRoundsBadge(m);
+              const cleanTreeRoundName = formatRoundDisplayName(m.roundName);
+              const p1Html = getMatchParticipantHtml(m, 'p1');
+              const p2Html = getMatchParticipantHtml(m, 'p2');
 
               let statusText = 'Offen';
-              let statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30 font-semibold';
+              let statusBadgeClass = 'bg-red-500/20 text-red-400 border border-red-500/30 font-semibold';
 
               if (isCurrent) {
-                statusText = 'Jetzt am Board';
+                statusText = '<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1"></span>Jetzt am Board';
                 statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold';
               } else if (isDone) {
                 statusText = 'Beendet';
@@ -2187,18 +2901,22 @@
                     : 'bg-slate-950 border-slate-800'
                 }">
                   <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-                    <span class="font-bold text-slate-300 font-display">${m.id}: ${m.roundName}</span>
-                    <span class="text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${statusBadgeClass}">
-                      ${statusText}
-                    </span>
+                    <span class="font-bold text-slate-300 font-display">${m.id}: ${cleanTreeRoundName}</span>
+                    <div class="flex items-center flex-wrap gap-1.5">
+                      ${matchBadgeHtml}
+                      <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-white border border-slate-700/80 shadow-sm">Best of ${matchBestOf}</span>
+                      <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ${statusBadgeClass}">
+                        ${statusText}
+                      </span>
+                    </div>
                   </div>
                   <div class="space-y-1.5 text-xs font-semibold">
                     <div class="flex items-center justify-between p-1.5 rounded bg-slate-900 border border-slate-800/80">
-                      <span class="${isDone && m.winner === m.p1 ? 'text-emerald-400 font-bold' : 'text-slate-300'} truncate">${escapeHtml(m.p1)}</span>
+                      <div class="truncate">${p1Html}</div>
                       <span class="font-display font-bold text-white ml-2">${isDone ? m.s1 : '-'}</span>
                     </div>
                     <div class="flex items-center justify-between p-1.5 rounded bg-slate-900 border border-slate-800/80">
-                      <span class="${isDone && m.winner === m.p2 ? 'text-emerald-400 font-bold' : 'text-slate-300'} truncate">${escapeHtml(m.p2)}</span>
+                      <div class="truncate">${p2Html}</div>
                       <span class="font-display font-bold text-white ml-2">${isDone ? m.s2 : '-'}</span>
                     </div>
                   </div>
@@ -2244,16 +2962,18 @@
         const list = calculateGroupStandings(grKey);
 
         const isGroupA = (grKey === 'A');
-        const accentTextClass = isGroupA ? 'text-emerald-400' : 'text-red-400';
-        const accentBgBadgeClass = isGroupA ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400';
+        const accentTextClass = isGroupA ? 'text-blue-400' : 'text-purple-400';
+        const accentBgBadgeClass = isGroupA ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40' : 'bg-purple-500/20 text-purple-300 border border-purple-500/40';
 
         list.forEach((s, idx) => {
           const rank = idx + 1;
           const isQuali = rank <= 2;
           const tr = document.createElement('tr');
-          tr.className = isQuali ? (isGroupA ? 'bg-emerald-500/5' : 'bg-red-500/5') : '';
+          tr.className = isQuali ? 'bg-slate-800/40' : '';
           tr.innerHTML = `
-            <td class="py-1.5 px-2 font-display font-bold ${rank <= 2 ? accentTextClass : 'text-slate-400'}">${rank}.</td>
+            <td class="py-1.5 px-2 font-display font-bold text-center ${rank <= 2 ? accentTextClass : 'text-slate-500'}">
+              ${rank}.
+            </td>
             <td class="py-1.5 px-2 font-bold text-white whitespace-nowrap">
               ${escapeHtml(s.name)}
               ${isQuali ? `<span class="ml-1 text-[9px] px-1 py-0.2 rounded ${accentBgBadgeClass} font-semibold">HF</span>` : ''}
@@ -2333,7 +3053,7 @@
 
         let badge = '';
         if (state.leaguePlayoff === 'top4' && rank <= 4) {
-          badge = '<span class="ml-1 text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Playoff</span>';
+          badge = '<span class="ml-1 text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-semibold">Playoff</span>';
         }
 
         const tr = document.createElement('tr');
@@ -2431,9 +3151,20 @@
         const p3 = loserFinal ? loserFinal.loser : 'Dritter';
 
         const ranked = [p1, p2, p3];
-        state.players.forEach(p => {
-          if (!ranked.includes(p.name)) ranked.push(p.name);
+
+        const loserSemi = state.matches.find(match => (match.roundName.includes('Verlierer-Halbfinale') || (state.playerCount === 4 && match.id === 'M3')) && match.finished);
+        if (loserSemi && loserSemi.loser && !ranked.includes(loserSemi.loser)) {
+          ranked.push(loserSemi.loser);
+        }
+
+        const remaining = state.players.map(p => p.name).filter(name => !ranked.includes(name));
+        remaining.sort((a, b) => {
+          const winsA = state.matches.filter(match => match.finished && match.winner === a).length;
+          const winsB = state.matches.filter(match => match.finished && match.winner === b).length;
+          return winsB - winsA;
         });
+        ranked.push(...remaining);
+
         state.finalStandings = ranked;
       } else if (m === 'gruppen') {
         const goldMatch = state.matches.find(match => match.stage === 'final' && match.finished);
@@ -2533,51 +3264,59 @@
         const rank = idx + 1;
         const title = funTitles[idx] || 'Turnier-Teilnehmer & Legenden-Anwärter';
 
-        let rankHtml = `${rank}.`;
-        let rankColorClass = 'text-slate-500';
-        let rowBgClass = '';
+        let wins = 0;
+        let losses = 0;
+        state.matches.filter(m => m.finished).forEach(m => {
+          if (m.winner === name) wins++;
+          else if (m.loser === name) losses++;
+        });
 
-        if (rank === 1) {
-          rankHtml = '🥇';
-          rankColorClass = 'text-amber-300 font-black text-base';
-          rowBgClass = 'bg-amber-500/10 border-l-4 border-l-amber-400';
-        } else if (rank === 2) {
-          rankHtml = '🥈';
-          rankColorClass = 'text-slate-200 font-black text-base';
-          rowBgClass = 'bg-slate-400/10 border-l-4 border-l-slate-300';
-        } else if (rank === 3) {
-          rankHtml = '🥉';
-          rankColorClass = 'text-amber-500 font-black text-base';
-          rowBgClass = 'bg-amber-900/15 border-l-4 border-l-amber-600';
-        }
+        let rankBadge = `${rank}.`;
+        if (rank === 1) rankBadge = '🥇';
+        else if (rank === 2) rankBadge = '🥈';
+        else if (rank === 3) rankBadge = '🥉';
 
         const tr = document.createElement('tr');
-        tr.className = `transition ${rowBgClass}`;
+        tr.className = rank <= 3 ? 'bg-slate-800/40' : '';
         tr.innerHTML = `
-          <td class="py-2.5 px-3 text-center font-display font-bold whitespace-nowrap ${rankColorClass}">
-            ${rankHtml}
-          </td>
-          <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">
-            ${escapeHtml(name)}
-          </td>
-          <td class="py-2.5 px-3 ${rank === 1 ? 'text-amber-200/90 font-semibold' : 'text-slate-300'} text-xs font-medium">
-            ${title}
-          </td>
-          <td class="py-2.5 px-3 text-right font-display text-slate-400">
-            ${getWinLossStats(name)}
-          </td>
+          <td class="py-2.5 px-3 font-display font-bold text-center ${rank <= 3 ? 'text-base' : 'text-slate-400'}">${rankBadge}</td>
+          <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">${escapeHtml(name)}</td>
+          <td class="py-2.5 px-3 text-slate-300 text-xs">${title}</td>
+          <td class="py-2.5 px-3 text-right font-display font-semibold text-slate-300">${wins}S : ${losses}N</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function getWinLossStats(name) {
-      let w = 0, l = 0;
-      state.matches.filter(m => m.finished).forEach(m => {
-        if (m.winner === name) w++;
-        else if (m.loser === name) l++;
-      });
-      return `${w}S / ${l}N`;
+    function returnToTournamentView() {
+      state.currentPhase = 'tournament';
+      updateStepBadges();
+      updateTournamentHeaderTitle();
+      document.getElementById('screenPodium').classList.add('hidden');
+      document.getElementById('screenTournament').classList.remove('hidden');
+
+      const grTables = document.getElementById('groupsLiveTablesContainer');
+      const ligaTable = document.getElementById('leagueLiveTableBox');
+      if (grTables) grTables.classList.toggle('hidden', state.mode !== 'gruppen');
+      if (ligaTable) ligaTable.classList.toggle('hidden', state.mode !== 'liga');
+
+      if (state.mode === 'gruppen') renderGroupTables();
+      if (state.mode === 'liga') renderLeagueTable();
+
+      renderActiveMatch();
+      renderScheduleList();
+      renderTree();
+      updateHeaderActions();
+      triggerPersistence();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function navToStep(stepNum) {
+      if (stepNum === 3 && (state.currentPhase === 'podium' || (state.matches && state.matches.length > 0))) {
+        returnToTournamentView();
+      } else if (stepNum === 4 && state.matches && state.matches.length > 0 && state.matches.every(m => m.finished)) {
+        finishTournament();
+      }
     }
 
     // ==========================================
@@ -2585,12 +3324,28 @@
     // ==========================================
     function undoLastAction() {
       if (state.currentPhase === 'podium') {
+        if (state.history.length > 0) {
+          const snapshot = state.history.pop();
+          state.matches = snapshot.matches;
+          state.activeMatchId = snapshot.activeMatchId;
+          state.leaguePlayoffGenerated = snapshot.leaguePlayoffGenerated;
+        }
         state.currentPhase = 'tournament';
         updateStepBadges();
         document.getElementById('screenPodium').classList.add('hidden');
         document.getElementById('screenTournament').classList.remove('hidden');
+
+        const grTables = document.getElementById('groupsLiveTablesContainer');
+        const ligaTable = document.getElementById('leagueLiveTableBox');
+        if (grTables) grTables.classList.toggle('hidden', state.mode !== 'gruppen');
+        if (ligaTable) ligaTable.classList.toggle('hidden', state.mode !== 'liga');
+
+        if (state.mode === 'gruppen') renderGroupTables();
+        if (state.mode === 'liga') renderLeagueTable();
+
         renderActiveMatch();
         renderScheduleList();
+        renderTree();
         updateHeaderActions();
         triggerPersistence();
         if (window.lucide) lucide.createIcons();
@@ -2683,8 +3438,12 @@
       state.scoringSystem = 'match';
       state.qualiMethod = 'bull';
       state.randomDrawDone = false;
-      state.leaguePlayoff = 'top4';
+      state.leaguePlayoff = 'none';
       state.leaguePlayoffGenerated = false;
+
+      state.semiExtraLegs = false;
+      state.bronzeExtraLegs = false;
+      state.finalExtraLegs = false;
 
       state.players = [
         { id: 1, name: "Spieler 1", qualiScore: 0, dartsCount: 0, tieBreakRank: 1, randomRank: 1 },
@@ -2693,7 +3452,6 @@
         { id: 4, name: "Spieler 4", qualiScore: 0, dartsCount: 0, tieBreakRank: 4, randomRank: 4 },
         { id: 5, name: "Spieler 5", qualiScore: 0, dartsCount: 0, tieBreakRank: 5, randomRank: 5 }
       ];
-
       state.qualiHistory = [];
       state.currentPhase = 'setup';
       state.tournamentView = 'runner';
@@ -2705,7 +3463,7 @@
       state.groupB = [];
 
       try {
-        localStorage.removeItem('darts_tournament_companion_state');
+        localStorage.removeItem(STORAGE_KEY);
       } catch (e) {
         console.warn(e);
       }
@@ -2719,9 +3477,10 @@
       setTournamentMode('dko');
       setTournamentRounds(1);
       setScoringSystem('match');
-      setLeaguePlayoff('top4');
+      setLeaguePlayoff('none');
       setQualiMethod('bull');
       updateBestOfUI();
+      updateExtraLegsUI();
       updateStepBadges();
       updateHeaderActions();
       updateAdvice();
@@ -2758,6 +3517,24 @@
       div.textContent = text;
       return div.innerHTML;
     }
+
+    // Beim Laden Initialisieren
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPersistedState();
+      if (state.currentPhase === 'setup') {
+        setPlayerCount(state.playerCount);
+        updateBestOfUI();
+        setTournamentMode(state.mode);
+        setTournamentRounds(state.rounds);
+        setScoringSystem(state.scoringSystem);
+        setLeaguePlayoff(state.leaguePlayoff);
+        updateQualiMethodUI();
+        updateExtraLegsUI();
+        updateAdvice();
+        updateHeaderActions();
+      }
+      if (window.lucide) lucide.createIcons();
+    });
   </script>
 </body>
 </html>
